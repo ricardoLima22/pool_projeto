@@ -52,7 +52,7 @@ export default function Login() {
     };
 
     return (
-        <main className="relative flex flex-col items-center justify-center min-h-screen p-6 overflow-hidden font-sans">
+        <main className="relative flex flex-col items-center justify-center min-h-screen min-h-dvh p-6 overflow-hidden font-sans">
             {/* Imagem de Fundo com Desfoque */}
             <div
                 className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat transition-all duration-1000"

@@ -84,8 +84,8 @@ export default function Home() {
 
     return (
         <main className="min-h-screen bg-slate-50 pb-20 font-sans text-slate-900">
-            {/* Cabeçalho Premium */}
-            <header className="bg-blue-600 text-white rounded-b-[40px] px-6 pt-12 pb-8 shadow-xl shadow-blue-200">
+            {/* Cabeçalho Premium - pt-12 alterado para pt-[calc(3rem+env(safe-area-inset-top))] */}
+            <header className="bg-blue-600 text-white rounded-b-[40px] px-6 pt-[calc(3rem+env(safe-area-inset-top))] pb-8 shadow-xl shadow-blue-200">
                 <div className="flex justify-between items-start mb-8">
                     <div className="flex flex-col">
                         <h2 className="text-2xl font-black mb-1 tracking-tight">Olá, {profile?.full_name || 'Usuário'}!</h2>

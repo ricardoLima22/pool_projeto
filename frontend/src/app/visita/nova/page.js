@@ -155,7 +155,16 @@ function NovaVisita() {
         router.push('/home');
     };
 
-    if (loading) return <p className="p-10 text-center animate-pulse">Carregando visita...</p>;
+    if (loading) {
+        return (
+            <main className="min-h-screen bg-slate-50 flex items-center justify-center">
+                <div className="flex flex-col items-center">
+                    <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+                    <p className="mt-4 text-slate-500 font-bold uppercase tracking-widest text-sm text-center">Iniciando visita...</p>
+                </div>
+            </main>
+        );
+    }
 
     // Tela de Seleção de Cliente
     if (!cliente) {

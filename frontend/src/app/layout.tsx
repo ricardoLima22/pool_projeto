@@ -12,20 +12,12 @@ export const viewport: Viewport = {
   themeColor: "#2563eb",
   width: "device-width",
   initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
-  viewportFit: "cover",
 };
 
 export const metadata: Metadata = {
   title: "PoolControl",
   description: "Gerenciamento de limpeza de piscinas",
   manifest: "/manifest.json",
-  appleWebApp: {
-    capable: true,
-    statusBarStyle: "black-translucent",
-    title: "PoolControl",
-  },
 };
 
 export default function RootLayout({

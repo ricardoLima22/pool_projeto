@@ -1,10 +1,15 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f8fafc;
+  /* slate-50 */
+  --foreground: #0f172a;
+  /* slate-900 */
   --primary: #2563eb;
+  /* blue-600 */
 }
+
+/* Removido o seletor @media dark que forçava fundo preto */
 
 @theme inline {
   --color-background: var(--background);
@@ -12,14 +17,6 @@
   --font-inter: var(--font-inter);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
-/* Configurações para PWA "travado" na tela */
 html,
 body {
   height: 100%;
@@ -27,22 +24,19 @@ body {
   margin: 0;
   padding: 0;
   overflow-x: hidden;
-  /* Evita o efeito de puxar e mostrar o fundo preto no mobile */
-  overscroll-behavior: none;
   background-color: var(--primary);
-  /* Fallback para áreas de scroll */
+  /* Cor de fundo "por trás" em azul para combinar com o cabeçalho */
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
-  font-feature-settings: 'cv11';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
+  /* Evita o efeito de bounce elástico no mobile que mostra fundo preto */
+  overscroll-behavior: none;
 }
 
 /* Utilitários para Safe Area */

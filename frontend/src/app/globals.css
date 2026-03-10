@@ -2,14 +2,9 @@
 
 :root {
   --background: #f8fafc;
-  /* slate-50 */
   --foreground: #0f172a;
-  /* slate-900 */
   --primary: #2563eb;
-  /* blue-600 */
 }
-
-/* Removido o seletor @media dark que forçava fundo preto */
 
 @theme inline {
   --color-background: var(--background);
@@ -17,15 +12,17 @@
   --font-inter: var(--font-inter);
 }
 
+/* Força o reset total para evitar bordas nativas */
 html,
 body {
   height: 100%;
   width: 100%;
   margin: 0;
   padding: 0;
-  overflow-x: hidden;
-  background-color: var(--primary);
-  /* Cor de fundo "por trás" em azul para combinar com o cabeçalho */
+  overflow: hidden;
+  /* Evita scroll no body, deixaremos o scroll para o main */
+  background-color: var(--primary) !important;
+  /* Azul por padrão em tudo */
 }
 
 body {
@@ -34,9 +31,16 @@ body {
   font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  min-height: 100dvh;
-  /* Evita o efeito de bounce elástico no mobile que mostra fundo preto */
-  overscroll-behavior: none;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Scroll controlado apenas nos containers internos */
+main {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: contain;
 }
 
 /* Utilitários para Safe Area */

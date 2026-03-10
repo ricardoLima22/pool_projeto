@@ -83,7 +83,7 @@ export default function Home() {
     }
 
     return (
-        <main className="min-h-screen bg-slate-50 pb-20 font-sans text-slate-900">
+        <main className="min-h-screen min-h-dvh bg-slate-50 pb-20 font-sans text-slate-900">
             {/* Cabeçalho Premium - pt-12 alterado para pt-[calc(3rem+env(safe-area-inset-top))] */}
             <header className="bg-blue-600 text-white rounded-b-[40px] px-6 pt-[calc(3rem+env(safe-area-inset-top))] pb-8 shadow-xl shadow-blue-200">
                 <div className="flex justify-between items-start mb-8">

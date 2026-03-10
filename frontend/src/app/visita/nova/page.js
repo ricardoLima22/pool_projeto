@@ -15,7 +15,7 @@ export default function NovaVisitaPage() {
 
 function NovaVisita() {
     const searchParams = useSearchParams();
-    const router = useRouter();
+    //const router = useRouter();
     const clienteId = searchParams.get('clienteId');
     const [cliente, setCliente] = useState(null);
     const [clientesList, setClientesList] = useState([]);

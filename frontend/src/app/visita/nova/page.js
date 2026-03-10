@@ -1,12 +1,21 @@
 // src/app/visita/nova/page.js
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { supabase } from '../../../lib/supabase';
 import { useSearchParams, useRouter } from 'next/navigation';
 
-export default function NovaVisita() {
+export default function NovaVisitaPage() {
+    return (
+        <Suspense fallback={<p className="p-10 text-center animate-pulse">Carregando formulário...</p>}>
+            <NovaVisita />
+        </Suspense>
+    );
+}
+
+function NovaVisita() {
     const searchParams = useSearchParams();
+    const router = useRouter();
     const clienteId = searchParams.get('clienteId');
     const [cliente, setCliente] = useState(null);
     const [clientesList, setClientesList] = useState([]);

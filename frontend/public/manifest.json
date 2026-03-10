@@ -1,0 +1,17 @@
+{
+    "name": "PoolControl",
+    "short_name": "PoolControl",
+    "description": "Gerenciamento de limpeza de piscinas",
+    "start_url": "/home",
+    "display": "standalone",
+    "background_color": "#2563eb",
+    "theme_color": "#2563eb",
+    "icons": [
+        {
+            "src": "/icon.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ]
+}

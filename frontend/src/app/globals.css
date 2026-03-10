@@ -19,11 +19,18 @@
   }
 }
 
-/* Força o HTML a ocupar toda a tela sem sobras */
-html {
+/* Configurações para PWA "travado" na tela */
+html,
+body {
   height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  /* Evita o efeito de puxar e mostrar o fundo preto no mobile */
+  overscroll-behavior: none;
   background-color: var(--primary);
-  /* Cor de fallback pro topo/base no Safari */
+  /* Fallback para áreas de scroll */
 }
 
 body {
@@ -33,14 +40,12 @@ body {
   font-feature-settings: 'cv11';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  margin: 0;
-  padding: 0;
-  min-height: 100%;
   min-height: 100dvh;
-  /* IMPORTANTE: Removido o padding do body que causava as bordas pretas */
+  display: flex;
+  flex-direction: column;
 }
 
-/* Utilitários para Safe Area que usaremos nos componentes */
+/* Utilitários para Safe Area */
 .pb-safe {
   padding-bottom: env(safe-area-inset-bottom);
 }

@@ -1,8 +1,9 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f8fafc;
+  --foreground: #0f172a;
+  --primary: #2563eb;
 }
 
 @theme inline {
@@ -11,18 +12,46 @@
   --font-inter: var(--font-inter);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* Reset agressivo para Mobile */
+html,
+body {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  /* Evita o bounce do navegador no body */
+  background-color: var(--primary);
+  /* Evita flash branco/preto nas bordas */
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
-  font-feature-settings: 'cv11';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  /* Altura dinâmica da viewport (ignora barra de navegação do browser) */
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Scroll controlado apenas no conteúdo principal */
+main {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: none;
+  /* Desativa o "rebote" que mostra o fundo do browser */
+}
+
+/* Utilitários para áreas de segurança (iPhone com notch) */
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.pt-safe {
+  padding-top: env(safe-area-inset-top);
 }

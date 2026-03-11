@@ -267,7 +267,7 @@ function NovaVisita() {
                             placeholder="pH Antes"
                             value={phAntes}
                             onChange={(e) => setPhAntes(e.target.value)}
-                            className="w-full px-3 py-3 rounded-xl bg-white border border-slate-200 text-sm font-bold text-slate-800 placeholder:text-slate-300 focus:ring-2 ring-blue-500 text-center shadow-sm"
+                            className="w-full px-3 py-3 rounded-xl bg-white border border-slate-200 text-sm font-bold text-slate-950 placeholder:text-slate-400 focus:ring-2 ring-blue-400 text-center shadow-sm"
                         />
                     </div>
                 </div>
@@ -286,7 +286,7 @@ function NovaVisita() {
                             placeholder="pH Depois"
                             value={phDepois}
                             onChange={(e) => setPhDepois(e.target.value)}
-                            className="w-full px-3 py-3 rounded-xl bg-white border border-slate-200 text-sm font-bold text-slate-800 placeholder:text-slate-300 focus:ring-2 ring-blue-500 text-center shadow-sm"
+                            className="w-full px-3 py-3 rounded-xl bg-white border border-slate-200 text-sm font-bold text-slate-950 placeholder:text-slate-400 focus:ring-2 ring-blue-400 text-center shadow-sm"
                         />
                     </div>
                 </div>
@@ -305,7 +305,7 @@ function NovaVisita() {
                             placeholder="0.00"
                             value={valorServico}
                             onChange={(e) => setValorServico(e.target.value)}
-                            className="w-full pl-11 pr-4 py-3.5 rounded-xl bg-slate-50 border-none text-xl font-black text-slate-800 placeholder:text-slate-200 focus:ring-2 ring-blue-500 shadow-inner"
+                            className="w-full pl-11 pr-4 py-3.5 rounded-xl bg-slate-50 border-none text-xl font-black text-slate-950 placeholder:text-slate-400 focus:ring-2 ring-blue-500 shadow-inner"
                         />
                     </div>
                 </div>

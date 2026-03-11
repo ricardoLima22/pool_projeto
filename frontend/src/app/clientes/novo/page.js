@@ -76,7 +76,7 @@ export default function NovoCliente() {
                         required
                         type="text"
                         placeholder="Ex: Casa do João"
-                        className="w-full p-4 bg-slate-50 rounded-2xl border-none focus:ring-2 ring-blue-500 text-slate-700"
+                        className="w-full p-4 bg-slate-50 rounded-2xl border-none focus:ring-2 ring-blue-500 text-slate-950 placeholder:text-slate-400"
                         onChange={(e) => setNome(e.target.value)}
                     />
                 </div>
@@ -87,7 +87,7 @@ export default function NovoCliente() {
                         required
                         type="tel"
                         placeholder="Ex: 27999887766"
-                        className="w-full p-4 bg-slate-50 rounded-2xl border-none focus:ring-2 ring-blue-500 text-slate-700"
+                        className="w-full p-4 bg-slate-50 rounded-2xl border-none focus:ring-2 ring-blue-500 text-slate-950 placeholder:text-slate-400"
                         onChange={(e) => setWhatsapp(e.target.value)}
                     />
                 </div>
@@ -98,7 +98,7 @@ export default function NovoCliente() {
                         required
                         type="email"
                         placeholder="Ex: cliente@email.com"
-                        className="w-full p-4 bg-slate-50 rounded-2xl border-none focus:ring-2 ring-blue-500 text-slate-700"
+                        className="w-full p-4 bg-slate-50 rounded-2xl border-none focus:ring-2 ring-blue-500 text-slate-950 placeholder:text-slate-400"
                         onChange={(e) => setEmail(e.target.value)}
                     />
                 </div>
@@ -108,7 +108,7 @@ export default function NovoCliente() {
                     <input
                         type="text"
                         placeholder="Rua, Número, Bairro"
-                        className="w-full p-4 bg-slate-50 rounded-2xl border-none focus:ring-2 ring-blue-500 text-slate-700"
+                        className="w-full p-4 bg-slate-50 rounded-2xl border-none focus:ring-2 ring-blue-500 text-slate-950 placeholder:text-slate-400"
                         onChange={(e) => setEndereco(e.target.value)}
                     />
                 </div>
@@ -120,7 +120,7 @@ export default function NovoCliente() {
                         type="number"
                         step="0.1"
                         placeholder="Ex: 45.5"
-                        className="w-full p-4 bg-slate-50 rounded-2xl border-none focus:ring-2 ring-blue-500 text-slate-700"
+                        className="w-full p-4 bg-slate-50 rounded-2xl border-none focus:ring-2 ring-blue-500 text-slate-950 placeholder:text-slate-400"
                         onChange={(e) => setVolume(e.target.value)}
                     />
                 </div>

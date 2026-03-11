@@ -27,6 +27,8 @@ function NovaVisita() {
     const [fotoAntes, setFotoAntes] = useState(null);
     const [fotoDepois, setFotoDepois] = useState(null);
     const [valorServico, setValorServico] = useState('');
+    const [phAntes, setPhAntes] = useState('');
+    const [phDepois, setPhDepois] = useState('');
     const [enviando, setEnviando] = useState(false);
 
     const router = useRouter();
@@ -111,6 +113,8 @@ function NovaVisita() {
         const { error: visitError } = await supabase.from('visits').insert([{
             customer_id: cliente.id,
             piscineiro_id: user?.id,
+            ph_antes: phAntes ? parseFloat(phAntes) : null,
+            ph_depois: phDepois ? parseFloat(phDepois) : null,
             products_used: quantidades,
             total_price: parseFloat(valorServico),
             photo_url: urlFotoDepois || urlFotoAntes,
@@ -135,7 +139,10 @@ function NovaVisita() {
 
         // Monta a mensagem do WhatsApp adaptada para o novo formato
         let msg = `Olá ${cliente.name}! ✅ A manutenção da sua piscina foi finalizada.\n\n` +
-            `*Serviço executado:*\n` +
+            `*Status da Água:*\n` +
+            (phAntes ? `- pH Inicial (Antes): ${phAntes}\n` : '') +
+            (phDepois ? `- pH Final (Depois): ${phDepois}\n` : '') +
+            `\n*Serviço executado:*\n` +
             `Valor: R$ ${parseFloat(valorServico).toFixed(2)}\n\n`;
 
         if (itensTexto.length > 0) {
@@ -274,6 +281,35 @@ function NovaVisita() {
                             onChange={(e) => setValorServico(e.target.value)}
                             className="w-full pl-12 pr-4 py-4 rounded-2xl bg-slate-50 border-none text-2xl font-black text-slate-800 placeholder:text-slate-300 focus:ring-2 ring-blue-500"
                         />
+                    </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3 mb-5">
+                    <div>
+                        <label className="block text-slate-500 font-bold mb-2 uppercase text-[10px]">pH Inicial (Antes)</label>
+                        <div className="relative">
+                            <input
+                                type="number"
+                                step="0.1"
+                                placeholder="7.2"
+                                value={phAntes}
+                                onChange={(e) => setPhAntes(e.target.value)}
+                                className="w-full px-4 py-4 rounded-2xl bg-slate-50 border-none text-xl font-black text-slate-800 placeholder:text-slate-300 focus:ring-2 ring-blue-500 text-center"
+                            />
+                        </div>
+                    </div>
+                    <div>
+                        <label className="block text-slate-500 font-bold mb-2 uppercase text-[10px]">pH Final (Depois)</label>
+                        <div className="relative">
+                            <input
+                                type="number"
+                                step="0.1"
+                                placeholder="7.4"
+                                value={phDepois}
+                                onChange={(e) => setPhDepois(e.target.value)}
+                                className="w-full px-4 py-4 rounded-2xl bg-slate-50 border-none text-xl font-black text-slate-800 placeholder:text-slate-300 focus:ring-2 ring-blue-500 text-center"
+                            />
+                        </div>
                     </div>
                 </div>
 

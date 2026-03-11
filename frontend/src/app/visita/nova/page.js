@@ -220,24 +220,24 @@ function NovaVisita() {
             </header>
 
             {/* Registro de Uso de Produtos (Opcional para a Cobrança) */}
-            <div className="mb-8">
-                <h2 className="text-slate-800 font-black text-lg mb-3">Produtos Utilizados <span className="text-slate-400 text-sm font-normal">(Estoque)</span></h2>
-                <div className="space-y-3">
+            <div className="mb-6">
+                <h2 className="text-slate-800 font-bold text-base mb-3">Produtos Utilizados <span className="text-slate-400 text-xs font-normal">(Estoque)</span></h2>
+                <div className="space-y-2">
                     {produtos.map(p => (
-                        <div key={p.id} className="bg-white p-4 rounded-3xl flex justify-between items-center shadow-sm border border-slate-100">
+                        <div key={p.id} className="bg-white p-3 rounded-2xl flex justify-between items-center shadow-sm border border-slate-100">
                             <div className="flex-1">
-                                <p className="font-bold text-slate-700">{p.name}</p>
-                                <p className="text-xs text-slate-400 font-medium">
-                                    Estoque: {p.stock_quantity} {p.unit}
+                                <p className="text-sm font-bold text-slate-700 leading-tight">{p.name}</p>
+                                <p className="text-[10px] text-slate-400 font-medium mt-0.5">
+                                    Disponível: {p.stock_quantity} {p.unit}
                                 </p>
                             </div>
-                            <div className="flex items-center gap-3">
-                                <button onClick={() => alterarQtd(p.id, -1, p.stock_quantity)} className="w-10 h-10 bg-slate-100 rounded-full font-bold text-xl text-slate-500 hover:bg-slate-200 transition">-</button>
-                                <span className="font-black text-lg min-w-[30px] text-center text-slate-800">{quantidades[p.id] || 0}</span>
+                            <div className="flex items-center gap-2">
+                                <button onClick={() => alterarQtd(p.id, -1, p.stock_quantity)} className="w-8 h-8 bg-slate-50 rounded-full font-bold text-lg text-slate-400 border border-slate-100 active:bg-slate-200 transition">-</button>
+                                <span className="font-black text-sm min-w-[20px] text-center text-slate-800">{quantidades[p.id] || 0}</span>
                                 <button
                                     onClick={() => alterarQtd(p.id, 1, p.stock_quantity)}
                                     disabled={(quantidades[p.id] || 0) >= p.stock_quantity}
-                                    className="w-10 h-10 bg-slate-100 rounded-full font-bold text-xl text-slate-500 hover:bg-slate-200 transition disabled:opacity-30 disabled:hover:bg-slate-100"
+                                    className="w-8 h-8 bg-slate-50 rounded-full font-bold text-lg text-slate-400 border border-slate-100 active:bg-slate-200 transition disabled:opacity-30"
                                 >
                                     +
                                 </button>
@@ -245,33 +245,59 @@ function NovaVisita() {
                         </div>
                     ))}
                     {produtos.length === 0 && (
-                        <p className="text-slate-400 text-sm text-center py-4 bg-white rounded-3xl border border-slate-100">Nenhum produto em estoque.</p>
+                        <p className="text-slate-400 text-xs text-center py-3 bg-white rounded-2xl border border-slate-100">Sem produtos.</p>
                     )}
                 </div>
             </div>
 
-            {/* Captura de Múltiplas Fotos */}
-            <h2 className="text-slate-800 font-black text-lg mb-3">Registro Fotográfico</h2>
+            {/* Registro Fotográfico e pH */}
+            <h2 className="text-slate-800 font-bold text-base mb-3">Registro e Medições</h2>
             <div className="grid grid-cols-2 gap-3 mb-8">
-                <label className={`flex flex-col items-center justify-center h-32 border-2 border-dashed ${fotoAntes ? 'border-orange-400 bg-orange-50' : 'border-slate-300 bg-white'} rounded-3xl active:scale-95 transition-all cursor-pointer`}>
-                    <span className="text-3xl mb-1">{fotoAntes ? "✅" : "📷"}</span>
-                    <p className={`text-xs font-bold text-center px-2 ${fotoAntes ? 'text-orange-600' : 'text-slate-500'}`}>{fotoAntes ? "Antes capturado" : "Foto Antes"}</p>
-                    <input type="file" accept="image/*" capture="environment" className="hidden" onChange={(e) => setFotoAntes(e.target.files[0])} />
-                </label>
+                {/* Coluna Antes */}
+                <div className="space-y-2">
+                    <label className={`flex flex-col items-center justify-center h-28 border-2 border-dashed ${fotoAntes ? 'border-orange-400 bg-orange-50' : 'border-slate-300 bg-white'} rounded-2xl active:scale-95 transition-all cursor-pointer`}>
+                        <span className="text-2xl mb-1">{fotoAntes ? "✅" : "📷"}</span>
+                        <p className={`text-[10px] font-bold text-center px-1 ${fotoAntes ? 'text-orange-600' : 'text-slate-400'}`}>{fotoAntes ? "Antes capturado" : "Foto Antes"}</p>
+                        <input type="file" accept="image/*" capture="environment" className="hidden" onChange={(e) => setFotoAntes(e.target.files[0])} />
+                    </label>
+                    <div className="relative">
+                        <input
+                            type="number"
+                            step="0.1"
+                            placeholder="pH Antes"
+                            value={phAntes}
+                            onChange={(e) => setPhAntes(e.target.value)}
+                            className="w-full px-3 py-3 rounded-xl bg-white border border-slate-200 text-sm font-bold text-slate-800 placeholder:text-slate-300 focus:ring-2 ring-blue-500 text-center shadow-sm"
+                        />
+                    </div>
+                </div>
 
-                <label className={`flex flex-col items-center justify-center h-32 border-2 border-dashed ${fotoDepois ? 'border-emerald-400 bg-emerald-50' : 'border-slate-300 bg-white'} rounded-3xl active:scale-95 transition-all cursor-pointer`}>
-                    <span className="text-3xl mb-1">{fotoDepois ? "✅" : "✨"}</span>
-                    <p className={`text-xs font-bold text-center px-2 ${fotoDepois ? 'text-emerald-600' : 'text-slate-500'}`}>{fotoDepois ? "Depois capturado" : "Foto Depois"}</p>
-                    <input type="file" accept="image/*" capture="environment" className="hidden" onChange={(e) => setFotoDepois(e.target.files[0])} />
-                </label>
+                {/* Coluna Depois */}
+                <div className="space-y-2">
+                    <label className={`flex flex-col items-center justify-center h-28 border-2 border-dashed ${fotoDepois ? 'border-emerald-400 bg-emerald-50' : 'border-slate-300 bg-white'} rounded-2xl active:scale-95 transition-all cursor-pointer`}>
+                        <span className="text-2xl mb-1">{fotoDepois ? "✅" : "✨"}</span>
+                        <p className={`text-[10px] font-bold text-center px-1 ${fotoDepois ? 'text-emerald-600' : 'text-slate-400'}`}>{fotoDepois ? "Depois capturado" : "Foto Depois"}</p>
+                        <input type="file" accept="image/*" capture="environment" className="hidden" onChange={(e) => setFotoDepois(e.target.files[0])} />
+                    </label>
+                    <div className="relative">
+                        <input
+                            type="number"
+                            step="0.1"
+                            placeholder="pH Depois"
+                            value={phDepois}
+                            onChange={(e) => setPhDepois(e.target.value)}
+                            className="w-full px-3 py-3 rounded-xl bg-white border border-slate-200 text-sm font-bold text-slate-800 placeholder:text-slate-300 focus:ring-2 ring-blue-500 text-center shadow-sm"
+                        />
+                    </div>
+                </div>
             </div>
 
-            {/* Rodapé Fixo com Cobrança Manual e Botão */}
-            <footer className="fixed bottom-0 left-0 right-0 bg-white p-6 rounded-t-[40px] shadow-[0_-20px_40px_-15px_rgba(0,0,0,0.1)] z-10">
-                <div className="mb-5">
-                    <label className="block text-slate-500 font-bold mb-2 uppercase text-xs">Valor Cobrado pelo Serviço</label>
+            {/* Rodapé Fixo Compacto */}
+            <footer className="fixed bottom-0 left-0 right-0 bg-white p-4 pb-8 rounded-t-[32px] shadow-[0_-15px_35px_-10px_rgba(0,0,0,0.08)] z-10 border-t border-slate-100">
+                <div className="mb-4">
+                    <label className="block text-slate-400 font-bold mb-1.5 uppercase text-[9px] tracking-wider ml-1">Valor Cobrado</label>
                     <div className="relative">
-                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold">R$</span>
+                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 font-bold text-sm">R$</span>
                         <input
                             type="number"
                             step="0.01"
@@ -279,49 +305,20 @@ function NovaVisita() {
                             placeholder="0.00"
                             value={valorServico}
                             onChange={(e) => setValorServico(e.target.value)}
-                            className="w-full pl-12 pr-4 py-4 rounded-2xl bg-slate-50 border-none text-2xl font-black text-slate-800 placeholder:text-slate-300 focus:ring-2 ring-blue-500"
+                            className="w-full pl-11 pr-4 py-3.5 rounded-xl bg-slate-50 border-none text-xl font-black text-slate-800 placeholder:text-slate-200 focus:ring-2 ring-blue-500 shadow-inner"
                         />
-                    </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-3 mb-5">
-                    <div>
-                        <label className="block text-slate-500 font-bold mb-2 uppercase text-[10px]">pH Inicial (Antes)</label>
-                        <div className="relative">
-                            <input
-                                type="number"
-                                step="0.1"
-                                placeholder="7.2"
-                                value={phAntes}
-                                onChange={(e) => setPhAntes(e.target.value)}
-                                className="w-full px-4 py-4 rounded-2xl bg-slate-50 border-none text-xl font-black text-slate-800 placeholder:text-slate-300 focus:ring-2 ring-blue-500 text-center"
-                            />
-                        </div>
-                    </div>
-                    <div>
-                        <label className="block text-slate-500 font-bold mb-2 uppercase text-[10px]">pH Final (Depois)</label>
-                        <div className="relative">
-                            <input
-                                type="number"
-                                step="0.1"
-                                placeholder="7.4"
-                                value={phDepois}
-                                onChange={(e) => setPhDepois(e.target.value)}
-                                className="w-full px-4 py-4 rounded-2xl bg-slate-50 border-none text-xl font-black text-slate-800 placeholder:text-slate-300 focus:ring-2 ring-blue-500 text-center"
-                            />
-                        </div>
                     </div>
                 </div>
 
                 <button
                     onClick={finalizarVisita}
                     disabled={enviando || !valorServico}
-                    className="w-full bg-blue-600 text-white py-5 rounded-2xl font-black text-lg shadow-xl shadow-blue-200 active:scale-95 transition-all disabled:opacity-50 disabled:active:scale-100 flex justify-center items-center gap-3"
+                    className="w-full bg-blue-600 text-white py-4 rounded-xl font-black text-base shadow-lg shadow-blue-100 active:scale-[0.97] transition-all disabled:opacity-40 disabled:active:scale-100 flex justify-center items-center gap-2"
                 >
-                    {enviando ? "PROCESSANDO VISITA..." : (
+                    {enviando ? "SALVANDO..." : (
                         <>
-                            <span>FINALIZAR SERVIÇO</span>
-                            <span className="text-2xl leading-none">💬</span>
+                            <span>FINALIZAR E ENVIAR</span>
+                            <span className="text-xl">💬</span>
                         </>
                     )}
                 </button>

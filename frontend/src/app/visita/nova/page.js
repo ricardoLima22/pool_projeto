@@ -29,6 +29,7 @@ function NovaVisita() {
     const [valorServico, setValorServico] = useState('');
     const [phAntes, setPhAntes] = useState('');
     const [phDepois, setPhDepois] = useState('');
+    const [observacao, setObservacao] = useState('');
     const [enviando, setEnviando] = useState(false);
 
     const router = useRouter();
@@ -117,7 +118,9 @@ function NovaVisita() {
             ph_depois: phDepois ? parseFloat(phDepois) : null,
             products_used: quantidades,
             total_price: parseFloat(valorServico),
-            photo_url: urlFotoDepois || urlFotoAntes,
+            photo_antes: urlFotoAntes,
+            photo_depois: urlFotoDepois,
+            observacao: observacao || null,
             sent_to_whatsapp: true
         }]);
 
@@ -152,6 +155,10 @@ function NovaVisita() {
             (phDepois ? `- pH Final (Depois): ${phDepois}\n` : '') +
             `\n*Serviço executado:*\n` +
             `Valor: R$ ${parseFloat(valorServico).toFixed(2)}\n\n`;
+
+        if (observacao) {
+            msg += `*Observações:*\n${observacao}\n\n`;
+        }
 
         if (itensTexto.length > 0) {
             msg += `*Produtos utilizados na visita:*\n- ${itensTexto.join('\n- ')}\n\n`;
@@ -267,13 +274,13 @@ function NovaVisita() {
 
             {/* Registro Fotográfico e pH */}
             <h2 className="text-slate-800 font-bold text-base mb-3">Registro e Medições</h2>
-            <div className="grid grid-cols-2 gap-3 mb-8">
+            <div className="grid grid-cols-2 gap-3 mb-4">
                 {/* Coluna Antes */}
                 <div className="space-y-2">
                     <label className={`flex flex-col items-center justify-center h-28 border-2 border-dashed ${fotoAntes ? 'border-orange-400 bg-orange-50' : 'border-slate-300 bg-white'} rounded-2xl active:scale-95 transition-all cursor-pointer`}>
                         <span className="text-2xl mb-1">{fotoAntes ? "✅" : "📷"}</span>
-                        <p className={`text-[10px] font-bold text-center px-1 ${fotoAntes ? 'text-orange-600' : 'text-slate-400'}`}>{fotoAntes ? "Antes capturado" : "Foto Antes"}</p>
-                        <input type="file" accept="image/*" capture="environment" className="hidden" onChange={(e) => setFotoAntes(e.target.files[0])} />
+                        <p className={`text-[10px] font-bold text-center px-1 ${fotoAntes ? 'text-orange-600' : 'text-slate-400'}`}>{fotoAntes ? "Antes capturado" : "Foto Antes (Câmera ou Galeria)"}</p>
+                        <input type="file" accept="image/*" className="hidden" onChange={(e) => setFotoAntes(e.target.files[0])} />
                     </label>
                     <div className="relative">
                         <input
@@ -289,10 +296,20 @@ function NovaVisita() {
 
                 {/* Coluna Depois */}
                 <div className="space-y-2">
-                    <label className={`flex flex-col items-center justify-center h-28 border-2 border-dashed ${fotoDepois ? 'border-emerald-400 bg-emerald-50' : 'border-slate-300 bg-white'} rounded-2xl active:scale-95 transition-all cursor-pointer`}>
+                    <label 
+                        onClick={() => { if(!fotoAntes) alert("⚠️ Por favor, registre a 'Foto Antes' primeiro."); }}
+                        className={`flex flex-col items-center justify-center h-28 border-2 border-dashed ${fotoDepois ? 'border-emerald-400 bg-emerald-50' : !fotoAntes ? 'border-slate-100 bg-slate-50 opacity-40 grayscale cursor-not-allowed' : 'border-slate-300 bg-white'} rounded-2xl active:scale-95 transition-all cursor-pointer relative`}
+                    >
+                        {!fotoAntes && <span className="absolute top-2 right-2 text-[10px]">🔒</span>}
                         <span className="text-2xl mb-1">{fotoDepois ? "✅" : "✨"}</span>
                         <p className={`text-[10px] font-bold text-center px-1 ${fotoDepois ? 'text-emerald-600' : 'text-slate-400'}`}>{fotoDepois ? "Depois capturado" : "Foto Depois"}</p>
-                        <input type="file" accept="image/*" capture="environment" className="hidden" onChange={(e) => setFotoDepois(e.target.files[0])} />
+                        <input 
+                            type="file" 
+                            accept="image/*" 
+                            disabled={!fotoAntes}
+                            className="hidden" 
+                            onChange={(e) => setFotoDepois(e.target.files[0])} 
+                        />
                     </label>
                     <div className="relative">
                         <input
@@ -301,10 +318,21 @@ function NovaVisita() {
                             placeholder="pH Depois"
                             value={phDepois}
                             onChange={(e) => setPhDepois(e.target.value)}
-                            className="w-full px-3 py-3 rounded-xl bg-white border border-slate-300 text-base font-black text-black placeholder:text-slate-400 focus:ring-2 ring-blue-500 text-center shadow-sm"
+                            className={`w-full px-3 py-3 rounded-xl bg-white border border-slate-300 text-base font-black text-black placeholder:text-slate-400 focus:ring-2 ring-blue-500 text-center shadow-sm ${!fotoAntes ? 'opacity-40 grayscale' : ''}`}
+                            disabled={!fotoAntes}
                         />
                     </div>
                 </div>
+            </div>
+
+            {/* Observações */}
+            <div className="mb-8">
+                <textarea
+                    placeholder="Adicionar observação sobre a visita... (Opcional)"
+                    value={observacao}
+                    onChange={(e) => setObservacao(e.target.value)}
+                    className="w-full px-4 py-3 rounded-2xl bg-white border border-slate-300 text-sm font-medium text-slate-800 placeholder:text-slate-400 focus:ring-2 ring-blue-500 shadow-sm resize-none h-24"
+                ></textarea>
             </div>
 
             {/* Rodapé Fixo Compacto */}

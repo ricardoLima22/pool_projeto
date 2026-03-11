@@ -164,10 +164,29 @@ function NovaVisita() {
             msg += `*Produtos utilizados na visita:*\n- ${itensTexto.join('\n- ')}\n\n`;
         }
 
-        if (urlFotoAntes || urlFotoDepois) {
+        // Encurtar os links antes de enviar no WhatsApp para ficar mais elegante
+        const encurtar = async (url) => {
+            if (!url) return null;
+            try {
+                const res = await fetch('/api/shorten', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ url })
+                });
+                const data = await res.json();
+                return data.shortUrl || url;
+            } catch (err) {
+                return url;
+            }
+        };
+
+        const shortAntes = await encurtar(urlFotoAntes);
+        const shortDepois = await encurtar(urlFotoDepois);
+
+        if (shortAntes || shortDepois) {
             msg += `📸 *Fotos do Serviço:*\n`;
-            if (urlFotoAntes) msg += `Antes: ${urlFotoAntes}\n`;
-            if (urlFotoDepois) msg += `Depois: ${urlFotoDepois}\n`;
+            if (shortAntes) msg += `Antes: ${shortAntes}\n`;
+            if (shortDepois) msg += `Depois: ${shortDepois}\n`;
         } else if (fotoAntes || fotoDepois) {
             alert("⚠️ As fotos não puderam ser enviadas. Verifique se a pasta 'pool-photos' no Supabase é PÚBLICA.");
         }

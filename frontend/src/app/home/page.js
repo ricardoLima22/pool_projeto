@@ -127,7 +127,6 @@ export default function Home() {
                         className="col-span-2 bg-gradient-to-br from-emerald-400 to-green-500 p-6 rounded-[30px] shadow-lg shadow-emerald-200 text-left relative overflow-hidden active:scale-[0.98] transition-all group"
                     >
                         <div className="absolute top-0 right-0 w-32 h-32 bg-white/20 rounded-full blur-2xl -mr-10 -mt-10 group-active:scale-110 transition-transform"></div>
-                        <span className="text-4xl mb-3 block">📸</span>
                         <h3 className="text-white font-black text-2xl leading-tight mb-1">Registrar<br />Visita</h3>
                         <p className="text-emerald-50 text-sm font-medium">Fotos e Cobrança</p>
                     </button>
@@ -137,7 +136,6 @@ export default function Home() {
                         onClick={() => router.push('/clientes')}
                         className="bg-white p-5 rounded-[24px] shadow-sm border border-slate-100 text-left active:scale-[0.98] active:bg-blue-50 transition-all flex flex-col justify-between"
                     >
-                        <span className="text-3xl mb-3 block bg-blue-50 w-12 h-12 rounded-xl flex items-center justify-center text-blue-500">👥</span>
                         <div>
                             <h3 className="text-slate-800 font-black text-lg leading-none mb-1">Meus<br />Clientes</h3>
                             <p className="text-slate-400 text-xs font-bold mt-1">Sua carteira</p>
@@ -149,7 +147,6 @@ export default function Home() {
                         onClick={() => router.push('/clientes/novo')}
                         className="bg-white p-5 rounded-[24px] shadow-sm border border-slate-100 text-left active:scale-[0.98] active:bg-blue-50 transition-all flex flex-col justify-between"
                     >
-                        <span className="text-3xl mb-3 block bg-blue-50 w-12 h-12 rounded-xl flex items-center justify-center text-blue-500">➕</span>
                         <div>
                             <h3 className="text-slate-800 font-black text-lg leading-none mb-1">Novo<br />Cliente</h3>
                             <p className="text-slate-400 text-xs font-bold mt-1">Cadastrar</p>
@@ -161,7 +158,6 @@ export default function Home() {
                         onClick={() => router.push('/produtos')}
                         className="bg-white p-5 rounded-[24px] shadow-sm border border-slate-100 text-left active:scale-[0.98] active:indigo-50 transition-all flex flex-col justify-between"
                     >
-                        <span className="text-3xl mb-3 block bg-indigo-50 w-12 h-12 rounded-xl flex items-center justify-center text-indigo-500">🧪</span>
                         <div>
                             <h3 className="text-slate-800 font-black text-lg leading-none mb-1">Meus<br />Produtos</h3>
                             <p className="text-slate-400 text-xs font-bold mt-1">Seu estoque</p>
@@ -173,7 +169,6 @@ export default function Home() {
                         onClick={() => router.push('/produtos/novo')}
                         className="bg-white p-5 rounded-[24px] shadow-sm border border-slate-100 text-left active:scale-[0.98] active:indigo-50 transition-all flex flex-col justify-between"
                     >
-                        <span className="text-3xl mb-3 block bg-indigo-50 w-12 h-12 rounded-xl flex items-center justify-center text-indigo-500">🛒</span>
                         <div>
                             <h3 className="text-slate-800 font-black text-lg leading-none mb-1">Novo<br />Produto</h3>
                             <p className="text-slate-400 text-xs font-bold mt-1">Cadastrar</p>

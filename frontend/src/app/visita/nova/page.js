@@ -137,6 +137,14 @@ function NovaVisita() {
             }
         }
 
+        // Limpa o número do WhatsApp (mantém apenas dígitos)
+        let whatsappLimpo = cliente.whatsapp.replace(/\D/g, '');
+
+        // Garante que o número tenha o DDI 55 (Brasil) se não tiver
+        if (whatsappLimpo.length <= 11) {
+            whatsappLimpo = `55${whatsappLimpo}`;
+        }
+
         // Monta a mensagem do WhatsApp adaptada para o novo formato
         let msg = `Olá ${cliente.name}! ✅ A manutenção da sua piscina foi finalizada.\n\n` +
             `*Status da Água:*\n` +
@@ -154,12 +162,19 @@ function NovaVisita() {
             if (urlFotoAntes) msg += `Antes: ${urlFotoAntes}\n`;
             if (urlFotoDepois) msg += `Depois: ${urlFotoDepois}\n`;
         } else if (fotoAntes || fotoDepois) {
-            // Se o usuário selecionou foto mas as URLs voltaram vázias, houve erro no Storage
-            alert("⚠️ As fotos não puderam ser enviadas. Verifique se a pasta 'pool-photos' no Supabase é PÚBLICA e permite Inserts.");
+            alert("⚠️ As fotos não puderam ser enviadas. Verifique se a pasta 'pool-photos' no Supabase é PÚBLICA.");
         }
 
-        window.open(`https://wa.me/55${cliente.whatsapp}?text=${encodeURIComponent(msg)}`, '_blank');
-        router.push('/home');
+        const whatsappUrl = `https://wa.me/${whatsappLimpo}?text=${encodeURIComponent(msg)}`;
+
+        // Tenta abrir o WhatsApp. Se o navegador bloquear o popup por causa do tempo de upload das fotos,
+        // usamos o location.href como backup para garantir que a mensagem saia.
+        const win = window.open(whatsappUrl, '_blank');
+        if (!win || win.closed || typeof win.closed === 'undefined') {
+            window.location.href = whatsappUrl;
+        } else {
+            router.push('/home');
+        }
     };
 
     if (loading) {

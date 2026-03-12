@@ -1,0 +1,31 @@
+name: 2. Enviar Mensagem (Acionado via API)
+
+on:
+  repository_dispatch:
+    types: [send_whatsapp_notification]
+
+jobs:
+  send_message:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 1. Checkout do Repositório
+        uses: actions/checkout@v4
+
+      - name: 2. Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: 3. Instalar Dependências WWebJS
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libgbm-dev libnss3 libasound2 libatk-bridge2.0-0 libgtk-3-0
+          npm init -y
+          npm install whatsapp-web.js mongoose puppeteer
+
+      - name: 4. Rodar Script de Envio de Mensagem
+        env:
+          MONGODB_URI: ${{ secrets.MONGODB_URI }}
+          PAYLOAD: ${{ toJson(github.event.client_payload) }}
+        run: node whatsapp_sender.js

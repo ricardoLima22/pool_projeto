@@ -13,8 +13,8 @@ export async function POST(req) {
             return NextResponse.json({ error: 'GitHub token missing' }, { status: 500 });
         }
 
-        // Repositório do seu Robô (ajuste se o nome for diferente)
-        const githubRepo = "ricardoLima22/dev_send_mensagem_pool"; 
+        // Repositório do seu Robô
+        const githubRepo = "ricardoLima22/pool_projeto"; 
 
         const githubResponse = await fetch(`https://api.github.com/repos/${githubRepo}/dispatches`, {
             method: 'POST',

@@ -67,40 +67,48 @@ function NovaVisita() {
 
     const comprimirImagem = (file) => {
         return new Promise((resolve) => {
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = (event) => {
-                const img = new Image();
-                img.src = event.target.result;
-                img.onload = () => {
-                    const canvas = document.createElement('canvas');
-                    const MAX_WIDTH = 1200;
-                    const MAX_HEIGHT = 1200;
-                    let width = img.width;
-                    let height = img.height;
+            const img = new Image();
+            const objectUrl = URL.createObjectURL(file);
+            
+            img.onload = () => {
+                URL.revokeObjectURL(objectUrl); // Limpa a memória instantaneamente
+                
+                const canvas = document.createElement('canvas');
+                const MAX_WIDTH = 1200;
+                const MAX_HEIGHT = 1200;
+                let width = img.width;
+                let height = img.height;
 
-                    if (width > height) {
-                        if (width > MAX_WIDTH) {
-                            height *= MAX_WIDTH / width;
-                            width = MAX_WIDTH;
-                        }
-                    } else {
-                        if (height > MAX_HEIGHT) {
-                            width *= MAX_HEIGHT / height;
-                            height = MAX_HEIGHT;
-                        }
+                if (width > height) {
+                    if (width > MAX_WIDTH) {
+                        height *= MAX_WIDTH / width;
+                        width = MAX_WIDTH;
                     }
-                    canvas.width = width;
-                    canvas.height = height;
-                    const ctx = canvas.getContext('2d');
-                    ctx.drawImage(img, 0, 0, width, height);
-                    
-                    // Converte para JPEG com 80% de qualidade
-                    canvas.toBlob((blob) => {
-                        resolve(new File([blob], "photo.jpg", { type: "image/jpeg" }));
-                    }, 'image/jpeg', 0.8);
-                };
+                } else {
+                    if (height > MAX_HEIGHT) {
+                        width *= MAX_HEIGHT / height;
+                        height = MAX_HEIGHT;
+                    }
+                }
+                
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+                
+                // Converte para JPEG com 80% de qualidade e retorna o BLOB bruto (muito mais seguro p/ Safari)
+                canvas.toBlob((blob) => {
+                    if (blob) resolve(blob);
+                    else resolve(file); // Em caso extremo de erro no canvas, devolve original
+                }, 'image/jpeg', 0.8);
             };
+            
+            img.onerror = () => {
+                URL.revokeObjectURL(objectUrl);
+                resolve(file); // Arquivos não suportados pelo Image (ex: RAW) vão inteiros
+            };
+            
+            img.src = objectUrl;
         });
     };
 
@@ -108,10 +116,21 @@ function NovaVisita() {
         if (!fileObj) return null;
 
         try {
-            // Converte qualquer formato (HEIC, PNG pesado, etc) para um JPG leve
-            const fileFormatoJpg = await comprimirImagem(fileObj);
+            // Tenta comprimir
+            let arquivoUpload = fileObj;
+            let extensao = fileObj.name?.split('.').pop() || 'jpg';
+            let tipoConteudo = fileObj.type || 'image/jpeg';
             
-            const fileExt = 'jpg';
+            try {
+                const comprimido = await comprimirImagem(fileObj);
+                if (comprimido !== fileObj) {
+                    arquivoUpload = comprimido;
+                    extensao = 'jpg';
+                    tipoConteudo = 'image/jpeg';
+                }
+            } catch (fallbackErr) {
+                console.error("Falha ao comprimir imagem, usando original:", fallbackErr);
+            }
             
             // Formata a data (DD_MM)
             const hoje = new Date();
@@ -121,29 +140,28 @@ function NovaVisita() {
             // Limpa o nome do cliente (maiúsculas, remove espaços e caracteres especiais)
             const nomeFormatado = nomeCliente.toUpperCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, '_').replace(/[^A-Z0-9_]/g, '');
             
-            const fileName = `${prefix}_${nomeFormatado}_${dia}_${mes}.${fileExt}`;
+            const fileName = `${prefix}_${nomeFormatado}_${dia}_${mes}.${extensao}`;
             const filePath = `visitas/${fileName}`;
 
             // Usa upsert para não dar erro se enviar outra foto pro mesmo cliente no mesmo dia
-            // Passamos o contentType explícito para ajudar o Supabase
-            const { error: uploadError } = await supabase.storage.from('pool-photos').upload(filePath, fileFormatoJpg, { 
+            const { error: uploadError } = await supabase.storage.from('pool-photos').upload(filePath, arquivoUpload, { 
                 upsert: true,
-                contentType: 'image/jpeg'
+                contentType: tipoConteudo 
             });
 
             if (uploadError) {
                 console.error("Erro Supabase Upload:", uploadError);
-                alert(`Erro ao fazer upload da foto: ${uploadError.message}`);
+                alert(`Erro ao subir arquivo ${prefix}: ${uploadError.message}`);
                 return null;
             }
 
             const { data } = supabase.storage.from('pool-photos').getPublicUrl(filePath);
             return {
                 publicUrl: data?.publicUrl || null,
-                fileName: fileName // Retorna apenas o nome do arquivo (ex: antes_RICARDO_10_03.jpg)
+                fileName: fileName // Retorna apenas o nome do arquivo "inteligente" no banco
             };
         } catch (err) {
-            console.error("Exceção no upload:", err);
+            console.error("Exceção fatal no upload:", err);
             return null;
         }
     };

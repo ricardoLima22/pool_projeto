@@ -52,7 +52,6 @@ mongoose.connect(MONGODB_URI).then(() => {
         },
         puppeteer: {
             headless: true,
-            executablePath: process.platform === 'win32' ? null : (process.env.CHROME_PATH || '/usr/bin/google-chrome'),
             args: [
                 '--no-sandbox',
                 '--disable-setuid-sandbox',

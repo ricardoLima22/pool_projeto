@@ -65,11 +65,53 @@ function NovaVisita() {
         });
     };
 
+    const comprimirImagem = (file) => {
+        return new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = (event) => {
+                const img = new Image();
+                img.src = event.target.result;
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    const MAX_WIDTH = 1200;
+                    const MAX_HEIGHT = 1200;
+                    let width = img.width;
+                    let height = img.height;
+
+                    if (width > height) {
+                        if (width > MAX_WIDTH) {
+                            height *= MAX_WIDTH / width;
+                            width = MAX_WIDTH;
+                        }
+                    } else {
+                        if (height > MAX_HEIGHT) {
+                            width *= MAX_HEIGHT / height;
+                            height = MAX_HEIGHT;
+                        }
+                    }
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+                    
+                    // Converte para JPEG com 80% de qualidade
+                    canvas.toBlob((blob) => {
+                        resolve(new File([blob], "photo.jpg", { type: "image/jpeg" }));
+                    }, 'image/jpeg', 0.8);
+                };
+            };
+        });
+    };
+
     const uploadFoto = async (fileObj, prefix, nomeCliente) => {
         if (!fileObj) return null;
 
         try {
-            const fileExt = fileObj.name.split('.').pop();
+            // Converte qualquer formato (HEIC, PNG pesado, etc) para um JPG leve
+            const fileFormatoJpg = await comprimirImagem(fileObj);
+            
+            const fileExt = 'jpg';
             
             // Formata a data (DD_MM)
             const hoje = new Date();
@@ -83,7 +125,11 @@ function NovaVisita() {
             const filePath = `visitas/${fileName}`;
 
             // Usa upsert para não dar erro se enviar outra foto pro mesmo cliente no mesmo dia
-            const { error: uploadError } = await supabase.storage.from('pool-photos').upload(filePath, fileObj, { upsert: true });
+            // Passamos o contentType explícito para ajudar o Supabase
+            const { error: uploadError } = await supabase.storage.from('pool-photos').upload(filePath, fileFormatoJpg, { 
+                upsert: true,
+                contentType: 'image/jpeg'
+            });
 
             if (uploadError) {
                 console.error("Erro Supabase Upload:", uploadError);
@@ -94,7 +140,7 @@ function NovaVisita() {
             const { data } = supabase.storage.from('pool-photos').getPublicUrl(filePath);
             return {
                 publicUrl: data?.publicUrl || null,
-                fileName: fileName // Retorna apenas o nome do arquivo "inteligente" (ex: antes_RICARDO_10_03.png)
+                fileName: fileName // Retorna apenas o nome do arquivo (ex: antes_RICARDO_10_03.jpg)
             };
         } catch (err) {
             console.error("Exceção no upload:", err);

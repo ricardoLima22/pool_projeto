@@ -92,7 +92,10 @@ function NovaVisita() {
             }
 
             const { data } = supabase.storage.from('pool-photos').getPublicUrl(filePath);
-            return data?.publicUrl || null;
+            return {
+                publicUrl: data?.publicUrl || null,
+                fileName: fileName // Retorna apenas o nome do arquivo "inteligente" (ex: antes_RICARDO_10_03.png)
+            };
         } catch (err) {
             console.error("Exceção no upload:", err);
             return null;
@@ -108,10 +111,16 @@ function NovaVisita() {
         setEnviando(true);
 
         // Faz o upload de ambas as fotos independentemente com os novos prefixos
-        const [urlFotoAntes, urlFotoDepois] = await Promise.all([
+        const [resultadoAntes, resultadoDepois] = await Promise.all([
             uploadFoto(fotoAntes, 'antes', cliente.name),
             uploadFoto(fotoDepois, 'depois', cliente.name)
         ]);
+
+        const urlFotoAntes = resultadoAntes?.publicUrl;
+        const nomeArquivoAntes = resultadoAntes?.fileName;
+        
+        const urlFotoDepois = resultadoDepois?.publicUrl;
+        const nomeArquivoDepois = resultadoDepois?.fileName;
 
         const itensTexto = produtos
             .filter(p => quantidades[p.id] > 0)
@@ -121,6 +130,8 @@ function NovaVisita() {
         const { data: { user } } = await supabase.auth.getUser();
 
         // Salva no banco de dados com a arquitetura definida
+        // Gravado no Banco: Já que as fotos têm nomes limpos, os links no banco (photo_antes e photo_depois)
+        // continuarão padronizados de forma mais inteligente. Ou seja, guardamos apenas o nome (ex: antes_RICARDO_10_03.png) 
         const { error: visitError } = await supabase.from('visits').insert([{
             customer_id: cliente.id,
             piscineiro_id: user?.id,
@@ -128,8 +139,8 @@ function NovaVisita() {
             ph_depois: phDepois ? parseFloat(phDepois) : null,
             products_used: quantidades,
             total_price: parseFloat(valorServico),
-            photo_antes: urlFotoAntes,
-            photo_depois: urlFotoDepois,
+            photo_antes: nomeArquivoAntes || null,
+            photo_depois: nomeArquivoDepois || null,
             observacao: observacao || null,
             sent_to_whatsapp: true
         }]);

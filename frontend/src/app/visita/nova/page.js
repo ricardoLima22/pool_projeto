@@ -140,7 +140,10 @@ function NovaVisita() {
             // Limpa o nome do cliente (maiúsculas, remove espaços e caracteres especiais)
             const nomeFormatado = nomeCliente.toUpperCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, '_').replace(/[^A-Z0-9_]/g, '');
             
-            const fileName = `${prefix}_${nomeFormatado}_${dia}_${mes}.${extensao}`;
+            const hora = String(hoje.getHours()).padStart(2, '0');
+            const min = String(hoje.getMinutes()).padStart(2, '0');
+            const seg = String(hoje.getSeconds()).padStart(2, '0');
+            const fileName = `${prefix}_${nomeFormatado}_${dia}_${mes}_${hora}${min}${seg}.${extensao}`;
             const filePath = `visitas/${fileName}`;
 
             // Usa upsert para não dar erro se enviar outra foto pro mesmo cliente no mesmo dia

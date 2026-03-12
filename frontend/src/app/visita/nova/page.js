@@ -65,15 +65,25 @@ function NovaVisita() {
         });
     };
 
-    const uploadFoto = async (fileObj) => {
+    const uploadFoto = async (fileObj, prefix, nomeCliente) => {
         if (!fileObj) return null;
 
         try {
             const fileExt = fileObj.name.split('.').pop();
-            const fileName = `${Math.random()}.${fileExt}`;
+            
+            // Formata a data (DD_MM)
+            const hoje = new Date();
+            const dia = String(hoje.getDate()).padStart(2, '0');
+            const mes = String(hoje.getMonth() + 1).padStart(2, '0');
+            
+            // Limpa o nome do cliente (maiúsculas, remove espaços e caracteres especiais)
+            const nomeFormatado = nomeCliente.toUpperCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, '_').replace(/[^A-Z0-9_]/g, '');
+            
+            const fileName = `${prefix}_${nomeFormatado}_${dia}_${mes}.${fileExt}`;
             const filePath = `visitas/${fileName}`;
 
-            const { error: uploadError } = await supabase.storage.from('pool-photos').upload(filePath, fileObj);
+            // Usa upsert para não dar erro se enviar outra foto pro mesmo cliente no mesmo dia
+            const { error: uploadError } = await supabase.storage.from('pool-photos').upload(filePath, fileObj, { upsert: true });
 
             if (uploadError) {
                 console.error("Erro Supabase Upload:", uploadError);
@@ -97,10 +107,10 @@ function NovaVisita() {
 
         setEnviando(true);
 
-        // Faz o upload de ambas as fotos independentemente
+        // Faz o upload de ambas as fotos independentemente com os novos prefixos
         const [urlFotoAntes, urlFotoDepois] = await Promise.all([
-            uploadFoto(fotoAntes),
-            uploadFoto(fotoDepois)
+            uploadFoto(fotoAntes, 'antes', cliente.name),
+            uploadFoto(fotoDepois, 'depois', cliente.name)
         ]);
 
         const itensTexto = produtos

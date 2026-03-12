@@ -185,41 +185,33 @@ function NovaVisita() {
             msg += `*Produtos utilizados na visita:*\n- ${itensTexto.join('\n- ')}\n\n`;
         }
 
-        // Encurtar os links antes de enviar no WhatsApp para ficar mais elegante
-        const encurtar = async (url) => {
-            if (!url) return null;
-            try {
-                const res = await fetch('/api/shorten', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ url })
-                });
-                const data = await res.json();
-                return data.shortUrl || url;
-            } catch (err) {
-                return url;
+        // Chamada direta para a API Interna que aciona o GitHub Actions
+        try {
+            const botResponse = await fetch('/api/trigger-bot', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    cliente_nome: cliente.name,
+                    numero_whatsapp: whatsappLimpo,
+                    mensagem_texto: msg,
+                    // Passamos as URLs públicas originais para o Robô fazer o download
+                    foto_antes_url: urlFotoAntes,
+                    foto_depois_url: urlFotoDepois
+                })
+            });
+
+            if (botResponse.ok) {
+                alert("✅ Visita salva! O robô enviará a mensagem pelo WhatsApp da empresa em instantes.");
+                router.push('/home');
+            } else {
+                const erroData = await botResponse.json();
+                console.error("Falha ao acionar bot:", erroData);
+                alert("⚠️ A visita foi salva no sistema, mas houve um erro ao acionar o robô de WhatsApp. Código: " + botResponse.status);
+                router.push('/home');
             }
-        };
-
-        const shortAntes = await encurtar(urlFotoAntes);
-        const shortDepois = await encurtar(urlFotoDepois);
-
-        if (shortAntes || shortDepois) {
-            msg += `📸 *Fotos do Serviço:*\n`;
-            if (shortAntes) msg += `Antes: ${shortAntes}\n`;
-            if (shortDepois) msg += `Depois: ${shortDepois}\n`;
-        } else if (fotoAntes || fotoDepois) {
-            alert("⚠️ As fotos não puderam ser enviadas. Verifique se a pasta 'pool-photos' no Supabase é PÚBLICA.");
-        }
-
-        const whatsappUrl = `https://wa.me/${whatsappLimpo}?text=${encodeURIComponent(msg)}`;
-
-        // Tenta abrir o WhatsApp. Se o navegador bloquear o popup por causa do tempo de upload das fotos,
-        // usamos o location.href como backup para garantir que a mensagem saia.
-        const win = window.open(whatsappUrl, '_blank');
-        if (!win || win.closed || typeof win.closed === 'undefined') {
-            window.location.href = whatsappUrl;
-        } else {
+        } catch (error) {
+            console.error("Erro fatal ao acionar bot:", error);
+            alert("⚠️ Visita salva, mas o robô de envio automático está inacessível no momento.");
             router.push('/home');
         }
     };

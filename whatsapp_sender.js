@@ -21,11 +21,12 @@ const {
     numero_whatsapp,
     mensagem_texto,
     foto_antes_url,
-    foto_depois_url,
-    session_id
+    foto_depois_url
 } = payload;
 
-if (!numero_whatsapp || !mensagem_texto || !session_id) {
+const exists = await store.sessionExists({ session: `RemoteAuth-${company.whatsapp_session}` });
+
+if (!numero_whatsapp || !mensagem_texto) {
     console.error("ERRO: Faltam campos obrigatórios no PAYLOAD (numero_whatsapp, mensagem_texto, session_id).");
     process.exit(1);
 }
@@ -36,6 +37,7 @@ if (!MONGODB_URI) {
     process.exit(1);
 }
 
+const session_id = targetCompany.whatsapp_session;
 mongoose.connect(MONGODB_URI).then(() => {
     console.log(">> 1. Conectado ao MongoDB. Lendo sessão salva...");
     const store = new CustomMongoStore({ mongoose: mongoose });

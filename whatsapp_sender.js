@@ -103,8 +103,15 @@ mongoose.connect(MONGODB_URI).then(() => {
 
             console.log(">> Página 100% estabilizada! Iniciando os disparos...\n");
 
-            // O ID de chat no wwebjs exige o domínio @c.us ao invés de apenas o número
-            const chatId = `${numero_whatsapp}@c.us`;
+            console.log(`Validando número do cliente: ${numero_whatsapp}...`);
+            const numberDetails = await client.getNumberId(numero_whatsapp);
+            
+            if (!numberDetails) {
+                 console.error(`Erro: O número ${numero_whatsapp} não possui um WhatsApp válido ou não foi encontrado.`);
+                 process.exit(1);
+            }
+
+            const chatId = numberDetails._serialized;
 
             console.log(`Enviando mensagem de texto para o cliente: ${numero_whatsapp}...`);
             await client.sendMessage(chatId, mensagem_texto);

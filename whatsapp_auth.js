@@ -49,8 +49,10 @@ async function getPendingCompanyToAuthenticate(store) {
             continue;
         }
 
-        // Verifica no MongoDB se a sessão (arquivos zip) já existe para este clientId
-        const exists = await store.sessionExists({ session: company.whatsapp_session });
+        // Verifica no MongoDB se a sessão (arquivos zip) já existe para este clientId.
+        // Importante: A biblioteca 'whatsapp-web.js' adiciona o prefixo 'RemoteAuth-' automaticamente na hora de salvar, 
+        // então precisamos testar a string inteira na hora de perguntar ao MongoStore se existe.
+        const exists = await store.sessionExists({ session: `RemoteAuth-${company.whatsapp_session}` });
         
         if (!exists) {
             console.log(`- [PENDENTE] Empresa "${company.name}" (Sessão: ${company.whatsapp_session}) PRECISA SER AUTENTICADA!`);

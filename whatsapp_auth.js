@@ -107,43 +107,44 @@ mongoose.connect(MONGODB_URI).then(async () => {
     });
 
     client.on('qr', (qr) => {
-        console.log(`[ATENÇÃO] QR CODE gerado para a empresa: ${targetCompany.name}`);
-        console.log("Escaneie o código abaixo com o WhatsApp do cliente:");
+        console.log('--- QR CODE RECEBIDO ---');
+        console.log('Escaneie o código abaixo com o seu WhatsApp:');
         qrcode.generate(qr, { small: true });
-        
+
+        // Link alternativo para caso o terminal não renderize bem
         console.log('\nOU use este link para ver o QR Code como imagem:');
         console.log(`https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(qr)}`);
     });
 
     client.on('ready', () => {
-        console.log(`\nWhatsApp da empresa '${targetCompany.name}' está pronto e conectado!`);
         console.log('WhatsApp Conectado e Pronto!');
-        // Aqui o bot não envia mensagens, apenas fecha porque o objetivo era só salvar a sessão.
-        setTimeout(() => {
-            console.log("Encerrando bot...");
-            client.destroy();
-            process.exit(0);
-        }, 3000);
+        console.log('Aguardando a confirmação de salvamento da sessão no MongoDB...');
     });
 
     client.on('remote_session_saved', () => {
-        console.log(`\nSESSÃO SALVA NO MONGODB  [${session_id}]`);
-        console.log("A autenticação desta empresa foi finalizada. Na próxima vez que o script rodar, ela será pulada automaticamente!");
+        console.log('SUCESSO: Sessão salva remotamente no MongoDB!');
+        console.log('Você já pode fechar este terminal e rodar no GitHub.');
+
+        // Aguarda 5 segundos extras por precaução e fecha
         setTimeout(() => {
+            console.log('Encerrando...');
             client.destroy();
+            mongoose.disconnect();
             process.exit(0);
         }, 5000);
     });
 
     client.on('auth_failure', msg => {
-        console.error('Falha de autenticação', msg);
-    });
-
-    client.initialize().catch(err => {
-        console.error("Erro ao inicializar:", err);
+        console.error('FALHA NA AUTENTICAÇÃO:', msg);
         process.exit(1);
     });
 
+    client.on('authenticated', () => {
+        console.log('Autenticado com sucesso!');
+    });
+
+    client.initialize();
 }).catch(err => {
-    console.error("Erro ao conectar no MongoDB:", err);
+    console.error("Erro ao conectar ao MongoDB:", err);
+    process.exit(1);
 });

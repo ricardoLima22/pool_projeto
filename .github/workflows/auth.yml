@@ -22,9 +22,11 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y libgbm-dev libnss3 libasound2 libatk-bridge2.0-0 libgtk-3-0
           npm init -y
-          npm install whatsapp-web.js qrcode-terminal mongoose puppeteer
+          npm install whatsapp-web.js qrcode-terminal mongoose puppeteer @supabase/supabase-js dotenv
 
       - name: 4. Rodar Script de Autenticação (Ler QR Code)
         env:
           MONGODB_URI: ${{ secrets.MONGODB_URI }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
         run: node whatsapp_auth.js

@@ -5,13 +5,19 @@ const qrcode = require('qrcode-terminal');
 
 // MongoDB URI from Environment Variable
 const MONGODB_URI = process.env.MONGODB_URI;
+const SESSION_ID = process.env.SESSION_ID;
 
 if (!MONGODB_URI) {
     console.error("Error: MONGODB_URI environment variable not set.");
     process.exit(1);
 }
 
-console.log("Iniciando Autenticação WhatsApp (RemoteAuth)...");
+if (!SESSION_ID) {
+    console.error("Error: SESSION_ID environment variable not set. Please provide the company's whatsapp_session string.");
+    process.exit(1);
+}
+
+console.log(`Iniciando Autenticação WhatsApp (RemoteAuth) para a sessão: ${SESSION_ID}...`);
 
 mongoose.connect(MONGODB_URI).then(() => {
     console.log("Conectado ao MongoDB. Aguardando QR Code...");
@@ -19,7 +25,7 @@ mongoose.connect(MONGODB_URI).then(() => {
 
     const client = new Client({
         authStrategy: new RemoteAuth({
-            clientId: 'STC',
+            clientId: SESSION_ID,
             store: store,
             backupSyncIntervalMs: 300000
         }),

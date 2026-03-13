@@ -21,11 +21,12 @@ const {
     numero_whatsapp,
     mensagem_texto,
     foto_antes_url,
-    foto_depois_url
+    foto_depois_url,
+    session_id
 } = payload;
 
-if (!numero_whatsapp || !mensagem_texto) {
-    console.error("ERRO: Faltam campos obrigatórios no PAYLOAD (numero_whatsapp, mensagem_texto).");
+if (!numero_whatsapp || !mensagem_texto || !session_id) {
+    console.error("ERRO: Faltam campos obrigatórios no PAYLOAD (numero_whatsapp, mensagem_texto, session_id).");
     process.exit(1);
 }
 
@@ -41,7 +42,7 @@ mongoose.connect(MONGODB_URI).then(() => {
 
     const client = new Client({
         authStrategy: new RemoteAuth({
-            clientId: 'STC', 
+            clientId: session_id, 
             store: store,
             backupSyncIntervalMs: 300000,
             dataPath: './.wwebjs_auth'
@@ -65,7 +66,7 @@ mongoose.connect(MONGODB_URI).then(() => {
     });
 
     client.on('qr', () => {
-        console.error("ERRO GRAVE: O WhatsApp não reconheceu a sessão e pediu novo QR Code! A sessão atual expirou.");
+        console.error(`ERRO GRAVE: O WhatsApp não reconheceu a sessão '${session_id}' e pediu novo QR Code! A sessão atual expirou ou não existe.`);
         process.exit(1);
     });
 

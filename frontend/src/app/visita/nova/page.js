@@ -22,6 +22,7 @@ function NovaVisita() {
     const [produtos, setProdutos] = useState([]);
     const [quantidades, setQuantidades] = useState({});
     const [loading, setLoading] = useState(true);
+    const [companySession, setCompanySession] = useState('');
 
     // Novos campos do planejamento
     const [fotoAntes, setFotoAntes] = useState(null);
@@ -39,6 +40,15 @@ function NovaVisita() {
             const { data: { user } } = await supabase.auth.getUser();
             if (user) {
                 const { data: profile } = await supabase.from('profiles').select('company_id').eq('id', user.id).single();
+
+                // Busca a sessão configurada para essa empresa logada:
+                const { data: companyInfo } = await supabase.from('companies').select('whatsapp_session').eq('id', profile.company_id).single();
+                if (companyInfo && companyInfo.whatsapp_session) {
+                    setCompanySession(companyInfo.whatsapp_session);
+                } else {
+                    // Fallback
+                    console.error("Nenhuma sessão configurada para esta empresa!");
+                }
 
                 const resProdutos = await supabase.from('products').select('*').eq('company_id', profile.company_id);
                 setProdutos(resProdutos.data || []);
@@ -261,9 +271,9 @@ function NovaVisita() {
                     cliente_nome: cliente.name,
                     numero_whatsapp: whatsappLimpo,
                     mensagem_texto: msg,
-                    // Passamos as URLs públicas originais para o Robô fazer o download
                     foto_antes_url: urlFotoAntes,
-                    foto_depois_url: urlFotoDepois
+                    foto_depois_url: urlFotoDepois,
+                    session_id: companySession
                 })
             });
 

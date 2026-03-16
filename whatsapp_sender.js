@@ -46,10 +46,6 @@ mongoose.connect(MONGODB_URI).then(() => {
             backupSyncIntervalMs: 300000,
             dataPath: './.wwebjs_auth'
         }),
-        webVersionCache: {
-            type: 'remote',
-            remotePath: 'https://raw.githubusercontent.com/wppconnect-team/wa-version/main/html/2.2412.54.html',
-        },
         puppeteer: {
             headless: true,
             args: [
@@ -59,7 +55,8 @@ mongoose.connect(MONGODB_URI).then(() => {
                 '--disable-accelerated-2d-canvas',
                 '--no-first-run',
                 '--no-zygote',
-                '--disable-gpu'
+                '--disable-gpu',
+                '--disable-features=site-per-process'
             ]
         }
     });

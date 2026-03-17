@@ -1,0 +1,31 @@
+name: 3. Retry Automático (Se o Envio Falhar)
+
+on:
+  workflow_run:
+    workflows: ["2. Enviar Mensagem (Acionado via API)"]
+    types:
+      - completed
+
+permissions:
+  actions: write
+
+jobs:
+  retry-failed-workflow:
+    # Só roda se o workflow original tiver falhado E for a primeira ou segunda tentativa (evita loop infinito)
+    if: ${{ github.event.workflow_run.conclusion == 'failure' && github.event.workflow_run.run_attempt < 3 }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Aguardar 30 segundos antes de tentar de novo
+        run: sleep 30
+
+      - name: Acionar Re-Run do Workflow Falho
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            console.log("Tentando rodar novamente o workflow: " + context.payload.workflow_run.id);
+            await github.rest.actions.reRunWorkflowFailedJobs({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              run_id: context.payload.workflow_run.id
+            });

@@ -4,8 +4,8 @@ import "./globals.css";
 
 const inter = Inter({
   subsets: ["latin"],
-  weight: ["400", "600", "900"],
   variable: "--font-inter",
+  display: "swap",
 });
 
 export const viewport: Viewport = {
@@ -26,8 +26,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="pt-br">
-      <body className={`${inter.variable} font-sans antialiased`}>
+    <html lang="pt-br" className={inter.variable}>
+      <body className={`font-sans antialiased bg-background text-foreground`}>
         {children}
       </body>
     </html>

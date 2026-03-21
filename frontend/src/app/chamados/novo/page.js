@@ -105,7 +105,7 @@ export default function NovoChamado() {
 
         if (error) {
             console.error("Erro ao inserir chamado:", error);
-            alert("Erro ao criar o chamado.");
+            alert(`Erro do banco: ${error.message || JSON.stringify(error)}`);
             setSubmitting(false);
         } else {
             router.push('/chamados');

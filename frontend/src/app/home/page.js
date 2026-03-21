@@ -45,12 +45,23 @@ export default function Home() {
 
             const { data: userProfile } = await supabase
                 .from('profiles')
-                .select('full_name, company_id')
+                .select('full_name, company_id, role_id, roles(name)')
                 .eq('id', user.id)
                 .single();
 
             if (userProfile) {
-                setProfile(userProfile);
+                const roleName = Array.isArray(userProfile.roles) 
+                    ? userProfile.roles[0]?.name 
+                    : userProfile.roles?.name;
+                    
+                if (roleName?.toLowerCase() === 'funcionario') {
+                    // Se por algum motivo o funcionário passar (sessão antiga), desloga e manda pro login
+                    await supabase.auth.signOut();
+                    router.push('/login');
+                    return;
+                }
+                    
+                setProfile({ ...userProfile, roleName });
             }
             setLoading(false);
 
@@ -88,7 +99,14 @@ export default function Home() {
             <header className="bg-blue-600 text-white rounded-b-[40px] px-6 pt-12 pb-8 shadow-xl shadow-blue-200">
                 <div className="flex justify-between items-start mb-8">
                     <div className="flex flex-col">
-                        <h2 className="text-2xl font-black mb-1 tracking-tight">Olá, {profile?.full_name || 'Usuário'}!</h2>
+                        <h2 className="text-2xl font-black mb-1 tracking-tight flex items-center">
+                            Olá, {profile?.full_name || 'Usuário'}!
+                            {profile?.roleName && (
+                                <span className="ml-3 text-xs font-bold bg-white/20 text-white uppercase tracking-wider px-2 py-1 rounded-lg">
+                                    {profile.roleName}
+                                </span>
+                            )}
+                        </h2>
                         <p className="text-blue-100 font-medium opacity-90 tracking-tight text-base">O que vamos fazer hoje?</p>
                     </div>
                     <button

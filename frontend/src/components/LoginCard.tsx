@@ -43,12 +43,31 @@ const LoginCard = () => {
         if (user) {
           const { data: profile } = await supabase
             .from("profiles")
-            .select("company_id")
+            .select("company_id, role_id, roles(name)")
             .eq("id", user.id)
             .single();
 
           if (profile) {
             localStorage.setItem("company_id", profile.company_id);
+            if (profile.role_id) {
+              localStorage.setItem("role_id", profile.role_id);
+            }
+            if (profile.roles) {
+              const roleName = Array.isArray(profile.roles) 
+                ? profile.roles[0]?.name 
+                : (profile.roles as any)?.name;
+              
+              if (roleName) {
+                localStorage.setItem("user_role", roleName);
+                
+                if (roleName.toLowerCase() === 'funcionario') {
+                  setErro("Acesso de funcionário em desenvolvimento 🚧");
+                  setIsLoading(false);
+                  await supabase.auth.signOut(); // Desloga pro usuário não ficar preso
+                  return;
+                }
+              }
+            }
             router.push("/home");
           } else {
             setErro("Perfil de empresa não encontrado ❌");

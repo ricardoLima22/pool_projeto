@@ -199,6 +199,28 @@ export default function Home() {
                             <p className="text-slate-400 text-xs font-bold mt-1">Cadastrar</p>
                         </div>
                     </button>
+
+                    {/* Botão de Chamados */}
+                    <button
+                        onClick={() => router.push('/chamados')}
+                        className="bg-white p-5 rounded-[24px] shadow-sm border border-slate-100 text-left active:scale-[0.98] active:bg-amber-50 transition-all flex flex-col justify-between cursor-pointer"
+                    >
+                        <div>
+                            <h3 className="text-slate-800 font-black text-lg leading-none mb-1">Meus<br />Chamados</h3>
+                            <p className="text-slate-400 text-xs font-bold mt-1">Agendamentos</p>
+                        </div>
+                    </button>
+
+                    {/* Botão Novo Chamado */}
+                    <button
+                        onClick={() => router.push('/chamados/novo')}
+                        className="bg-white p-5 rounded-[24px] shadow-sm border border-slate-100 text-left active:scale-[0.98] active:bg-amber-50 transition-all flex flex-col justify-between cursor-pointer"
+                    >
+                        <div>
+                            <h3 className="text-slate-800 font-black text-lg leading-none mb-1">Novo<br />Chamado</h3>
+                            <p className="text-slate-400 text-xs font-bold mt-1">Gerar serviço</p>
+                        </div>
+                    </button>
                 </div>
 
                 {/* Banner de Ajuda ou Resumo (Opcional, futuro) */}

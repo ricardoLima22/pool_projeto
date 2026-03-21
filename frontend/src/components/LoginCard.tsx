@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Droplets, Eye, EyeOff } from "lucide-react";
 import { supabase } from "../lib/supabase";
@@ -18,6 +18,18 @@ const LoginCard = () => {
   const router = useRouter();
 
   const isValid = email.length > 3 && password.length > 3;
+
+  useEffect(() => {
+    // Verifica se fomos redirecionados com o aviso de funcionário sem acesso
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("erro") === "funcionario") {
+        setErro("Acesso de funcionário em desenvolvimento 🚧");
+        // Remove da URL para não ficar preso
+        window.history.replaceState({}, document.title, window.location.pathname);
+      }
+    }
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -41,38 +53,9 @@ const LoginCard = () => {
         const user = authData?.user;
 
         if (user) {
-          const { data: profile } = await supabase
-            .from("profiles")
-            .select("company_id, role_id, roles(name)")
-            .eq("id", user.id)
-            .single();
-
-          if (profile) {
-            localStorage.setItem("company_id", profile.company_id);
-            if (profile.role_id) {
-              localStorage.setItem("role_id", profile.role_id);
-            }
-            if (profile.roles) {
-              const roleName = Array.isArray(profile.roles) 
-                ? profile.roles[0]?.name 
-                : (profile.roles as any)?.name;
-              
-              if (roleName) {
-                localStorage.setItem("user_role", roleName);
-                
-                if (roleName.toLowerCase() === 'funcionario') {
-                  setErro("Acesso de funcionário em desenvolvimento 🚧");
-                  setIsLoading(false);
-                  await supabase.auth.signOut(); // Desloga pro usuário não ficar preso
-                  return;
-                }
-              }
-            }
-            router.push("/home");
-          } else {
-            setErro("Perfil de empresa não encontrado ❌");
-            setIsLoading(false);
-          }
+          // A verificação de banco (se é funcionário ou dono) vai acontecer 100% na Home agora
+          // para cortar o tempo de espera no botão pela metade.
+          router.push("/home");
         }
       }
     } catch (err) {

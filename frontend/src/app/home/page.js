@@ -55,11 +55,15 @@ export default function Home() {
                     : userProfile.roles?.name;
                     
                 if (roleName?.toLowerCase() === 'funcionario') {
-                    // Se por algum motivo o funcionário passar (sessão antiga), desloga e manda pro login
                     await supabase.auth.signOut();
-                    router.push('/login');
+                    router.push('/login?erro=funcionario');
                     return;
                 }
+
+                // Salva no localStorage para uso rápido pelo app (ex: validação offline)
+                localStorage.setItem("company_id", userProfile.company_id);
+                localStorage.setItem("role_id", userProfile.role_id);
+                localStorage.setItem("user_role", roleName);
                     
                 setProfile({ ...userProfile, roleName });
             }

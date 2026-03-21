@@ -61,10 +61,20 @@ export default function ListagemChamados() {
     const formatStatus = (status) => {
         switch(status?.toLowerCase()) {
             case 'pendente': return 'bg-yellow-100 text-yellow-700';
-            case 'concluído':
             case 'concluido': return 'bg-emerald-100 text-emerald-700';
-            case 'em andamento': return 'bg-blue-100 text-blue-700';
+            case 'em_execucao': return 'bg-blue-100 text-blue-700';
+            case 'cancelado': return 'bg-red-100 text-red-700';
             default: return 'bg-slate-100 text-slate-700';
+        }
+    };
+    
+    const formatStatusName = (status) => {
+        switch(status?.toLowerCase()) {
+            case 'pendente': return 'Pendente';
+            case 'concluido': return 'Concluído';
+            case 'em_execucao': return 'Em Execução';
+            case 'cancelado': return 'Cancelado';
+            default: return status || 'Pendente';
         }
     };
 
@@ -106,7 +116,7 @@ export default function ListagemChamados() {
                                     </p>
                                 </div>
                                 <span className={`text-[10px] font-bold px-2 py-1 rounded-full uppercase ${formatStatus(chamado.status)}`}>
-                                    {chamado.status || 'Pendente'}
+                                    {formatStatusName(chamado.status)}
                                 </span>
                             </div>
                             

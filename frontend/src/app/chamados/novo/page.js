@@ -23,7 +23,7 @@ export default function NovoChamado() {
         service_type_id: '',
         scheduled_date: '',
         description: '',
-        status: 'Pendente'
+        status: 'pendente'
     });
 
     useEffect(() => {
@@ -207,9 +207,10 @@ export default function NovoChamado() {
                         onChange={handleChange}
                         className="w-full p-4 rounded-xl border border-slate-200 bg-slate-50 text-slate-700 bg-white"
                     >
-                        <option value="Pendente">Pendente</option>
-                        <option value="Em Andamento">Em Andamento</option>
-                        <option value="Concluído">Concluído</option>
+                        <option value="pendente">Pendente</option>
+                        <option value="em_execucao">Em Execução</option>
+                        <option value="concluido">Concluído</option>
+                        <option value="cancelado">Cancelado</option>
                     </select>
                 </div>
 

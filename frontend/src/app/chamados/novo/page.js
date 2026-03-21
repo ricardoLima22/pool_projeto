@@ -91,17 +91,23 @@ export default function NovoChamado() {
             return;
         }
 
+        const payload = {
+            id: crypto.randomUUID(),
+            created_at: new Date().toISOString(),
+            company_id: companyId,
+            customer_id: form.customer_id,
+            piscineiro_id: form.piscineiro_id,
+            service_type_id: form.service_type_id,
+            scheduled_date: new Date(form.scheduled_date).toISOString(),
+            description: form.description,
+            status: form.status
+        };
+        
+        console.log("Enviando pro banco:", payload);
+
         const { error } = await supabase
             .from('service_requests')
-            .insert([{
-                company_id: companyId,
-                customer_id: form.customer_id,
-                piscineiro_id: form.piscineiro_id,
-                service_type_id: form.service_type_id,
-                scheduled_date: new Date(form.scheduled_date).toISOString(),
-                description: form.description,
-                status: form.status
-            }]);
+            .insert([payload]);
 
         if (error) {
             console.error("Erro ao inserir chamado:", error);

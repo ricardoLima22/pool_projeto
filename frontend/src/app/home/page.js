@@ -7,17 +7,17 @@ import { useWeather } from '../../hooks/useWeather';
 import { Droplets, LogOut, Camera, Users, UserPlus, Package, PlusCircle, BarChart3, Calendar, MapPin, Clock, TrendingUp, Waves, Thermometer } from "lucide-react";
 
 const StatCard = ({ icon, value, label }) => (
-  <div className="bg-white rounded-xl p-5 shadow-sm border border-slate-100 text-center hover:shadow-md transition-all">
-    <div className="flex justify-center text-blue-500 mb-2">{icon}</div>
-    <p className="text-2xl font-black text-slate-800 tracking-tight">{value}</p>
-    <p className="text-xs text-slate-500 font-medium mt-1">{label}</p>
+  <div className="bg-white rounded-xl p-4 shadow-sm border border-slate-200 text-center">
+    <div className="flex justify-center text-cyan-600 mb-1">{icon}</div>
+    <p className="text-xl font-bold text-slate-800">{value}</p>
+    <p className="text-xs text-slate-500">{label}</p>
   </div>
 );
 
 const QuickCard = ({ icon, title, subtitle, onClick }) => (
-  <button onClick={onClick} className="bg-white w-full rounded-xl p-5 shadow-sm border border-slate-100 text-left hover:shadow-md hover:border-blue-200 transition-all group active:scale-[0.98]">
-    <div className="mb-3 group-hover:scale-110 transition-transform inline-block bg-slate-50 p-2 rounded-lg">{icon}</div>
-    <p className="font-bold text-slate-800">{title}</p>
+  <button onClick={onClick} className="bg-white w-full rounded-xl p-4 shadow-sm border border-slate-200 text-left hover:shadow-md hover:border-cyan-200 transition-all group">
+    <div className="mb-2 group-hover:scale-110 transition-transform inline-block">{icon}</div>
+    <p className="font-semibold text-slate-800">{title}</p>
     <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400 mt-1">{subtitle}</p>
   </button>
 );
@@ -159,23 +159,22 @@ export default function Dashboard() {
 
     return (
         <div className="min-h-screen bg-slate-50 pb-20 font-sans">
-            {/* Header com CSS Gradient Customizado */}
-            <header className="gradient-hero px-6 pt-10 pb-16 text-white shadow-xl shadow-cyan-900/10 rounded-b-[30px] relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full blur-3xl -mr-20 -mt-20"></div>
-                <div className="max-w-4xl mx-auto relative z-10">
-                    <div className="flex items-center justify-between mb-8">
+            {/* Header */}
+            <header className="gradient-hero px-6 pt-6 pb-10 text-white shadow-md">
+                <div className="max-w-4xl mx-auto">
+                    <div className="flex items-center justify-between mb-6">
                         <div className="flex items-center gap-2">
-                            <Droplets className="h-7 w-7 text-cyan-200" />
-                            <span className="font-black tracking-tight text-xl">Pool Light</span>
+                            <Droplets className="h-6 w-6 text-cyan-200" />
+                            <span className="font-bold tracking-tight text-lg">Pool Light</span>
                         </div>
-                        <button onClick={handleLogout} className="flex items-center gap-2 text-sm bg-white/10 hover:bg-white/20 px-4 py-2 text-white font-bold rounded-xl backdrop-blur-md transition-all active:scale-95 border border-white/10">
+                        <button onClick={handleLogout} className="flex items-center gap-2 text-sm opacity-80 hover:opacity-100 transition-opacity">
                             <LogOut className="h-4 w-4" />
                             Sair
                         </button>
                     </div>
                     <div>
-                        <h1 className="text-3xl font-black animate-fade-in tracking-tight drop-shadow-sm">{greeting}, {profile?.full_name?.split(' ')[0] || 'Usuário'}!</h1>
-                        <p className="text-cyan-100 font-medium opacity-90 mt-1.5 text-sm">O que vamos fazer hoje?</p>
+                        <h1 className="text-2xl font-bold animate-fade-in">{greeting}, {profile?.full_name?.split(' ')[0] || 'Usuário'}!</h1>
+                        <p className="text-sm opacity-75 mt-1">O que vamos fazer hoje?</p>
                     </div>
                 </div>
             </header>
@@ -183,7 +182,7 @@ export default function Dashboard() {
             {/* Main Content */}
             <main className="max-w-4xl mx-auto px-5 -mt-8 relative z-20">
                 {/* Weather Card */}
-                <div className="mb-6 animate-slide-up bg-white/40 backdrop-blur-2xl rounded-[24px] p-5 border border-white/60 shadow-lg shadow-blue-900/5">
+                <div className="mb-4 animate-slide-up bg-white/40 backdrop-blur-sm rounded-xl p-4 border border-cyan-100 shadow-sm">
                     {weatherLoading ? (
                         <div className="flex items-center gap-3 text-slate-600 justify-center py-2">
                             <Thermometer className="h-5 w-5 animate-pulse text-cyan-600" />
@@ -213,37 +212,37 @@ export default function Dashboard() {
                 </div>
 
                 {/* Register Visit CTA */}
-                <div className="animate-slide-up mb-10" style={{ animationDelay: "0.2s" }}>
-                    <button onClick={() => router.push('/visita/nova')} className="w-full gradient-success text-white rounded-[24px] p-6 text-left shadow-xl shadow-emerald-200/50 hover:shadow-2xl hover:-translate-y-1 transition-all group relative overflow-hidden">
-                        <div className="absolute top-0 right-0 w-32 h-32 bg-white/20 rounded-full blur-2xl -mr-10 -mt-10 group-active:scale-110 transition-transform"></div>
+                <div className="animate-slide-up mb-8" style={{ animationDelay: "0.2s" }}>
+                    <button onClick={() => router.push('/visita/nova')} className="w-full gradient-success text-white rounded-xl p-5 text-left shadow-md hover:shadow-xl transition-shadow group relative overflow-hidden">
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-2xl -mr-10 -mt-10 group-active:scale-110 transition-transform"></div>
                         <div className="flex items-center justify-between relative z-10">
                             <div>
-                                <p className="text-2xl font-black tracking-tight mb-1">Registrar Visita</p>
-                                <p className="text-emerald-50 text-sm font-medium">Fotos, medições e cobrança</p>
+                                <p className="text-lg font-bold tracking-tight mb-0.5">Registrar Visita</p>
+                                <p className="text-emerald-50 text-sm opacity-90">Fotos, medições e cobrança</p>
                             </div>
-                            <div className="bg-white/20 rounded-full p-4 shadow-sm group-hover:scale-110 group-hover:rotate-3 transition-all backdrop-blur-sm">
-                                <Camera className="h-7 w-7 text-white" />
+                            <div className="bg-emerald-700/30 rounded-full p-3 group-hover:scale-110 transition-transform">
+                                <Camera className="h-6 w-6 text-white" />
                             </div>
                         </div>
                     </button>
                 </div>
 
                 {/* Quick Access */}
-                <section className="mb-10 animate-slide-up" style={{ animationDelay: "0.3s" }}>
-                    <h2 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-4 ml-1">Acesso Rápido</h2>
+                <section className="mb-8 animate-slide-up" style={{ animationDelay: "0.3s" }}>
+                    <h2 className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-4">Acesso Rápido</h2>
                     <div className="grid grid-cols-2 gap-3">
-                        <QuickCard onClick={() => router.push('/clientes')} icon={<Users className="h-6 w-6 text-indigo-500" />} title="Meus Clientes" subtitle="Sua carteira" />
-                        <QuickCard onClick={() => router.push('/clientes/novo')} icon={<UserPlus className="h-6 w-6 text-emerald-500" />} title="Novo Cliente" subtitle="Cadastrar" />
-                        <QuickCard onClick={() => router.push('/chamados')} icon={<Calendar className="h-6 w-6 text-indigo-500" />} title="Meus Chamados" subtitle="Agendamentos" />
-                        <QuickCard onClick={() => router.push('/chamados/novo')} icon={<PlusCircle className="h-6 w-6 text-emerald-500" />} title="Novo Chamado" subtitle="Gerar serviço" />
+                        <QuickCard onClick={() => router.push('/clientes')} icon={<Users className="h-5 w-5 text-blue-500" />} title="Meus Clientes" subtitle="Sua carteira" />
+                        <QuickCard onClick={() => router.push('/clientes/novo')} icon={<UserPlus className="h-5 w-5 text-emerald-500" />} title="Novo Cliente" subtitle="Cadastrar" />
+                        <QuickCard onClick={() => router.push('/produtos')} icon={<Package className="h-5 w-5 text-blue-500" />} title="Meus Produtos" subtitle="Seu estoque" />
+                        <QuickCard onClick={() => router.push('/produtos/novo')} icon={<PlusCircle className="h-5 w-5 text-emerald-500" />} title="Novo Produto" subtitle="Cadastrar" />
+                        <QuickCard onClick={() => router.push('/chamados')} icon={<Calendar className="h-5 w-5 text-blue-500" />} title="Meus Chamados" subtitle="Agendamentos" />
+                        <QuickCard onClick={() => router.push('/chamados/novo')} icon={<PlusCircle className="h-5 w-5 text-emerald-500" />} title="Novo Chamado" subtitle="Gerar serviço" />
                     </div>
                 </section>
 
                 {/* Upcoming Visits */}
-                <section className="animate-slide-up" style={{ animationDelay: "0.4s" }}>
-                    <div className="flex justify-between items-center mb-4 ml-1">
-                        <h2 className="text-xs font-black text-slate-400 uppercase tracking-widest">Próximas Visitas</h2>
-                    </div>
+                <section className="mb-8 animate-slide-up" style={{ animationDelay: "0.4s" }}>
+                    <h2 className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-4">Próximas Visitas</h2>
                     <div className="space-y-3">
                         {upcomingVisits.length > 0 ? (
                             upcomingVisits.map((visit) => {
@@ -272,18 +271,17 @@ export default function Dashboard() {
                 </section>
 
                 {/* Bottom Banner */}
-                <div className="mt-10 gradient-dark rounded-[24px] p-6 text-white animate-slide-up shadow-xl shadow-slate-900/10 relative overflow-hidden" style={{ animationDelay: "0.5s" }}>
-                    <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
-                    <div className="flex items-start gap-4 relative z-10">
-                        <div className="bg-blue-500/20 rounded-xl p-3 mt-1 backdrop-blur-sm border border-blue-400/20">
-                            <BarChart3 className="h-6 w-6 text-blue-300" />
+                <div className="mt-8 mb-8 gradient-dark rounded-xl p-5 text-slate-200 animate-slide-up" style={{ animationDelay: "0.5s" }}>
+                    <div className="flex items-start gap-3">
+                        <div className="bg-cyan-900/50 rounded-lg p-2 mt-0.5">
+                            <BarChart3 className="h-5 w-5 text-cyan-400" />
                         </div>
                         <div>
-                            <p className="font-black text-lg tracking-tight drop-shadow-sm">Seu negócio está crescendo! 📈</p>
-                            <p className="text-slate-300 text-sm mt-1.5 leading-relaxed font-medium">Mantenha seu estoque atualizado para gerar relatórios precisos.</p>
-                            <div className="inline-block mt-4 bg-white/10 border border-white/10 text-white px-3 py-1.5 rounded-full backdrop-blur-md">
-                                <span className="text-[10px] font-black tracking-widest uppercase opacity-90">Em breve: Relatórios</span>
-                            </div>
+                            <p className="font-bold text-white">Seu negócio está crescendo! 📈</p>
+                            <p className="text-sm opacity-75 mt-1">Mantenha seu estoque atualizado para gerar relatórios precisos.</p>
+                            <span className="inline-block mt-3 text-xs bg-cyan-900/50 text-cyan-300 px-3 py-1 rounded-full font-medium">
+                                Em breve: Relatórios
+                            </span>
                         </div>
                     </div>
                 </div>

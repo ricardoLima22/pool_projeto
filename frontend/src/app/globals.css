@@ -19,8 +19,12 @@
   --color-muted: hsl(210 20% 94%);
   --color-muted-foreground: hsl(215 15% 50%);
 
-  --color-accent: hsl(160 80% 50%);
+  --color-accent: hsl(160 84% 45%);
   --color-accent-foreground: hsl(0 0% 100%);
+  --color-success: hsl(160 84% 45%);
+  --color-success-foreground: hsl(0 0% 100%);
+  --color-warning: hsl(38 92% 50%);
+  --color-warning-foreground: hsl(0 0% 100%);
 
   --color-popover: hsl(210 40% 98%);
   --color-popover-foreground: hsl(215 50% 10%);
@@ -33,6 +37,31 @@
   --radius-sm: calc(0.75rem - 4px);
 
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+
+  --animate-fade-in: fade-in 0.5s ease-out forwards;
+  --animate-slide-up: slide-up 0.6s ease-out forwards;
+}
+
+@keyframes fade-in {
+  0% { opacity: 0; transform: translateY(10px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slide-up {
+  0% { opacity: 0; transform: translateY(20px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+@utility gradient-hero {
+  background: linear-gradient(135deg, hsl(200 60% 18%), hsl(187 80% 30%));
+}
+
+@utility gradient-success {
+  background: linear-gradient(135deg, hsl(160 84% 39%), hsl(145 80% 48%));
+}
+
+@utility gradient-dark {
+  background: linear-gradient(135deg, hsl(210 30% 18%), hsl(220 25% 22%));
 }
 
 * {

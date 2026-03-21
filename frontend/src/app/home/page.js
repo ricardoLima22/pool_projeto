@@ -78,7 +78,15 @@ export default function Home() {
     }, [router]);
 
     const handleLogout = async () => {
-        await supabase.auth.signOut();
+        // Limpa os dados de sessão do localStorage
+        localStorage.removeItem('company_id');
+        localStorage.removeItem('role_id');
+        localStorage.removeItem('user_role');
+
+        // Dispara o logout no Supabase sem travar a tela (async)
+        supabase.auth.signOut().catch(console.error);
+        
+        // Redireciona imediatamente para o login
         router.push('/login');
     };
 

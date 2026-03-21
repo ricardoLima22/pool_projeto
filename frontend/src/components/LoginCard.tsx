@@ -29,7 +29,7 @@ const LoginCard = () => {
     setIsLoading(true);
     
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      const { data: authData, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
@@ -38,7 +38,7 @@ const LoginCard = () => {
         setErro("E-mail ou senha inválidos");
         setIsLoading(false);
       } else {
-        const { data: { user } } = await supabase.auth.getUser();
+        const user = authData?.user;
 
         if (user) {
           const { data: profile } = await supabase

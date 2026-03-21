@@ -101,22 +101,20 @@ export default function Dashboard() {
                 const tomorrow = new Date(today);
                 tomorrow.setDate(tomorrow.getDate() + 1);
                 
-                // 1. Clientes Ativos
-                const { count: customersCount } = await supabase
+                // OTIMIZAÇÃO: Promise.all para as 3 consultas simultâneas
+                const customersPromise = supabase
                     .from('customers')
                     .select('*', { count: 'exact', head: true })
                     .eq('company_id', userProfile.company_id);
 
-                // 2. Visitas Hoje (service_requests agendados para a data de hoje)
-                const { count: visitsTodayCount } = await supabase
+                const visitsTodayPromise = supabase
                     .from('service_requests')
                     .select('*', { count: 'exact', head: true })
                     .eq('company_id', userProfile.company_id)
                     .gte('scheduled_date', today.toISOString())
                     .lt('scheduled_date', tomorrow.toISOString());
 
-                // 3. Próximas Visitas (Chamados futuros ou de hoje com status pendente/execução)
-                const { data: upcoming } = await supabase
+                const upcomingPromise = supabase
                     .from('service_requests')
                     .select('id, scheduled_date, status, customers(name, address)')
                     .eq('company_id', userProfile.company_id)
@@ -125,12 +123,16 @@ export default function Dashboard() {
                     .order('scheduled_date', { ascending: true })
                     .limit(3);
 
+                const [customersRes, visitsRes, upcomingRes] = await Promise.all([
+                    customersPromise, visitsTodayPromise, upcomingPromise
+                ]);
+
                 setStats({
-                    activeCustomers: customersCount || 0,
-                    visitsToday: visitsTodayCount || 0
+                    activeCustomers: customersRes.count || 0,
+                    visitsToday: visitsRes.count || 0
                 });
                 
-                setUpcomingVisits(upcoming || []);
+                setUpcomingVisits(upcomingRes.data || []);
             }
             setLoading(false);
         }

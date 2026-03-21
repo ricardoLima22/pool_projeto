@@ -45,7 +45,8 @@ export function useWeather() {
         () => {
           // Fallback: São Leopoldo
           fetchWeather(-29.7604, -51.1480);
-        }
+        },
+        { timeout: 5000, maximumAge: 600000 }
       );
     } else {
       fetchWeather(-29.7604, -51.1480);

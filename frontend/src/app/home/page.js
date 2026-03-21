@@ -214,7 +214,7 @@ export default function Dashboard() {
 
                 {/* Register Visit CTA */}
                 <div className="animate-slide-up mb-10" style={{ animationDelay: "0.2s" }}>
-                    <button onClick={() => router.push('/chamados/novo')} className="w-full gradient-success text-white rounded-[24px] p-6 text-left shadow-xl shadow-emerald-200/50 hover:shadow-2xl hover:-translate-y-1 transition-all group relative overflow-hidden">
+                    <button onClick={() => router.push('/visita/nova')} className="w-full gradient-success text-white rounded-[24px] p-6 text-left shadow-xl shadow-emerald-200/50 hover:shadow-2xl hover:-translate-y-1 transition-all group relative overflow-hidden">
                         <div className="absolute top-0 right-0 w-32 h-32 bg-white/20 rounded-full blur-2xl -mr-10 -mt-10 group-active:scale-110 transition-transform"></div>
                         <div className="flex items-center justify-between relative z-10">
                             <div>

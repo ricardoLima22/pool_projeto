@@ -55,8 +55,9 @@ export default function Dashboard() {
     const router = useRouter();
     
     // Métricas reais do Supabase
-    const [stats, setStats] = useState({ visitsToday: 0, activeCustomers: 0 });
+    const [stats, setStats] = useState({ visitsToday: null, activeCustomers: null });
     const [upcomingVisits, setUpcomingVisits] = useState([]);
+    const [dataLoading, setDataLoading] = useState(true);
 
     const currentHour = new Date().getHours();
     const greeting = currentHour < 12 ? "Bom dia" : currentHour < 18 ? "Boa tarde" : "Boa noite";
@@ -94,47 +95,39 @@ export default function Dashboard() {
                 localStorage.setItem("user_role", roleName);
                     
                 setProfile({ ...userProfile, roleName });
-                
-                // LÓGICA DE DADOS DINÂMICOS
-                const today = new Date();
-                today.setHours(0, 0, 0, 0);
-                const tomorrow = new Date(today);
-                tomorrow.setDate(tomorrow.getDate() + 1);
-                
-                // OTIMIZAÇÃO: Promise.all para as 3 consultas simultâneas
-                const customersPromise = supabase
-                    .from('customers')
-                    .select('*', { count: 'exact', head: true })
-                    .eq('company_id', userProfile.company_id);
+                setLoading(false); // Libera a tela imediatamente
 
-                const visitsTodayPromise = supabase
-                    .from('service_requests')
-                    .select('*', { count: 'exact', head: true })
-                    .eq('company_id', userProfile.company_id)
-                    .gte('scheduled_date', today.toISOString())
-                    .lt('scheduled_date', tomorrow.toISOString());
+                // Busca dados em background
+                fetchMetrics(userProfile.company_id);
+            } else {
+                setLoading(false);
+            }
+        }
 
-                const upcomingPromise = supabase
-                    .from('service_requests')
-                    .select('id, scheduled_date, status, customers(name, address)')
-                    .eq('company_id', userProfile.company_id)
-                    .in('status', ['pendente', 'em_execucao'])
-                    .gte('scheduled_date', today.toISOString())
-                    .order('scheduled_date', { ascending: true })
-                    .limit(3);
-
+        async function fetchMetrics(companyId) {
+            setDataLoading(true);
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const tomorrow = new Date(today);
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            
+            try {
                 const [customersRes, visitsRes, upcomingRes] = await Promise.all([
-                    customersPromise, visitsTodayPromise, upcomingPromise
+                    supabase.from('customers').select('*', { count: 'exact', head: true }).eq('company_id', companyId),
+                    supabase.from('service_requests').select('*', { count: 'exact', head: true }).eq('company_id', companyId).gte('scheduled_date', today.toISOString()).lt('scheduled_date', tomorrow.toISOString()),
+                    supabase.from('service_requests').select('id, scheduled_date, status, customers(name, address)').eq('company_id', companyId).in('status', ['pendente', 'em_execucao']).gte('scheduled_date', today.toISOString()).order('scheduled_date', { ascending: true }).limit(3)
                 ]);
 
                 setStats({
                     activeCustomers: customersRes.count || 0,
                     visitsToday: visitsRes.count || 0
                 });
-                
                 setUpcomingVisits(upcomingRes.data || []);
+            } catch (error) {
+                console.error("Erro ao buscar métricas", error);
+            } finally {
+                setDataLoading(false);
             }
-            setLoading(false);
         }
 
         fetchUserAndData();
@@ -208,8 +201,8 @@ export default function Dashboard() {
 
                 {/* Stats Row */}
                 <div className="grid grid-cols-3 gap-3 mb-8 animate-slide-up" style={{ animationDelay: "0.1s" }}>
-                    <StatCard icon={<Calendar className="h-6 w-6" />} value={stats.visitsToday.toString()} label="Visitas hoje" />
-                    <StatCard icon={<Users className="h-6 w-6" />} value={stats.activeCustomers.toString()} label="Clientes ativos" />
+                    <StatCard icon={<Calendar className="h-6 w-6" />} value={stats.visitsToday !== null ? stats.visitsToday : '...'} label="Visitas hoje" />
+                    <StatCard icon={<Users className="h-6 w-6" />} value={stats.activeCustomers !== null ? stats.activeCustomers : '...'} label="Clientes ativos" />
                     <StatCard icon={<TrendingUp className="h-6 w-6 text-emerald-500" />} value="R$ --" label="Em breve" />
                 </div>
 
@@ -246,7 +239,12 @@ export default function Dashboard() {
                 <section className="mb-8 animate-slide-up" style={{ animationDelay: "0.4s" }}>
                     <h2 className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-4">Próximas Visitas</h2>
                     <div className="space-y-3">
-                        {upcomingVisits.length > 0 ? (
+                        {dataLoading ? (
+                            <div className="bg-white rounded-[20px] p-6 text-center border border-slate-100 shadow-sm animate-pulse">
+                                <div className="bg-slate-100 w-full h-12 rounded-lg mb-2"></div>
+                                <div className="bg-slate-100 w-full h-12 rounded-lg mb-2"></div>
+                            </div>
+                        ) : upcomingVisits.length > 0 ? (
                             upcomingVisits.map((visit) => {
                                 const visitDate = new Date(visit.scheduled_date);
                                 const timeString = visitDate.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });

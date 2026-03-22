@@ -63,74 +63,78 @@ export default function NovoCliente() {
     };
 
     return (
-        <main className="min-h-screen bg-white p-6 pb-24">
-            <div className="flex items-center gap-4 mb-8">
-                <button onClick={() => router.back()} className="text-slate-400">←</button>
-                <h1 className="text-xl font-black text-slate-800">Novo Cliente</h1>
+        <main className="min-h-screen bg-[#fcfbf8] pb-24">
+            <div className="flex items-center gap-3 px-4 py-4 bg-white border-b border-slate-200">
+                <button onClick={() => router.back()} className="text-slate-800">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+                </button>
+                <h1 className="text-lg font-bold text-slate-800">Novo Cliente</h1>
             </div>
 
-            <form onSubmit={handleSalvar} className="space-y-5">
-                <div>
-                    <label className="block text-xs font-bold text-slate-400 uppercase mb-2">Nome do Cliente</label>
+            <form onSubmit={handleSalvar} className="px-4 pt-2 pb-6 space-y-1">
+                <div className="pt-4">
+                    <label className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block">Nome do Cliente</label>
                     <input
                         required
                         type="text"
                         placeholder="Ex: Casa do João"
-                        className="w-full p-4 bg-white rounded-2xl border border-slate-200 focus:ring-2 ring-blue-500 text-black font-black placeholder:text-slate-400 shadow-sm"
+                        className="w-full border-b-2 border-slate-200 bg-transparent py-3 text-slate-800 placeholder:text-slate-400 focus:border-[#008080] focus:outline-none transition-colors text-sm"
                         onChange={(e) => setNome(e.target.value)}
                     />
                 </div>
 
-                <div>
-                    <label className="block text-xs font-bold text-slate-400 uppercase mb-2">WhatsApp (DDD + Número)</label>
+                <div className="pt-4">
+                    <label className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block">WhatsApp (DDD + Número)</label>
                     <input
                         required
                         type="tel"
                         placeholder="Ex: 27999887766"
-                        className="w-full p-4 bg-white rounded-2xl border border-slate-200 focus:ring-2 ring-blue-500 text-black font-black placeholder:text-slate-400 shadow-sm"
+                        className="w-full border-b-2 border-slate-200 bg-transparent py-3 text-slate-800 placeholder:text-slate-400 focus:border-[#008080] focus:outline-none transition-colors text-sm"
                         onChange={(e) => setWhatsapp(e.target.value)}
                     />
                 </div>
 
-                <div>
-                    <label className="block text-xs font-bold text-slate-400 uppercase mb-2">E-mail</label>
+                <div className="pt-4">
+                    <label className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block">E-mail</label>
                     <input
                         required
                         type="email"
                         placeholder="Ex: cliente@email.com"
-                        className="w-full p-4 bg-white rounded-2xl border border-slate-200 focus:ring-2 ring-blue-500 text-black font-black placeholder:text-slate-400 shadow-sm"
+                        className="w-full border-b-2 border-slate-200 bg-transparent py-3 text-slate-800 placeholder:text-slate-400 focus:border-[#008080] focus:outline-none transition-colors text-sm"
                         onChange={(e) => setEmail(e.target.value)}
                     />
                 </div>
 
-                <div>
-                    <label className="block text-xs font-bold text-slate-400 uppercase mb-2">Endereço</label>
+                <div className="pt-4">
+                    <label className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block">Endereço</label>
                     <input
                         type="text"
                         placeholder="Rua, Número, Bairro"
-                        className="w-full p-4 bg-white rounded-2xl border border-slate-200 focus:ring-2 ring-blue-500 text-black font-black placeholder:text-slate-400 shadow-sm"
+                        className="w-full border-b-2 border-slate-200 bg-transparent py-3 text-slate-800 placeholder:text-slate-400 focus:border-[#008080] focus:outline-none transition-colors text-sm"
                         onChange={(e) => setEndereco(e.target.value)}
                     />
                 </div>
 
-                <div>
-                    <label className="block text-xs font-bold text-slate-400 uppercase mb-2">Volume da Piscina (m³)</label>
+                <div className="pt-4">
+                    <label className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block">Volume da Piscina (m³)</label>
                     <input
                         required
                         type="number"
                         step="0.1"
                         placeholder="Ex: 45.5"
-                        className="w-full p-4 bg-white rounded-2xl border border-slate-200 focus:ring-2 ring-blue-500 text-black font-black placeholder:text-slate-400 shadow-sm"
+                        className="w-full border-b-2 border-slate-200 bg-transparent py-3 text-slate-800 placeholder:text-slate-400 focus:border-[#008080] focus:outline-none transition-colors text-sm"
                         onChange={(e) => setVolume(e.target.value)}
                     />
                 </div>
 
-                <button
-                    disabled={loading}
-                    className="w-full bg-blue-600 text-white py-5 rounded-3xl font-black text-lg shadow-xl shadow-blue-100 active:scale-95 transition-all"
-                >
-                    {loading ? 'SALVANDO...' : 'CADASTRAR PISCINA'}
-                </button>
+                <div className="pt-8">
+                    <button
+                        disabled={loading}
+                        className="w-full bg-[#2ECC71] hover:bg-[#27ae60] text-white py-3.5 rounded-xl font-bold text-sm tracking-wide shadow-sm active:scale-95 transition-all text-center"
+                    >
+                        {loading ? 'SALVANDO...' : 'CADASTRAR PISCINA'}
+                    </button>
+                </div>
             </form>
         </main>
     );

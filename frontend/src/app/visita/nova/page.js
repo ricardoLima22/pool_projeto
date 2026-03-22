@@ -352,143 +352,163 @@ function NovaVisita() {
     }
 
     return (
-        <main className="min-h-screen bg-slate-50 p-4 pb-[220px]">
-            <header className="mb-6 flex gap-3">
+        <main className="min-h-screen bg-[#fcfbf8] pb-48">
+            <header className="sticky top-0 z-10 bg-white border-b border-slate-200 px-4 py-4 pt-6 flex items-center gap-3 mb-6">
                 <button onClick={() => {
                     if (!clienteId) setCliente(null);
                     else router.back();
-                }} className="text-slate-500 text-2xl mt-[-4px]">←</button>
+                }} className="text-slate-800 transition-colors p-1 -ml-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+                </button>
                 <div>
-                    <h1 className="text-xl font-black text-slate-800">{cliente?.name}</h1>
-                    <p className="text-slate-500 text-sm">{cliente?.pool_volume_m3}m³ • {cliente?.address}</p>
+                    <h1 className="text-lg font-bold text-slate-800 leading-tight truncate max-w-[250px]">{cliente?.name}</h1>
+                    <p className="text-sm text-slate-500 truncate max-w-[250px]">
+                        {cliente?.pool_volume_m3 || 0}m³ • {cliente?.address || 'Sem endereço'}
+                    </p>
                 </div>
             </header>
 
-            {/* Registro de Uso de Produtos (Opcional para a Cobrança) */}
-            <div className="mb-6">
-                <h2 className="text-slate-800 font-bold text-base mb-3">Produtos Utilizados <span className="text-slate-400 text-xs font-normal">(Estoque)</span></h2>
-                <div className="space-y-2">
-                    {produtos.map(p => (
-                        <div key={p.id} className="bg-white p-3 rounded-2xl flex justify-between items-center shadow-sm border border-slate-100">
-                            <div className="flex-1">
-                                <p className="text-sm font-bold text-slate-700 leading-tight">{p.name}</p>
-                                <p className="text-[10px] text-slate-400 font-medium mt-0.5">
-                                    Disponível: {p.stock_quantity} {p.unit}
-                                </p>
-                            </div>
-                            <div className="flex items-center gap-2">
-                                <button onClick={() => alterarQtd(p.id, -1, p.stock_quantity)} className="w-8 h-8 bg-slate-50 rounded-full font-bold text-lg text-slate-400 border border-slate-100 active:bg-slate-200 transition">-</button>
-                                <span className="font-black text-sm min-w-[20px] text-center text-slate-800">{quantidades[p.id] || 0}</span>
-                                <button
-                                    onClick={() => alterarQtd(p.id, 1, p.stock_quantity)}
-                                    disabled={(quantidades[p.id] || 0) >= p.stock_quantity}
-                                    className="w-8 h-8 bg-slate-50 rounded-full font-bold text-lg text-slate-400 border border-slate-100 active:bg-slate-200 transition disabled:opacity-30"
-                                >
-                                    +
-                                </button>
-                            </div>
+            <div className="px-4 space-y-6 max-w-2xl mx-auto">
+                {/* Registro de Uso de Produtos (Opcional para a Cobrança) */}
+                <section>
+                    <div className="flex items-baseline gap-2 mb-2">
+                        <h2 className="text-sm font-bold text-slate-800">Produtos Utilizados</h2>
+                        <span className="text-xs text-slate-500">(Estoque)</span>
+                    </div>
+                    {produtos.length === 0 ? (
+                        <div className="rounded-xl border border-slate-200 bg-white py-4 text-center">
+                            <p className="text-sm text-slate-500">Sem produtos.</p>
                         </div>
-                    ))}
-                    {produtos.length === 0 && (
-                        <p className="text-slate-400 text-xs text-center py-3 bg-white rounded-2xl border border-slate-100">Sem produtos.</p>
+                    ) : (
+                        <div className="space-y-2">
+                            {produtos.map(p => (
+                                <div key={p.id} className="bg-white p-3 rounded-xl flex justify-between items-center shadow-sm border border-slate-200">
+                                    <div className="flex-1">
+                                        <p className="text-sm font-bold text-slate-700 leading-tight">{p.name}</p>
+                                        <p className="text-[10px] text-slate-400 font-medium mt-0.5">
+                                            Disponível: {p.stock_quantity} {p.unit}
+                                        </p>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <button onClick={() => alterarQtd(p.id, -1, p.stock_quantity)} className="w-8 h-8 flex items-center justify-center bg-slate-50 rounded-lg font-bold text-lg text-slate-400 border border-slate-100 active:bg-slate-200 transition">-</button>
+                                        <span className="font-black text-sm min-w-[20px] text-center text-slate-800">{quantidades[p.id] || 0}</span>
+                                        <button
+                                            onClick={() => alterarQtd(p.id, 1, p.stock_quantity)}
+                                            disabled={(quantidades[p.id] || 0) >= p.stock_quantity}
+                                            className="w-8 h-8 flex items-center justify-center bg-slate-50 rounded-lg font-bold text-lg text-slate-400 border border-slate-100 active:bg-slate-200 transition disabled:opacity-30"
+                                        >
+                                            +
+                                        </button>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
                     )}
-                </div>
-            </div>
+                </section>
 
-            {/* Registro Fotográfico e pH */}
-            <h2 className="text-slate-800 font-bold text-base mb-3">Registro e Medições</h2>
-            <div className="grid grid-cols-2 gap-3 mb-4">
-                {/* Coluna Antes */}
-                <div className="space-y-2">
-                    <label className={`flex flex-col items-center justify-center h-28 border-2 border-dashed ${fotoAntes ? 'border-orange-400 bg-orange-50' : 'border-slate-300 bg-white'} rounded-2xl active:scale-95 transition-all cursor-pointer`}>
-                        <span className="text-2xl mb-1">{fotoAntes ? "✅" : "📷"}</span>
-                        <p className={`text-[10px] font-bold text-center px-1 ${fotoAntes ? 'text-orange-600' : 'text-slate-400'}`}>{fotoAntes ? "Antes capturado" : "Foto Antes (Câmera ou Galeria)"}</p>
-                        <input type="file" accept="image/*" className="hidden" onChange={(e) => setFotoAntes(e.target.files[0])} />
-                    </label>
-                    <div className="relative">
+                {/* Registro Fotográfico e pH */}
+                <section>
+                    <h2 className="text-sm font-bold text-slate-800 mb-3">Registro e Medições</h2>
+                    
+                    {/* Fotos */}
+                    <div className="grid grid-cols-5 gap-3 mb-3">
+                        {/* Foto Antes - maior */}
+                        <label className={`col-span-3 aspect-[4/3] rounded-xl border-2 border-dashed ${fotoAntes ? 'border-[#008080]/30 bg-white' : 'border-slate-300 bg-white'} flex flex-col items-center justify-center gap-2 hover:border-[#008080]/40 transition-colors active:scale-[0.98] cursor-pointer overflow-hidden relative`}>
+                            {fotoAntes ? (
+                                <img src={URL.createObjectURL(fotoAntes)} alt="Antes" className="w-full h-full object-cover" />
+                            ) : (
+                                <>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-slate-400 opacity-60"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>
+                                    <span className="text-xs text-slate-500 font-medium text-center px-4">Foto Antes (Câmera ou Galeria)</span>
+                                </>
+                            )}
+                            <input type="file" accept="image/*" className="hidden" onChange={(e) => setFotoAntes(e.target.files[0])} />
+                        </label>
+
+                        {/* Foto Depois - menor */}
+                        <label 
+                            onClick={(e) => { if(!fotoAntes) { e.preventDefault(); alert("⚠️ Por favor, registre a 'Foto Antes' primeiro."); } }}
+                            className={`col-span-2 aspect-[4/3] rounded-xl border-2 border-dashed ${fotoDepois ? 'border-[#008080]/30 bg-white' : !fotoAntes ? 'border-slate-200 bg-slate-50 opacity-40 cursor-not-allowed' : 'border-slate-300 bg-white'} flex flex-col items-center justify-center gap-2 hover:border-[#008080]/40 transition-colors active:scale-[0.98] cursor-pointer overflow-hidden relative`}
+                        >
+                            {!fotoAntes && <span className="absolute top-2 right-2 text-[10px]">🔒</span>}
+                            {fotoDepois ? (
+                                <img src={URL.createObjectURL(fotoDepois)} alt="Depois" className="w-full h-full object-cover" />
+                            ) : (
+                                <>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-slate-400 opacity-40"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/><path d="M5 3v4"/><path d="M19 17v4"/><path d="M3 5h4"/><path d="M17 19h4"/></svg>
+                                    <span className="text-[11px] text-slate-500 font-medium">Foto Depois</span>
+                                </>
+                            )}
+                            <input type="file" accept="image/*" disabled={!fotoAntes} className="hidden" onChange={(e) => setFotoDepois(e.target.files[0])} />
+                        </label>
+                    </div>
+
+                    {/* pH Inputs */}
+                    <div className="grid grid-cols-2 gap-3 mb-3">
                         <input
                             type="number"
                             step="0.1"
                             placeholder="pH Antes"
                             value={phAntes}
                             onChange={(e) => setPhAntes(e.target.value)}
-                            className="w-full px-3 py-3 rounded-xl bg-white border border-slate-300 text-base font-black text-black placeholder:text-slate-400 focus:ring-2 ring-blue-500 text-center shadow-sm"
+                            className="h-12 w-full rounded-xl text-center font-semibold bg-white border border-slate-200 placeholder:text-slate-400 focus:outline-none focus:border-[#008080] transition-colors shadow-sm"
                         />
-                    </div>
-                </div>
-
-                {/* Coluna Depois */}
-                <div className="space-y-2">
-                    <label 
-                        onClick={() => { if(!fotoAntes) alert("⚠️ Por favor, registre a 'Foto Antes' primeiro."); }}
-                        className={`flex flex-col items-center justify-center h-28 border-2 border-dashed ${fotoDepois ? 'border-emerald-400 bg-emerald-50' : !fotoAntes ? 'border-slate-100 bg-slate-50 opacity-40 grayscale cursor-not-allowed' : 'border-slate-300 bg-white'} rounded-2xl active:scale-95 transition-all cursor-pointer relative`}
-                    >
-                        {!fotoAntes && <span className="absolute top-2 right-2 text-[10px]">🔒</span>}
-                        <span className="text-2xl mb-1">{fotoDepois ? "✅" : "✨"}</span>
-                        <p className={`text-[10px] font-bold text-center px-1 ${fotoDepois ? 'text-emerald-600' : 'text-slate-400'}`}>{fotoDepois ? "Depois capturado" : "Foto Depois"}</p>
-                        <input 
-                            type="file" 
-                            accept="image/*" 
-                            disabled={!fotoAntes}
-                            className="hidden" 
-                            onChange={(e) => setFotoDepois(e.target.files[0])} 
-                        />
-                    </label>
-                    <div className="relative">
                         <input
                             type="number"
                             step="0.1"
                             placeholder="pH Depois"
                             value={phDepois}
                             onChange={(e) => setPhDepois(e.target.value)}
-                            className={`w-full px-3 py-3 rounded-xl bg-white border border-slate-300 text-base font-black text-black placeholder:text-slate-400 focus:ring-2 ring-blue-500 text-center shadow-sm ${!fotoAntes ? 'opacity-40 grayscale' : ''}`}
+                            className={`h-12 w-full rounded-xl text-center font-semibold bg-white border border-slate-200 placeholder:text-slate-400 focus:outline-none focus:border-[#008080] transition-colors shadow-sm ${!fotoAntes ? 'opacity-50' : ''}`}
                             disabled={!fotoAntes}
                         />
                     </div>
-                </div>
-            </div>
 
-            {/* Observações */}
-            <div className="mb-8">
-                <textarea
-                    placeholder="Adicionar observação sobre a visita... (Opcional)"
-                    value={observacao}
-                    onChange={(e) => setObservacao(e.target.value)}
-                    className="w-full px-4 py-3 rounded-2xl bg-white border border-slate-300 text-sm font-medium text-slate-800 placeholder:text-slate-400 focus:ring-2 ring-blue-500 shadow-sm resize-none h-24"
-                ></textarea>
+                    {/* Observação */}
+                    <textarea
+                        placeholder="Adicionar observação sobre a visita... (Opcional)"
+                        value={observacao}
+                        onChange={(e) => setObservacao(e.target.value)}
+                        className="w-full p-4 rounded-xl bg-white border border-slate-200 min-h-[100px] resize-none placeholder:text-slate-400 focus:outline-none focus:border-[#008080] transition-colors text-sm font-medium text-slate-700 shadow-sm"
+                    ></textarea>
+                </section>
             </div>
 
             {/* Rodapé Fixo Compacto */}
-            <footer className="fixed bottom-0 left-0 right-0 bg-white p-4 pb-8 rounded-t-[32px] shadow-[0_-15px_35px_-10px_rgba(0,0,0,0.08)] z-10 border-t border-slate-100">
-                <div className="mb-4">
-                    <label className="block text-slate-400 font-bold mb-1.5 uppercase text-[9px] tracking-wider ml-1">Valor Cobrado</label>
-                    <div className="relative">
-                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 font-bold text-sm">R$</span>
-                        <input
-                            type="number"
-                            step="0.01"
-                            min="0"
-                            placeholder="0.00"
-                            value={valorServico}
-                            onChange={(e) => setValorServico(e.target.value)}
-                            className="w-full pl-11 pr-4 py-3.5 rounded-xl bg-white border border-slate-200 text-2xl font-black text-black placeholder:text-slate-300 focus:ring-2 ring-blue-500 shadow-sm"
-                        />
+            <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 p-4 space-y-3 z-20">
+                <div className="max-w-2xl mx-auto space-y-3">
+                    <div>
+                        <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                            Valor Cobrado
+                        </label>
+                        <div className="flex items-center gap-2 mt-1">
+                            <span className="text-sm font-medium text-slate-500">R$</span>
+                            <input
+                                type="number"
+                                step="0.01"
+                                min="0"
+                                placeholder="0.00"
+                                value={valorServico}
+                                onChange={(e) => setValorServico(e.target.value)}
+                                className="h-10 w-full border-0 border-b border-slate-200 rounded-none bg-transparent text-2xl font-light text-slate-700 placeholder:text-slate-400 focus:outline-none focus:border-[#008080] transition-colors px-0 py-0"
+                            />
+                        </div>
                     </div>
-                </div>
 
-                <button
-                    onClick={finalizarVisita}
-                    disabled={enviando || !valorServico}
-                    className="w-full bg-blue-600 text-white py-4 rounded-xl font-black text-base shadow-lg shadow-blue-100 active:scale-[0.97] transition-all disabled:opacity-40 disabled:active:scale-100 flex justify-center items-center gap-2"
-                >
-                    {enviando ? "SALVANDO..." : (
-                        <>
-                            <span>FINALIZAR E ENVIAR</span>
-                            <span className="text-xl">💬</span>
-                        </>
-                    )}
-                </button>
-            </footer>
+                    <button
+                        onClick={finalizarVisita}
+                        disabled={enviando || !valorServico}
+                        className="w-full flex items-center justify-center gap-3 bg-[#2ECC71] hover:bg-[#27ae60] text-white h-14 rounded-2xl font-bold tracking-wide active:scale-[0.98] transition-all disabled:opacity-50 disabled:active:scale-100 uppercase"
+                    >
+                        {enviando ? "SALVANDO..." : (
+                            <>
+                                FINALIZAR E ENVIAR
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
+                            </>
+                        )}
+                    </button>
+                </div>
+            </div>
         </main>
     );
 }

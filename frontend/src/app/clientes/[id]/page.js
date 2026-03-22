@@ -136,7 +136,7 @@ export default function DetalhesCliente() {
                         <div className="pt-8 flex gap-4">
                             <button
                                 onClick={() => setEditando(true)}
-                                className="flex-1 bg-[#3b82f6] hover:bg-blue-600 text-white py-3.5 rounded-xl font-bold text-sm tracking-wide shadow-sm active:scale-95 transition-all text-center uppercase"
+                                className="flex-1 bg-[#2ECC71] hover:bg-[#27ae60] text-white py-3.5 rounded-xl font-bold text-sm tracking-wide shadow-sm active:scale-95 transition-all text-center uppercase"
                             >
                                 Editar Cliente
                             </button>

@@ -451,7 +451,7 @@ function NovaVisita() {
                             placeholder="pH Antes"
                             value={phAntes}
                             onChange={(e) => setPhAntes(e.target.value)}
-                            className="h-12 w-full rounded-xl text-center font-semibold bg-white border border-slate-200 placeholder:text-slate-400 focus:outline-none focus:border-[#008080] transition-colors shadow-sm"
+                            className="h-12 w-full rounded-xl text-center font-bold text-slate-800 bg-white border border-slate-200 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#008080]/20 focus:border-[#008080] transition-all shadow-sm"
                         />
                         <input
                             type="number"
@@ -459,7 +459,7 @@ function NovaVisita() {
                             placeholder="pH Depois"
                             value={phDepois}
                             onChange={(e) => setPhDepois(e.target.value)}
-                            className={`h-12 w-full rounded-xl text-center font-semibold bg-white border border-slate-200 placeholder:text-slate-400 focus:outline-none focus:border-[#008080] transition-colors shadow-sm ${!fotoAntes ? 'opacity-50' : ''}`}
+                            className={`h-12 w-full rounded-xl text-center font-bold text-slate-800 bg-white border border-slate-200 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#008080]/20 focus:border-[#008080] transition-all shadow-sm ${!fotoAntes ? 'opacity-50' : ''}`}
                             disabled={!fotoAntes}
                         />
                     </div>
@@ -469,7 +469,7 @@ function NovaVisita() {
                         placeholder="Adicionar observação sobre a visita... (Opcional)"
                         value={observacao}
                         onChange={(e) => setObservacao(e.target.value)}
-                        className="w-full p-4 rounded-xl bg-white border border-slate-200 min-h-[100px] resize-none placeholder:text-slate-400 focus:outline-none focus:border-[#008080] transition-colors text-sm font-medium text-slate-700 shadow-sm"
+                        className="w-full p-4 rounded-xl bg-white border border-slate-200 min-h-[100px] resize-none placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#008080]/20 focus:border-[#008080] transition-all text-sm font-medium text-slate-800 shadow-sm"
                     ></textarea>
                 </section>
             </div>
@@ -490,7 +490,7 @@ function NovaVisita() {
                                 placeholder="0.00"
                                 value={valorServico}
                                 onChange={(e) => setValorServico(e.target.value)}
-                                className="h-10 w-full border-0 border-b border-slate-200 rounded-none bg-transparent text-2xl font-light text-slate-700 placeholder:text-slate-400 focus:outline-none focus:border-[#008080] transition-colors px-0 py-0"
+                                className="h-10 w-full border-0 border-b border-slate-200 rounded-none bg-transparent text-2xl font-light text-slate-800 placeholder:text-slate-300 focus:outline-none focus:ring-0 focus:border-b-2 focus:border-[#008080] transition-all px-0 py-0"
                             />
                         </div>
                     </div>

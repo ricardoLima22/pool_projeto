@@ -35,15 +35,16 @@ const VisitCard = ({ name, address, time, status }) => (
       </div>
     </div>
     <div className="text-right shrink-0 flex flex-col justify-between items-end gap-1">
-      <div className="flex items-center gap-1.5 text-sm font-bold text-slate-700">
+      <div className="flex items-center gap-1 text-xs font-semibold text-slate-700">
         <Clock className="h-3.5 w-3.5 text-slate-400" />
         {time}
       </div>
-      <span className={`text-[10px] uppercase font-black px-2 py-0.5 rounded-full ${
-        status?.toLowerCase() === "concluido" ? "bg-emerald-100 text-emerald-700" : 
-        status?.toLowerCase() === "em_execucao" ? "bg-blue-100 text-blue-700" : 
-        "bg-amber-100 text-amber-700"}`}>
-        {status === 'em_execucao' ? 'Em Execução' : status === 'concluido' ? 'Concluído' : status || 'Pendente'}
+      <span className={`text-[11px] font-bold ${
+        ["concluido", "concluído", "confirmada", "em_execucao"].includes(status?.toLowerCase()) 
+        ? "text-emerald-500" 
+        : "text-amber-500"
+      }`}>
+        {status?.toLowerCase() === 'em_execucao' ? 'Em Execução' : status?.charAt(0).toUpperCase() + status?.slice(1).toLowerCase() || 'Pendente'}
       </span>
     </div>
   </div>
@@ -111,11 +112,14 @@ export default function Dashboard() {
             const tomorrow = new Date(today);
             tomorrow.setDate(tomorrow.getDate() + 1);
             
+            const todayStr = today.toISOString().split('T')[0];
+            const tomorrowStr = tomorrow.toISOString().split('T')[0];
+            
             try {
                 const [customersRes, visitsRes, upcomingRes] = await Promise.all([
                     supabase.from('customers').select('*', { count: 'exact', head: true }).eq('company_id', companyId),
-                    supabase.from('service_requests').select('*', { count: 'exact', head: true }).eq('company_id', companyId).gte('scheduled_date', today.toISOString()).lt('scheduled_date', tomorrow.toISOString()),
-                    supabase.from('service_requests').select('id, scheduled_date, status, customers(name, address)').eq('company_id', companyId).in('status', ['pendente', 'em_execucao']).gte('scheduled_date', today.toISOString()).order('scheduled_date', { ascending: true }).limit(3)
+                    supabase.from('service_requests').select('*', { count: 'exact', head: true }).eq('company_id', companyId).gte('scheduled_date', todayStr).lt('scheduled_date', tomorrowStr),
+                    supabase.from('service_requests').select('*, customers!inner(*)').eq('company_id', companyId).in('status', ['pendente', 'Pendente', 'em_execucao', 'Em Execução', 'Confirmada', 'confirmada']).gte('scheduled_date', todayStr).order('scheduled_date', { ascending: true }).limit(5)
                 ]);
 
                 setStats({

@@ -88,109 +88,114 @@ export default function DetalhesCliente() {
 
     if (!cliente) {
         return (
-            <main className="min-h-screen bg-slate-50 p-6 flex flex-col justify-center items-center">
-                <p className="text-slate-500 mb-4 text-lg">Cliente não encontrado.</p>
-                <button onClick={() => router.back()} className="text-blue-500 font-bold px-4 py-2 bg-blue-50 rounded-lg">Voltar à lista</button>
+            <main className="min-h-screen bg-[#fcfbf8] p-6 flex flex-col justify-center items-center">
+                <p className="text-slate-500 mb-4 text-sm font-medium">Cliente não encontrado.</p>
+                <button onClick={() => router.back()} className="text-white font-bold px-4 py-2 bg-[#008080] rounded-xl text-sm">Voltar à lista</button>
             </main>
         );
     }
 
     return (
-        <main className="min-h-screen bg-slate-50 p-4 pb-24">
-            <div className="flex items-center gap-4 mb-8">
-                <button onClick={() => router.push('/clientes')} className="text-slate-500 text-2xl">←</button>
-                <h1 className="text-xl font-black text-slate-800">
+        <main className="min-h-screen bg-[#fcfbf8] pb-24">
+            {/* Header */}
+            <div className="flex items-center gap-3 px-4 py-4 pt-6 bg-white border-b border-slate-200 sticky top-0 z-10">
+                <button onClick={() => router.push('/clientes')} className="text-slate-800 transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+                </button>
+                <h1 className="text-lg font-bold text-slate-800">
                     {editando ? "Editar Cliente" : "Detalhes do Cliente"}
                 </h1>
             </div>
 
-            <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm mb-6">
+            <div className="px-4 pt-2 pb-6 space-y-1">
                 {!editando ? (
-                    <div className="space-y-6">
-                        <div>
-                            <h2 className="text-xs font-bold text-slate-400 uppercase mb-1">Nome</h2>
-                            <p className="text-lg font-bold text-slate-800">{cliente.name}</p>
+                    <div className="space-y-1">
+                        <div className="pt-4">
+                            <h2 className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block mb-1">Nome</h2>
+                            <p className="w-full border-b-2 border-slate-200 bg-transparent py-3 text-slate-800 text-sm font-medium">{cliente.name}</p>
                         </div>
-                        <div>
-                            <h2 className="text-xs font-bold text-slate-400 uppercase mb-1">WhatsApp</h2>
-                            <p className="text-lg font-bold text-slate-800">{cliente.whatsapp || 'Não informado'}</p>
+                        <div className="pt-4">
+                            <h2 className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block mb-1">WhatsApp</h2>
+                            <p className="w-full border-b-2 border-slate-200 bg-transparent py-3 text-slate-800 text-sm font-medium">{cliente.whatsapp || 'Não informado'}</p>
                         </div>
-                        <div>
-                            <h2 className="text-xs font-bold text-slate-400 uppercase mb-1">E-mail</h2>
-                            <p className="text-lg font-bold text-slate-800">{cliente.email || 'Não informado'}</p>
+                        <div className="pt-4">
+                            <h2 className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block mb-1">E-mail</h2>
+                            <p className="w-full border-b-2 border-slate-200 bg-transparent py-3 text-slate-800 text-sm font-medium">{cliente.email || 'Não informado'}</p>
                         </div>
-                        <div>
-                            <h2 className="text-xs font-bold text-slate-400 uppercase mb-1">Endereço</h2>
-                            <p className="text-lg font-bold text-slate-800">{cliente.address || 'Não informado'}</p>
+                        <div className="pt-4">
+                            <h2 className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block mb-1">Endereço</h2>
+                            <p className="w-full border-b-2 border-slate-200 bg-transparent py-3 text-slate-800 text-sm font-medium">{cliente.address || 'Não informado'}</p>
                         </div>
-                        <div>
-                            <h2 className="text-xs font-bold text-slate-400 uppercase mb-1">Volume da Piscina (m³)</h2>
-                            <p className="text-lg font-bold text-blue-600 bg-blue-50 inline-block px-3 py-1 rounded-xl">{cliente.pool_volume_m3} m³</p>
+                        <div className="pt-4">
+                            <h2 className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block mb-1">Volume da Piscina (m³)</h2>
+                            <div className="w-full border-b-2 border-slate-200 bg-transparent py-3">
+                                <p className="text-sm font-bold text-[#3b82f6] bg-blue-50 inline-block px-3 py-1 rounded-md">{cliente.pool_volume_m3} m³</p>
+                            </div>
                         </div>
 
-                        <div className="pt-6 mt-4 border-t border-slate-100 flex gap-4">
+                        <div className="pt-8 flex gap-4">
                             <button
                                 onClick={() => setEditando(true)}
-                                className="flex-1 bg-blue-600 text-white py-4 rounded-2xl font-bold shadow-lg shadow-blue-200 active:scale-95 transition-all text-sm uppercase"
+                                className="flex-1 bg-[#3b82f6] hover:bg-blue-600 text-white py-3.5 rounded-xl font-bold text-sm tracking-wide shadow-sm active:scale-95 transition-all text-center uppercase"
                             >
                                 Editar Cliente
                             </button>
                             <button
                                 onClick={handleDelete}
-                                className="flex-1 bg-red-100 text-red-600 py-4 rounded-2xl font-bold active:scale-95 transition-all text-sm uppercase hover:bg-red-200"
+                                className="flex-1 bg-white border border-red-500 text-red-500 hover:bg-red-50 py-3.5 rounded-xl font-bold active:scale-95 transition-all text-sm uppercase text-center"
                             >
                                 Excluir Cliente
                             </button>
                         </div>
                     </div>
                 ) : (
-                    <form onSubmit={handleUpdate} className="space-y-5 flex flex-col">
-                        <div>
-                            <label className="block text-xs font-bold text-slate-400 uppercase mb-2">Nome</label>
+                    <form onSubmit={handleUpdate} className="space-y-1 flex flex-col">
+                        <div className="pt-4">
+                            <label className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block mb-1">Nome</label>
                             <input
                                 required type="text" value={nome} onChange={(e) => setNome(e.target.value)}
-                                className="w-full p-4 bg-slate-50 rounded-2xl border-none focus:ring-2 ring-blue-500 text-slate-700"
+                                className="w-full border-b-2 border-slate-200 bg-transparent py-3 text-slate-800 placeholder:text-slate-400 focus:border-[#008080] focus:outline-none transition-colors text-sm"
                             />
                         </div>
-                        <div>
-                            <label className="block text-xs font-bold text-slate-400 uppercase mb-2">WhatsApp</label>
+                        <div className="pt-4">
+                            <label className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block mb-1">WhatsApp</label>
                             <input
                                 required type="tel" value={whatsapp} onChange={(e) => setWhatsapp(e.target.value)}
-                                className="w-full p-4 bg-slate-50 rounded-2xl border-none focus:ring-2 ring-blue-500 text-slate-700"
+                                className="w-full border-b-2 border-slate-200 bg-transparent py-3 text-slate-800 placeholder:text-slate-400 focus:border-[#008080] focus:outline-none transition-colors text-sm"
                             />
                         </div>
-                        <div>
-                            <label className="block text-xs font-bold text-slate-400 uppercase mb-2">E-mail</label>
+                        <div className="pt-4">
+                            <label className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block mb-1">E-mail</label>
                             <input
                                 required type="email" value={email} onChange={(e) => setEmail(e.target.value)}
-                                className="w-full p-4 bg-slate-50 rounded-2xl border-none focus:ring-2 ring-blue-500 text-slate-700"
+                                className="w-full border-b-2 border-slate-200 bg-transparent py-3 text-slate-800 placeholder:text-slate-400 focus:border-[#008080] focus:outline-none transition-colors text-sm"
                             />
                         </div>
-                        <div>
-                            <label className="block text-xs font-bold text-slate-400 uppercase mb-2">Endereço</label>
+                        <div className="pt-4">
+                            <label className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block mb-1">Endereço</label>
                             <input
                                 type="text" value={endereco} onChange={(e) => setEndereco(e.target.value)}
-                                className="w-full p-4 bg-slate-50 rounded-2xl border-none focus:ring-2 ring-blue-500 text-slate-700"
+                                className="w-full border-b-2 border-slate-200 bg-transparent py-3 text-slate-800 placeholder:text-slate-400 focus:border-[#008080] focus:outline-none transition-colors text-sm"
                             />
                         </div>
-                        <div>
-                            <label className="block text-xs font-bold text-slate-400 uppercase mb-2">Volume (m³)</label>
+                        <div className="pt-4">
+                            <label className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block mb-1">Volume (m³)</label>
                             <input
                                 required type="number" step="0.1" value={volume} onChange={(e) => setVolume(e.target.value)}
-                                className="w-full p-4 bg-slate-50 rounded-2xl border-none focus:ring-2 ring-blue-500 text-slate-700"
+                                className="w-full border-b-2 border-slate-200 bg-transparent py-3 text-slate-800 placeholder:text-slate-400 focus:border-[#008080] focus:outline-none transition-colors text-sm"
                             />
                         </div>
 
-                        <div className="pt-6 border-t border-slate-100 flex gap-4 mt-2">
+                        <div className="pt-8 flex gap-4">
                             <button
                                 type="button" onClick={() => setEditando(false)} disabled={salvando}
-                                className="flex-1 bg-slate-100 text-slate-600 py-4 rounded-2xl font-bold active:scale-95 transition-all"
+                                className="flex-1 bg-white border border-slate-300 text-slate-600 hover:bg-slate-50 py-3.5 rounded-xl font-bold active:scale-95 transition-all text-sm uppercase text-center"
                             >
                                 Cancelar
                             </button>
                             <button
                                 type="submit" disabled={salvando}
-                                className="flex-1 bg-emerald-500 text-white py-4 rounded-2xl font-bold shadow-lg shadow-emerald-200 active:scale-95 transition-all"
+                                className="flex-1 bg-[#2ECC71] hover:bg-[#27ae60] text-white py-3.5 rounded-xl font-bold tracking-wide shadow-sm active:scale-95 transition-all text-sm uppercase text-center"
                             >
                                 {salvando ? 'Salvando...' : 'Salvar Alterações'}
                             </button>

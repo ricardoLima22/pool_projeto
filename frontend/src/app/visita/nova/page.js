@@ -307,31 +307,45 @@ function NovaVisita() {
     // Tela de Seleção de Cliente
     if (!cliente) {
         return (
-            <main className="min-h-screen bg-slate-50 p-6 pb-40">
-                <div className="flex items-center gap-4 mb-6">
-                    <button onClick={() => router.back()} className="text-slate-500 text-2xl">←</button>
-                    <h1 className="text-2xl font-black text-slate-800">Nova Visita</h1>
-                </div>
-                <p className="text-slate-500 font-bold mb-4 uppercase text-xs">Selecione o Cliente</p>
-                <div className="space-y-3">
-                    {clientesList.map(c => (
-                        <button
-                            key={c.id}
-                            onClick={() => setCliente(c)}
-                            className="w-full text-left bg-white p-5 rounded-3xl border border-slate-100 shadow-sm active:scale-95 transition-all flex flex-col"
-                        >
-                            <span className="font-bold text-lg text-slate-800">{c.name}</span>
-                            <span className="text-sm text-slate-400 mt-1">{c.address || 'Sem endereço'}</span>
-                        </button>
-                    ))}
-                    {clientesList.length === 0 && (
-                        <div className="text-center p-8 bg-white rounded-3xl border border-slate-100">
-                            <p className="text-slate-500 font-bold mb-2">Nenhum cliente encontrado.</p>
-                            <button onClick={() => router.push('/clientes/novo')} className="text-blue-600 font-bold text-sm">
-                                + Cadastrar Cliente
+            <main className="min-h-screen bg-[#fcfbf8] pb-40">
+                <header className="px-4 pt-6 pb-4 bg-white border-b border-slate-200 sticky top-0 z-10 flex items-center gap-3">
+                    <button onClick={() => router.back()} className="text-slate-800 transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+                    </button>
+                    <h1 className="text-lg font-bold text-slate-800 tracking-tight">Nova Visita</h1>
+                </header>
+
+                <div className="px-4 pt-6">
+                    <p className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block mb-4">Selecione o Cliente</p>
+                    <div className="space-y-3">
+                        {clientesList.map(c => (
+                            <button
+                                key={c.id}
+                                onClick={() => setCliente(c)}
+                                className="w-full bg-white rounded-xl border border-slate-100 p-4 flex items-center justify-between hover:border-[#008080]/30 transition-colors text-left shadow-sm active:scale-[0.99]"
+                            >
+                                <div className="space-y-1 overflow-hidden pr-2">
+                                    <p className="font-bold text-slate-800 text-sm truncate">{c.name}</p>
+                                    <p className="text-xs text-slate-500 flex items-center gap-1 mt-1 truncate">
+                                        <svg className="h-3 w-3 text-red-500 shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                                        <span className="truncate">{c.address || 'Endereço não informado'}</span>
+                                    </p>
+                                    <span className="inline-block mt-1 text-[10px] font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded uppercase">
+                                        {c.pool_volume_m3 || 0} M³
+                                    </span>
+                                </div>
+                                <svg className="h-5 w-5 text-[#008080] shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6"/></svg>
                             </button>
-                        </div>
-                    )}
+                        ))}
+                        {clientesList.length === 0 && (
+                            <div className="text-center p-8 bg-white rounded-xl border border-slate-100">
+                                <p className="text-sm font-medium text-slate-500 mb-2">Nenhum cliente encontrado.</p>
+                                <button onClick={() => router.push('/clientes/novo')} className="text-[#008080] font-bold text-sm hover:underline">
+                                    + Cadastrar Cliente
+                                </button>
+                            </div>
+                        )}
+                    </div>
                 </div>
             </main>
         );

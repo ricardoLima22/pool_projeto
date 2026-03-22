@@ -17,7 +17,7 @@ const StatCard = ({ icon, value, label }) => (
 const QuickCard = ({ icon, title, subtitle, onClick }) => (
   <button onClick={onClick} className="bg-white w-full rounded-xl p-4 shadow-sm border border-slate-200 text-left hover:shadow-md hover:border-cyan-200 transition-all group">
     <div className="mb-2 group-hover:scale-110 transition-transform inline-block">{icon}</div>
-    <p className="font-semibold text-slate-800">{title}</p>
+    <p className="font-bold text-slate-800">{title}</p>
     <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400 mt-1">{subtitle}</p>
   </button>
 );

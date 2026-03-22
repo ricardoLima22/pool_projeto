@@ -107,7 +107,11 @@ export default function ListagemChamados() {
             ) : (
                 <div className="space-y-4">
                     {chamadosFiltrados.map(chamado => (
-                        <div key={chamado.id} className="bg-white p-5 rounded-3xl border border-slate-100 shadow-sm transition-all flex flex-col gap-3">
+                        <div 
+                            key={chamado.id} 
+                            onClick={() => router.push(`/chamados/${chamado.id}`)}
+                            className="bg-white p-5 rounded-3xl border border-slate-100 shadow-sm transition-all flex flex-col gap-3 cursor-pointer hover:shadow-md hover:border-blue-200 active:scale-[0.99]"
+                        >
                             <div className="flex justify-between items-start">
                                 <div>
                                     <h2 className="font-bold text-slate-800 text-lg">{chamado.customers?.name || 'Cliente Removido'}</h2>
@@ -132,14 +136,19 @@ export default function ListagemChamados() {
                                 
                                 <div className="flex gap-2">
                                     <button 
-                                        onClick={() => router.push(`/chamados/${chamado.id}/editar`)}
-                                        className="text-slate-400 hover:text-blue-500 bg-slate-100 p-2 rounded-lg transition-colors"
-                                        title="Editar"
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            router.push(`/chamados/${chamado.id}`);
+                                        }}
+                                        className="text-slate-400 hover:text-blue-500 bg-slate-100 px-3 py-2 rounded-lg font-bold text-xs transition-colors flex items-center gap-1"
                                     >
-                                        ✏️
+                                        ✏️ Detalhes
                                     </button>
                                     <button 
-                                        onClick={() => handleDelete(chamado.id)}
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            handleDelete(chamado.id);
+                                        }}
                                         className="text-slate-400 hover:text-red-500 bg-red-50 p-2 rounded-lg transition-colors"
                                         title="Excluir"
                                     >

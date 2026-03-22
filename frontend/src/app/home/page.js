@@ -22,8 +22,8 @@ const QuickCard = ({ icon, title, subtitle, onClick }) => (
   </button>
 );
 
-const VisitCard = ({ name, address, time, status }) => (
-  <div className="bg-white rounded-xl p-4 shadow-sm border border-slate-100 flex items-center gap-4 hover:shadow-md transition-shadow">
+const VisitCard = ({ id, name, address, time, status, onClick }) => (
+  <button onClick={onClick} className="w-full text-left bg-white rounded-xl p-4 shadow-sm border border-slate-100 flex items-center gap-4 hover:shadow-md hover:border-blue-200 transition-all active:scale-[0.98]">
     <div className="bg-cyan-50 rounded-full p-3 border border-cyan-100">
       <Waves className="h-5 w-5 text-cyan-600" />
     </div>
@@ -47,7 +47,7 @@ const VisitCard = ({ name, address, time, status }) => (
         {status?.toLowerCase() === 'em_execucao' ? 'Em Execução' : status?.charAt(0).toUpperCase() + status?.slice(1).toLowerCase() || 'Pendente'}
       </span>
     </div>
-  </div>
+  </button>
 );
 
 export default function Dashboard() {
@@ -255,10 +255,12 @@ export default function Dashboard() {
                                 return (
                                     <VisitCard 
                                         key={visit.id}
+                                        id={visit.id}
                                         name={visit.customers?.name || 'Cliente Desconhecido'} 
                                         address={visit.customers?.address || ''} 
                                         time={timeString} 
                                         status={visit.status} 
+                                        onClick={() => router.push(`/chamados/${visit.id}`)}
                                     />
                                 );
                             })

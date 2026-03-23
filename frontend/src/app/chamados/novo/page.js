@@ -123,119 +123,157 @@ export default function NovoChamado() {
     }
 
     return (
-        <main className="min-h-screen bg-slate-50 p-4 pb-20">
-            <div className="flex items-center gap-4 mb-8">
-                <button onClick={() => router.back()} className="text-slate-500 text-2xl">←</button>
-                <h1 className="text-xl font-black text-slate-800">Novo Chamado</h1>
+        <div className="min-h-screen bg-slate-50 flex flex-col">
+            {/* Header */}
+            <div
+                className="px-4 py-4"
+                style={{
+                    background: "linear-gradient(135deg, hsl(195 60% 18%), hsl(180 40% 28%))",
+                }}
+            >
+                <div className="max-w-2xl mx-auto flex items-center gap-3">
+                    <button
+                        onClick={() => router.back()}
+                        className="text-white hover:text-white/80 transition-colors"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+                    </button>
+                    <h1 className="text-lg font-bold text-white tracking-wide">Novo Chamado</h1>
+                </div>
             </div>
 
-            <form onSubmit={handleSubmit} className="bg-white p-6 rounded-[24px] shadow-sm border border-slate-100 space-y-5">
-                
-                {/* Cliente */}
-                <div className="space-y-1.5">
-                    <label className="text-sm font-bold text-slate-700">Cliente *</label>
-                    <select
-                        name="customer_id"
-                        value={form.customer_id}
-                        onChange={handleChange}
-                        className="w-full p-4 rounded-xl border border-slate-200 bg-slate-50 text-slate-700 bg-white"
-                        required
-                    >
-                        <option value="" disabled>Selecione um cliente...</option>
-                        {clientes.map(c => (
-                            <option key={c.id} value={c.id}>{c.name}</option>
-                        ))}
-                    </select>
-                </div>
+            <main className="flex-1 px-4 py-6 max-w-2xl mx-auto w-full space-y-5 pb-28">
+                <form onSubmit={handleSubmit} className="bg-white rounded-2xl border border-slate-200 p-5 space-y-5 shadow-sm">
+                    {/* Cliente */}
+                    <div className="space-y-1.5">
+                        <label className="text-slate-800 font-semibold text-sm">
+                            Cliente <span className="text-red-500">*</span>
+                        </label>
+                        <div className="relative">
+                            <select
+                                name="customer_id"
+                                value={form.customer_id}
+                                onChange={handleChange}
+                                className="flex h-10 w-full items-center justify-between rounded-md border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:border-slate-400 shadow-sm appearance-none"
+                                required
+                            >
+                                <option value="" disabled>Selecione um cliente...</option>
+                                {clientes.map(c => (
+                                    <option key={c.id} value={c.id}>{c.name}</option>
+                                ))}
+                            </select>
+                            <svg className="absolute right-3 top-3 h-4 w-4 opacity-50 pointer-events-none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                        </div>
+                    </div>
 
-                {/* Tipo de Serviço */}
-                <div className="space-y-1.5">
-                    <label className="text-sm font-bold text-slate-700">Tipo de Serviço *</label>
-                    <select
-                        name="service_type_id"
-                        value={form.service_type_id}
-                        onChange={handleChange}
-                        className="w-full p-4 rounded-xl border border-slate-200 bg-slate-50 text-slate-700 bg-white"
-                        required
-                    >
-                        <option value="" disabled>Selecione o serviço...</option>
-                        {servicos.map(s => (
-                            <option key={s.id} value={s.id}>{s.name}</option>
-                        ))}
-                    </select>
-                </div>
+                    {/* Tipo de Serviço */}
+                    <div className="space-y-1.5">
+                        <label className="text-slate-800 font-semibold text-sm">
+                            Tipo de Serviço <span className="text-red-500">*</span>
+                        </label>
+                        <div className="relative">
+                            <select
+                                name="service_type_id"
+                                value={form.service_type_id}
+                                onChange={handleChange}
+                                className="flex h-10 w-full items-center justify-between rounded-md border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:border-slate-400 shadow-sm appearance-none"
+                                required
+                            >
+                                <option value="" disabled>Selecione o serviço...</option>
+                                {servicos.map(s => (
+                                    <option key={s.id} value={s.id}>{s.name}</option>
+                                ))}
+                            </select>
+                            <svg className="absolute right-3 top-3 h-4 w-4 opacity-50 pointer-events-none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                        </div>
+                    </div>
 
-                {/* Funcionário Responsável */}
-                <div className="space-y-1.5">
-                    <label className="text-sm font-bold text-slate-700">Atribuir ao Funcionário *</label>
-                    <select
-                        name="piscineiro_id"
-                        value={form.piscineiro_id}
-                        onChange={handleChange}
-                        className="w-full p-4 rounded-xl border border-slate-200 bg-slate-50 text-slate-700 bg-white"
-                        required
-                    >
-                        <option value="" disabled>Selecione o funcionário...</option>
-                        {funcionarios.map(f => (
-                            <option key={f.id} value={f.id}>{f.full_name}</option>
-                        ))}
-                        {funcionarios.length === 0 && (
-                            <option value="" disabled>⚠️ Nenhum funcionário encontrado</option>
-                        )}
-                    </select>
-                </div>
+                    {/* Funcionário Responsável */}
+                    <div className="space-y-1.5">
+                        <label className="text-slate-800 font-semibold text-sm">
+                            Atribuir ao Funcionário <span className="text-red-500">*</span>
+                        </label>
+                        <div className="relative">
+                            <select
+                                name="piscineiro_id"
+                                value={form.piscineiro_id}
+                                onChange={handleChange}
+                                className="flex h-10 w-full items-center justify-between rounded-md border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:border-slate-400 shadow-sm appearance-none"
+                                required
+                            >
+                                <option value="" disabled>Selecione o funcionário...</option>
+                                {funcionarios.map(f => (
+                                    <option key={f.id} value={f.id}>{f.full_name}</option>
+                                ))}
+                                {funcionarios.length === 0 && (
+                                    <option value="" disabled>⚠️ Nenhum funcionário encontrado</option>
+                                )}
+                            </select>
+                            <svg className="absolute right-3 top-3 h-4 w-4 opacity-50 pointer-events-none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                        </div>
+                    </div>
 
-                {/* Data Agendada */}
-                <div className="space-y-1.5">
-                    <label className="text-sm font-bold text-slate-700">Data e Hora Agendada *</label>
-                    <input
-                        type="datetime-local"
-                        name="scheduled_date"
-                        value={form.scheduled_date}
-                        onChange={handleChange}
-                        className="w-full p-4 rounded-xl border border-slate-200 bg-slate-50 text-slate-700 bg-white"
-                        required
-                    />
-                </div>
+                    {/* Data Agendada */}
+                    <div className="space-y-1.5">
+                        <label className="text-slate-800 font-semibold text-sm">
+                            Data e Hora Agendada <span className="text-red-500">*</span>
+                        </label>
+                        <input
+                            type="datetime-local"
+                            name="scheduled_date"
+                            value={form.scheduled_date}
+                            onChange={handleChange}
+                            className="flex h-10 w-full items-center justify-between rounded-md border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:border-slate-400 shadow-sm"
+                            required
+                        />
+                    </div>
 
-                {/* Status */}
-                <div className="space-y-1.5">
-                    <label className="text-sm font-bold text-slate-700">Status</label>
-                    <select
-                        name="status"
-                        value={form.status}
-                        onChange={handleChange}
-                        className="w-full p-4 rounded-xl border border-slate-200 bg-slate-50 text-slate-700 bg-white"
-                    >
-                        <option value="Pendente">Pendente</option>
-                        <option value="Concluido">Concluído</option>
-                        <option value="Cancelado">Cancelado</option>
-                    </select>
-                </div>
+                    {/* Status */}
+                    <div className="space-y-1.5">
+                        <label className="text-slate-800 font-semibold text-sm">Status</label>
+                        <div className="relative">
+                            <select
+                                name="status"
+                                value={form.status}
+                                onChange={handleChange}
+                                className="flex h-10 w-full items-center justify-between rounded-md border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:border-slate-400 shadow-sm appearance-none"
+                            >
+                                <option value="Pendente">Pendente</option>
+                                <option value="Em andamento">Em andamento</option>
+                                <option value="Concluido">Concluído</option>
+                                <option value="Cancelado">Cancelado</option>
+                            </select>
+                            <svg className="absolute right-3 top-3 h-4 w-4 opacity-50 pointer-events-none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                        </div>
+                    </div>
 
-                {/* Descrição */}
-                <div className="space-y-1.5">
-                    <label className="text-sm font-bold text-slate-700">Descrição / Observações</label>
-                    <textarea
-                        name="description"
-                        value={form.description}
-                        onChange={handleChange}
-                        rows={4}
-                        placeholder="Detalhes adicionais sobre o serviço..."
-                        className="w-full p-4 rounded-xl border border-slate-200 bg-slate-50 text-slate-700 bg-white"
-                    />
-                </div>
+                    {/* Descrição */}
+                    <div className="space-y-1.5">
+                        <label className="text-slate-800 font-semibold text-sm">Descrição / Observações</label>
+                        <textarea
+                            name="description"
+                            value={form.description}
+                            onChange={handleChange}
+                            placeholder="Detalhes adicionais sobre o serviço..."
+                            className="flex min-h-[120px] w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:border-slate-400 shadow-sm resize-none"
+                            maxLength={1000}
+                        />
+                    </div>
+                </form>
+            </main>
 
-                <div className="pt-4">
+            {/* Footer */}
+            <div className="fixed bottom-0 left-0 right-0 px-4 py-4 bg-slate-50 border-t border-slate-200 z-10 shadow-[0_-4px_15px_-3px_rgba(0,0,0,0.05)]">
+                <div className="max-w-2xl mx-auto">
                     <button
-                        type="submit"
+                        onClick={handleSubmit}
                         disabled={submitting}
-                        className="w-full bg-blue-600 text-white font-bold p-4 rounded-xl shadow-lg shadow-blue-200 active:scale-[0.98] transition-all disabled:bg-slate-300 disabled:shadow-none uppercase tracking-wider text-sm"
+                        className="w-full bg-[#2ECC71] hover:bg-[#27ae60] text-white py-3.5 rounded-xl font-bold text-sm tracking-wide shadow-sm active:scale-[0.98] transition-all disabled:opacity-50 disabled:active:scale-100 uppercase"
                     >
-                        {submitting ? 'Salvando Chamado...' : 'Abrir Chamado'}
+                        {submitting ? 'Salvando...' : 'ABRIR CHAMADO'}
                     </button>
                 </div>
-            </form>
-        </main>
+            </div>
+        </div>
     );
 }

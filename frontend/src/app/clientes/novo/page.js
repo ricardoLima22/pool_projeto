@@ -46,7 +46,7 @@ export default function NovoCliente() {
                 {
                     name: nome,
                     whatsapp: whatsapp,
-                    email: email,
+                    email: email || null,
                     address: endereco,
                     pool_volume_m3: parseFloat(volume),
                     company_id: companyId,
@@ -95,9 +95,8 @@ export default function NovoCliente() {
                 </div>
 
                 <div className="pt-4">
-                    <label className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block">E-mail</label>
+                    <label className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block">E-mail (Opcional)</label>
                     <input
-                        required
                         type="email"
                         placeholder="Ex: cliente@email.com"
                         className="w-full border-b-2 border-slate-200 bg-transparent py-3 text-slate-800 placeholder:text-slate-400 focus:border-[#008080] focus:outline-none transition-colors text-sm"

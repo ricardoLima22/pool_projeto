@@ -157,7 +157,7 @@ export default function NovoChamado() {
                             Cliente <span className="text-red-500">*</span>
                         </label>
                         <Select required value={form.customer_id} onValueChange={(val) => handleChange({ target: { name: 'customer_id', value: val } })}>
-                            <SelectTrigger className="w-full h-10 bg-white shadow-sm border-slate-200">
+                            <SelectTrigger className="w-full h-10 bg-white shadow-sm border-slate-200 text-slate-800 focus:ring-[#10b673] focus:ring-offset-0 focus:ring-1 data-[state=open]:border-[#10b673] data-[state=open]:ring-1 data-[state=open]:ring-[#10b673]">
                                 <SelectValue placeholder="Selecione um cliente..." />
                             </SelectTrigger>
                             <SelectContent className="bg-white">
@@ -174,7 +174,7 @@ export default function NovoChamado() {
                             Tipo de Serviço <span className="text-red-500">*</span>
                         </label>
                         <Select required value={form.service_type_id} onValueChange={(val) => handleChange({ target: { name: 'service_type_id', value: val } })}>
-                            <SelectTrigger className="w-full h-10 bg-white shadow-sm border-slate-200">
+                            <SelectTrigger className="w-full h-10 bg-white shadow-sm border-slate-200 text-slate-800 focus:ring-[#10b673] focus:ring-offset-0 focus:ring-1 data-[state=open]:border-[#10b673] data-[state=open]:ring-1 data-[state=open]:ring-[#10b673]">
                                 <SelectValue placeholder="Selecione o serviço..." />
                             </SelectTrigger>
                             <SelectContent className="bg-white">
@@ -191,7 +191,7 @@ export default function NovoChamado() {
                             Atribuir ao Funcionário <span className="text-red-500">*</span>
                         </label>
                         <Select required value={form.piscineiro_id} onValueChange={(val) => handleChange({ target: { name: 'piscineiro_id', value: val } })}>
-                            <SelectTrigger className="w-full h-10 bg-white shadow-sm border-slate-200">
+                            <SelectTrigger className="w-full h-10 bg-white shadow-sm border-slate-200 text-slate-800 focus:ring-[#10b673] focus:ring-offset-0 focus:ring-1 data-[state=open]:border-[#10b673] data-[state=open]:ring-1 data-[state=open]:ring-[#10b673]">
                                 <SelectValue placeholder="Selecione o funcionário..." />
                             </SelectTrigger>
                             <SelectContent className="bg-white">
@@ -224,7 +224,7 @@ export default function NovoChamado() {
                     <div className="space-y-1.5">
                         <label className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block">Status</label>
                         <Select value={form.status} onValueChange={(val) => handleChange({ target: { name: 'status', value: val } })}>
-                            <SelectTrigger className="w-full h-10 bg-white shadow-sm border-slate-200">
+                            <SelectTrigger className="w-full h-10 bg-white shadow-sm border-slate-200 text-slate-800 focus:ring-[#10b673] focus:ring-offset-0 focus:ring-1 data-[state=open]:border-[#10b673] data-[state=open]:ring-1 data-[state=open]:ring-[#10b673]">
                                 <SelectValue placeholder="Selecione o status..." />
                             </SelectTrigger>
                             <SelectContent className="bg-white">

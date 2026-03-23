@@ -77,189 +77,191 @@ export default function ListagemChamados() {
 
     return (
         <div className="min-h-screen bg-[#fcfbf8]">
-            {/* Header */}
-            <header
-                className="px-5 pt-6 pb-8 rounded-b-3xl"
-                style={{ background: "linear-gradient(135deg, hsl(225 75% 48%), hsl(225 85% 60%))" }}
-            >
-                <div className="flex items-center justify-between mb-5">
-                    <div className="flex items-center gap-3">
-                        <button onClick={() => router.push("/home")} className="text-white/80 hover:text-white transition-colors">
-                            <ArrowLeft className="h-5 w-5" />
+            <div className="max-w-2xl mx-auto w-full bg-[#fcfbf8] min-h-screen shadow-sm">
+                {/* Header */}
+                <header
+                    className="px-5 pt-6 pb-8 rounded-b-3xl relative"
+                    style={{ background: "linear-gradient(135deg, hsl(225 75% 48%), hsl(225 85% 60%))" }}
+                >
+                    <div className="flex items-center justify-between mb-5">
+                        <div className="flex items-center gap-3">
+                            <button onClick={() => router.push("/home")} className="text-white/80 hover:text-white transition-colors">
+                                <ArrowLeft className="h-5 w-5" />
+                            </button>
+                            <div>
+                                <h1 className="text-xl font-bold text-white">Meus Chamados</h1>
+                                <p className="text-white/60 text-xs mt-0.5">Gerencie seus serviços</p>
+                            </div>
+                        </div>
+                        <button
+                            onClick={() => router.push('/chamados/novo')}
+                            className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-sm font-bold text-white bg-white/20 backdrop-blur-sm hover:bg-white/30 transition-colors"
+                        >
+                            <Plus className="h-4 w-4" />
+                            Novo
                         </button>
-                        <div>
-                            <h1 className="text-xl font-bold text-white">Meus Chamados</h1>
-                            <p className="text-white/60 text-xs mt-0.5">Gerencie seus serviços</p>
+                    </div>
+
+                    {/* Stats */}
+                    <div className="grid grid-cols-3 gap-3 mb-5">
+                        <div className="bg-white/15 backdrop-blur-sm rounded-xl px-3 py-3 text-center">
+                            <p className="text-2xl font-bold text-white">{chamados.length}</p>
+                            <p className="text-[10px] text-white/70 font-medium uppercase tracking-wider">Total</p>
+                        </div>
+                        <div className="bg-white/15 backdrop-blur-sm rounded-xl px-3 py-3 text-center">
+                            <p className="text-2xl font-bold text-amber-300">{pendentes}</p>
+                            <p className="text-[10px] text-white/70 font-medium uppercase tracking-wider">Pendentes</p>
+                        </div>
+                        <div className="bg-white/15 backdrop-blur-sm rounded-xl px-3 py-3 text-center">
+                            <p className="text-2xl font-bold text-emerald-300">{concluidos}</p>
+                            <p className="text-[10px] text-white/70 font-medium uppercase tracking-wider">Concluídos</p>
                         </div>
                     </div>
-                    <button
-                        onClick={() => router.push('/chamados/novo')}
-                        className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-sm font-bold text-white bg-white/20 backdrop-blur-sm hover:bg-white/30 transition-colors"
-                    >
-                        <Plus className="h-4 w-4" />
-                        Novo
-                    </button>
-                </div>
 
-                {/* Stats */}
-                <div className="grid grid-cols-3 gap-3 mb-5">
-                    <div className="bg-white/15 backdrop-blur-sm rounded-xl px-3 py-3 text-center">
-                        <p className="text-2xl font-bold text-white">{chamados.length}</p>
-                        <p className="text-[10px] text-white/70 font-medium uppercase tracking-wider">Total</p>
+                    {/* Search */}
+                    <div className="relative">
+                        <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-white/40" />
+                        <input
+                            type="text"
+                            placeholder="Buscar chamado..."
+                            value={busca}
+                            onChange={(e) => setBusca(e.target.value)}
+                            className="w-full pl-10 pr-4 py-3 rounded-xl bg-white/15 backdrop-blur-sm text-sm text-white placeholder:text-white/40 focus:outline-none focus:bg-white/25 transition-colors border border-white/10"
+                        />
                     </div>
-                    <div className="bg-white/15 backdrop-blur-sm rounded-xl px-3 py-3 text-center">
-                        <p className="text-2xl font-bold text-amber-300">{pendentes}</p>
-                        <p className="text-[10px] text-white/70 font-medium uppercase tracking-wider">Pendentes</p>
+                </header>
+
+                {/* Filter Tabs */}
+                <div className="px-5 -mt-3 relative z-10">
+                    <div className="bg-white rounded-xl border border-slate-200 p-1 flex gap-1 shadow-sm">
+                        {navTabs.map((tab) => (
+                            <button
+                                key={tab}
+                                onClick={() => setFiltroStatus(tab)}
+                                className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${
+                                    filtroStatus === tab
+                                        ? "text-white shadow-md"
+                                        : "text-slate-500 hover:text-slate-800"
+                                }`}
+                                style={filtroStatus === tab ? { background: "hsl(225 75% 52%)" } : {}}
+                            >
+                                {tab === "TODOS" ? "Todos" : tab === "PENDENTE" ? "Pendentes" : "Concluídos"}
+                            </button>
+                        ))}
                     </div>
-                    <div className="bg-white/15 backdrop-blur-sm rounded-xl px-3 py-3 text-center">
-                        <p className="text-2xl font-bold text-emerald-300">{concluidos}</p>
-                        <p className="text-[10px] text-white/70 font-medium uppercase tracking-wider">Concluídos</p>
-                    </div>
                 </div>
 
-                {/* Search */}
-                <div className="relative">
-                    <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-white/40" />
-                    <input
-                        type="text"
-                        placeholder="Buscar chamado..."
-                        value={busca}
-                        onChange={(e) => setBusca(e.target.value)}
-                        className="w-full pl-10 pr-4 py-3 rounded-xl bg-white/15 backdrop-blur-sm text-sm text-white placeholder:text-white/40 focus:outline-none focus:bg-white/25 transition-colors border border-white/10"
-                    />
-                </div>
-            </header>
-
-            {/* Filter Tabs */}
-            <div className="px-5 -mt-3">
-                <div className="bg-white rounded-xl border border-slate-200 p-1 flex gap-1 shadow-sm">
-                    {navTabs.map((tab) => (
-                        <button
-                            key={tab}
-                            onClick={() => setFiltroStatus(tab)}
-                            className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${
-                                filtroStatus === tab
-                                    ? "text-white shadow-md"
-                                    : "text-slate-500 hover:text-slate-800"
-                            }`}
-                            style={filtroStatus === tab ? { background: "hsl(225 75% 52%)" } : {}}
-                        >
-                            {tab === "TODOS" ? "Todos" : tab === "PENDENTE" ? "Pendentes" : "Concluídos"}
-                        </button>
-                    ))}
-                </div>
-            </div>
-
-            {/* List */}
-            <div className="px-5 py-4 space-y-3 pb-20">
-                {loading ? (
-                    <p className="text-center py-10 text-slate-400 animate-pulse">Carregando chamados...</p>
-                ) : (
-                    <>
-                        {chamadosFiltrados.map((chamado) => {
-                            const isPendente = chamado.status?.toLowerCase() === 'pendente';
-                            return (
-                                <div
-                                    key={chamado.id}
-                                    onClick={() => router.push(`/chamados/${chamado.id}`)}
-                                    className="bg-white cursor-pointer rounded-2xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-md transition-shadow active:scale-[0.99]"
-                                >
-                                    {/* Card top accent */}
+                {/* List */}
+                <div className="px-5 py-4 space-y-3 pb-20">
+                    {loading ? (
+                        <p className="text-center py-10 text-slate-400 animate-pulse">Carregando chamados...</p>
+                    ) : (
+                        <>
+                            {chamadosFiltrados.map((chamado) => {
+                                const isPendente = chamado.status?.toLowerCase() === 'pendente';
+                                return (
                                     <div
-                                        className="h-1"
-                                        style={{
-                                            background: isPendente
-                                                ? "linear-gradient(90deg, hsl(40 90% 55%), hsl(30 90% 55%))"
-                                                : "linear-gradient(90deg, hsl(152 70% 45%), hsl(160 70% 40%))",
-                                        }}
-                                    />
+                                        key={chamado.id}
+                                        onClick={() => router.push(`/chamados/${chamado.id}`)}
+                                        className="bg-white cursor-pointer rounded-2xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-md transition-shadow active:scale-[0.99]"
+                                    >
+                                        {/* Card top accent */}
+                                        <div
+                                            className="h-1 w-full"
+                                            style={{
+                                                background: isPendente
+                                                    ? "linear-gradient(90deg, hsl(40 90% 55%), hsl(30 90% 55%))"
+                                                    : "linear-gradient(90deg, hsl(152 70% 45%), hsl(160 70% 40%))",
+                                            }}
+                                        />
 
-                                    <div className="p-4">
-                                        {/* Top row */}
-                                        <div className="flex items-start justify-between mb-3">
-                                            <div className="flex items-center gap-3">
-                                                <div
-                                                    className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
-                                                    style={{ background: "hsl(225 75% 52% / 0.1)" }}
-                                                >
-                                                    {chamado.service_types?.name?.toLowerCase().includes("limpeza") ? (
-                                                        <Droplets className="h-5 w-5" style={{ color: "hsl(225 75% 52%)" }} />
-                                                    ) : (
-                                                        <Wrench className="h-5 w-5" style={{ color: "hsl(225 75% 52%)" }} />
-                                                    )}
+                                        <div className="p-4">
+                                            {/* Top row */}
+                                            <div className="flex items-start justify-between mb-3">
+                                                <div className="flex items-center gap-3">
+                                                    <div
+                                                        className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
+                                                        style={{ background: "hsl(225 75% 52% / 0.1)" }}
+                                                    >
+                                                        {chamado.service_types?.name?.toLowerCase().includes("limpeza") ? (
+                                                            <Droplets className="h-5 w-5" style={{ color: "hsl(225 75% 52%)" }} />
+                                                        ) : (
+                                                            <Wrench className="h-5 w-5" style={{ color: "hsl(225 75% 52%)" }} />
+                                                        )}
+                                                    </div>
+                                                    <div>
+                                                        <p className="font-bold text-slate-800 text-[15px]">{chamado.customers?.name || 'Cliente Removido'}</p>
+                                                        <p className="text-xs font-semibold" style={{ color: "hsl(225 75% 52%)" }}>
+                                                            {chamado.service_types?.name || 'Serviço Padrão'}
+                                                        </p>
+                                                    </div>
                                                 </div>
-                                                <div>
-                                                    <p className="font-bold text-slate-800 text-[15px]">{chamado.customers?.name || 'Cliente Removido'}</p>
-                                                    <p className="text-xs font-semibold" style={{ color: "hsl(225 75% 52%)" }}>
-                                                        {chamado.service_types?.name || 'Serviço Padrão'}
+                                                <span
+                                                    className={`text-[10px] font-bold tracking-wider px-2.5 py-1 rounded-lg uppercase whitespace-nowrap ${
+                                                        isPendente
+                                                            ? "bg-amber-100 text-amber-700"
+                                                            : chamado.status?.toLowerCase() === 'cancelado' 
+                                                                ? "bg-red-100 text-red-700"
+                                                                : "bg-emerald-100 text-emerald-700"
+                                                    }`}
+                                                >
+                                                    {chamado.status}
+                                                </span>
+                                            </div>
+
+                                            {/* Description */}
+                                            <div className="bg-slate-50/80 rounded-xl px-3 py-2.5 mb-3">
+                                                <p className="text-sm text-slate-500 whitespace-pre-wrap line-clamp-2">
+                                                    {chamado.description || 'Nenhuma descrição fornecida.'}
+                                                </p>
+                                            </div>
+
+                                            {/* Bottom row */}
+                                            <div className="flex items-center justify-between mt-1">
+                                                <div className="flex items-center gap-4">
+                                                    <p className="text-xs text-slate-500 flex items-center gap-1.5 font-medium">
+                                                        <User className="h-3.5 w-3.5" style={{ color: "hsl(225 75% 52%)" }} />
+                                                        {chamado.profiles?.full_name?.split(' ')[0] || 'N/A'}
+                                                    </p>
+                                                    <p className="text-xs text-slate-500 flex items-center gap-1.5 font-medium">
+                                                        <CalendarDays className="h-3.5 w-3.5" style={{ color: "hsl(225 75% 52%)" }} />
+                                                        {chamado.scheduled_date ? new Date(chamado.scheduled_date).toLocaleDateString() : '--/--/----'}
                                                     </p>
                                                 </div>
-                                            </div>
-                                            <span
-                                                className={`text-[10px] font-bold tracking-wider px-2.5 py-1 rounded-lg uppercase whitespace-nowrap ${
-                                                    isPendente
-                                                        ? "bg-amber-100 text-amber-700"
-                                                        : chamado.status?.toLowerCase() === 'cancelado' 
-                                                            ? "bg-red-100 text-red-700"
-                                                            : "bg-emerald-100 text-emerald-700"
-                                                }`}
-                                            >
-                                                {chamado.status}
-                                            </span>
-                                        </div>
-
-                                        {/* Description */}
-                                        <div className="bg-slate-50/80 rounded-xl px-3 py-2.5 mb-3">
-                                            <p className="text-sm text-slate-500 whitespace-pre-wrap line-clamp-2">
-                                                {chamado.description || 'Nenhuma descrição fornecida.'}
-                                            </p>
-                                        </div>
-
-                                        {/* Bottom row */}
-                                        <div className="flex items-center justify-between mt-1">
-                                            <div className="flex items-center gap-4">
-                                                <p className="text-xs text-slate-500 flex items-center gap-1.5 font-medium">
-                                                    <User className="h-3.5 w-3.5" style={{ color: "hsl(225 75% 52%)" }} />
-                                                    {chamado.profiles?.full_name?.split(' ')[0] || 'N/A'}
-                                                </p>
-                                                <p className="text-xs text-slate-500 flex items-center gap-1.5 font-medium">
-                                                    <CalendarDays className="h-3.5 w-3.5" style={{ color: "hsl(225 75% 52%)" }} />
-                                                    {chamado.scheduled_date ? new Date(chamado.scheduled_date).toLocaleDateString() : '--/--/----'}
-                                                </p>
-                                            </div>
-                                            <div className="flex items-center gap-1.5">
-                                                <button 
-                                                    onClick={(e) => handleDelete(chamado.id, e)}
-                                                    className="p-2 rounded-xl text-slate-400 hover:text-red-500 hover:bg-red-50 transition-colors"
-                                                >
-                                                    <Trash2 className="h-4 w-4" />
-                                                </button>
-                                                <button
-                                                    onClick={(e) => {
-                                                        e.stopPropagation();
-                                                        router.push(`/chamados/${chamado.id}`);
-                                                    }}
-                                                    className="flex items-center gap-1 text-[11px] font-bold px-3 py-1.5 rounded-xl text-white transition-colors"
-                                                    style={{ background: "hsl(225 75% 52%)" }}
-                                                >
-                                                    Detalhes
-                                                    <ChevronRight className="h-3 w-3" />
-                                                </button>
+                                                <div className="flex items-center gap-1.5">
+                                                    <button 
+                                                        onClick={(e) => handleDelete(chamado.id, e)}
+                                                        className="p-2 rounded-xl text-slate-400 hover:text-red-500 hover:bg-red-50 transition-colors"
+                                                    >
+                                                        <Trash2 className="h-4 w-4" />
+                                                    </button>
+                                                    <button
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            router.push(`/chamados/${chamado.id}`);
+                                                        }}
+                                                        className="flex items-center gap-1 text-[11px] font-bold px-3 py-1.5 rounded-xl text-white transition-colors"
+                                                        style={{ background: "hsl(225 75% 52%)" }}
+                                                    >
+                                                        Detalhes
+                                                        <ChevronRight className="h-3 w-3" />
+                                                    </button>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                            );
-                        })}
+                                );
+                            })}
 
-                        {chamadosFiltrados.length === 0 && (
-                            <div className="text-center py-12">
-                                <Droplets className="h-12 w-12 mx-auto mb-3 text-slate-300" />
-                                <p className="text-slate-500 text-sm font-medium">Nenhum chamado encontrado nesta categoria.</p>
-                            </div>
-                        )}
-                    </>
-                )}
+                            {chamadosFiltrados.length === 0 && (
+                                <div className="text-center py-12">
+                                    <Droplets className="h-12 w-12 mx-auto mb-3 text-slate-300" />
+                                    <p className="text-slate-500 text-sm font-medium">Nenhum chamado encontrado nesta categoria.</p>
+                                </div>
+                            )}
+                        </>
+                    )}
+                </div>
             </div>
         </div>
     );

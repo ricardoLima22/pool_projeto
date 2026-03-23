@@ -4,6 +4,13 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '../../../lib/supabase';
 import { useRouter } from 'next/navigation';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '../../../components/ui/select';
 
 export default function NovoChamado() {
     const router = useRouter();
@@ -149,21 +156,16 @@ export default function NovoChamado() {
                         <label className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block">
                             Cliente <span className="text-red-500">*</span>
                         </label>
-                        <div className="relative">
-                            <select
-                                name="customer_id"
-                                value={form.customer_id}
-                                onChange={handleChange}
-                                className="flex h-10 w-full items-center justify-between rounded-md border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:border-slate-400 shadow-sm appearance-none"
-                                required
-                            >
-                                <option value="" disabled>Selecione um cliente...</option>
+                        <Select required value={form.customer_id} onValueChange={(val) => handleChange({ target: { name: 'customer_id', value: val } })}>
+                            <SelectTrigger className="w-full h-10 bg-white shadow-sm border-slate-200">
+                                <SelectValue placeholder="Selecione um cliente..." />
+                            </SelectTrigger>
+                            <SelectContent className="bg-white">
                                 {clientes.map(c => (
-                                    <option key={c.id} value={c.id}>{c.name}</option>
+                                    <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
                                 ))}
-                            </select>
-                            <svg className="absolute right-3 top-3 h-4 w-4 opacity-50 pointer-events-none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg>
-                        </div>
+                            </SelectContent>
+                        </Select>
                     </div>
 
                     {/* Tipo de Serviço */}
@@ -171,21 +173,16 @@ export default function NovoChamado() {
                         <label className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block">
                             Tipo de Serviço <span className="text-red-500">*</span>
                         </label>
-                        <div className="relative">
-                            <select
-                                name="service_type_id"
-                                value={form.service_type_id}
-                                onChange={handleChange}
-                                className="flex h-10 w-full items-center justify-between rounded-md border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:border-slate-400 shadow-sm appearance-none"
-                                required
-                            >
-                                <option value="" disabled>Selecione o serviço...</option>
+                        <Select required value={form.service_type_id} onValueChange={(val) => handleChange({ target: { name: 'service_type_id', value: val } })}>
+                            <SelectTrigger className="w-full h-10 bg-white shadow-sm border-slate-200">
+                                <SelectValue placeholder="Selecione o serviço..." />
+                            </SelectTrigger>
+                            <SelectContent className="bg-white">
                                 {servicos.map(s => (
-                                    <option key={s.id} value={s.id}>{s.name}</option>
+                                    <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>
                                 ))}
-                            </select>
-                            <svg className="absolute right-3 top-3 h-4 w-4 opacity-50 pointer-events-none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg>
-                        </div>
+                            </SelectContent>
+                        </Select>
                     </div>
 
                     {/* Funcionário Responsável */}
@@ -193,24 +190,19 @@ export default function NovoChamado() {
                         <label className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block">
                             Atribuir ao Funcionário <span className="text-red-500">*</span>
                         </label>
-                        <div className="relative">
-                            <select
-                                name="piscineiro_id"
-                                value={form.piscineiro_id}
-                                onChange={handleChange}
-                                className="flex h-10 w-full items-center justify-between rounded-md border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:border-slate-400 shadow-sm appearance-none"
-                                required
-                            >
-                                <option value="" disabled>Selecione o funcionário...</option>
+                        <Select required value={form.piscineiro_id} onValueChange={(val) => handleChange({ target: { name: 'piscineiro_id', value: val } })}>
+                            <SelectTrigger className="w-full h-10 bg-white shadow-sm border-slate-200">
+                                <SelectValue placeholder="Selecione o funcionário..." />
+                            </SelectTrigger>
+                            <SelectContent className="bg-white">
                                 {funcionarios.map(f => (
-                                    <option key={f.id} value={f.id}>{f.full_name}</option>
+                                    <SelectItem key={f.id} value={f.id}>{f.full_name}</SelectItem>
                                 ))}
                                 {funcionarios.length === 0 && (
-                                    <option value="" disabled>⚠️ Nenhum funcionário encontrado</option>
+                                    <SelectItem value="none" disabled>⚠️ Nenhum funcionário encontrado</SelectItem>
                                 )}
-                            </select>
-                            <svg className="absolute right-3 top-3 h-4 w-4 opacity-50 pointer-events-none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg>
-                        </div>
+                            </SelectContent>
+                        </Select>
                     </div>
 
                     {/* Data Agendada */}
@@ -231,20 +223,17 @@ export default function NovoChamado() {
                     {/* Status */}
                     <div className="space-y-1.5">
                         <label className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block">Status</label>
-                        <div className="relative">
-                            <select
-                                name="status"
-                                value={form.status}
-                                onChange={handleChange}
-                                className="flex h-10 w-full items-center justify-between rounded-md border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:border-slate-400 shadow-sm appearance-none"
-                            >
-                                <option value="Pendente">Pendente</option>
-                                <option value="Em andamento">Em andamento</option>
-                                <option value="Concluido">Concluído</option>
-                                <option value="Cancelado">Cancelado</option>
-                            </select>
-                            <svg className="absolute right-3 top-3 h-4 w-4 opacity-50 pointer-events-none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg>
-                        </div>
+                        <Select value={form.status} onValueChange={(val) => handleChange({ target: { name: 'status', value: val } })}>
+                            <SelectTrigger className="w-full h-10 bg-white shadow-sm border-slate-200">
+                                <SelectValue placeholder="Selecione o status..." />
+                            </SelectTrigger>
+                            <SelectContent className="bg-white">
+                                <SelectItem value="Pendente">Pendente</SelectItem>
+                                <SelectItem value="Em andamento">Em andamento</SelectItem>
+                                <SelectItem value="Concluido">Concluído</SelectItem>
+                                <SelectItem value="Cancelado">Cancelado</SelectItem>
+                            </SelectContent>
+                        </Select>
                     </div>
 
                     {/* Descrição */}

@@ -231,7 +231,6 @@ export default function NovoChamado() {
                             </SelectTrigger>
                             <SelectContent className="bg-white">
                                 <SelectItem value="Pendente">Pendente</SelectItem>
-                                <SelectItem value="Em andamento">Em andamento</SelectItem>
                                 <SelectItem value="Concluido">Concluído</SelectItem>
                                 <SelectItem value="Cancelado">Cancelado</SelectItem>
                             </SelectContent>

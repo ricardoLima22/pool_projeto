@@ -208,7 +208,7 @@ export default function NovoChamado() {
                             name="scheduled_date"
                             value={form.scheduled_date}
                             onChange={handleChange}
-                            className="flex h-10 w-full items-center justify-between rounded-md border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:border-slate-400 shadow-sm"
+                            className="flex h-10 w-full items-center justify-between rounded-md border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder:text-slate-500 focus:outline-none focus:ring-[#10b673] focus:border-[#10b673] focus:ring-1 focus:ring-offset-0 shadow-sm"
                             required
                         />
                     </div>
@@ -237,7 +237,7 @@ export default function NovoChamado() {
                             value={form.description}
                             onChange={handleChange}
                             placeholder="Detalhes adicionais sobre o serviço..."
-                            className="flex min-h-[120px] w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:border-slate-400 shadow-sm resize-none"
+                            className="flex min-h-[120px] w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-[#10b673] focus:border-[#10b673] focus:ring-1 focus:ring-offset-0 shadow-sm resize-none"
                             maxLength={1000}
                         />
                     </div>

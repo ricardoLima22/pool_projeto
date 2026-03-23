@@ -34,7 +34,7 @@ export default function NovoServico() {
         setLoading(true);
 
         const { error } = await supabase
-            .from('service_type')
+            .from('service_types')
             .insert([
                 {
                     name: nome,

@@ -146,7 +146,7 @@ export default function NovoChamado() {
                 <form onSubmit={handleSubmit} className="bg-white rounded-2xl border border-slate-200 p-5 space-y-5 shadow-sm">
                     {/* Cliente */}
                     <div className="space-y-1.5">
-                        <label className="text-slate-800 font-semibold text-sm">
+                        <label className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block">
                             Cliente <span className="text-red-500">*</span>
                         </label>
                         <div className="relative">
@@ -168,7 +168,7 @@ export default function NovoChamado() {
 
                     {/* Tipo de Serviço */}
                     <div className="space-y-1.5">
-                        <label className="text-slate-800 font-semibold text-sm">
+                        <label className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block">
                             Tipo de Serviço <span className="text-red-500">*</span>
                         </label>
                         <div className="relative">
@@ -190,7 +190,7 @@ export default function NovoChamado() {
 
                     {/* Funcionário Responsável */}
                     <div className="space-y-1.5">
-                        <label className="text-slate-800 font-semibold text-sm">
+                        <label className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block">
                             Atribuir ao Funcionário <span className="text-red-500">*</span>
                         </label>
                         <div className="relative">
@@ -215,7 +215,7 @@ export default function NovoChamado() {
 
                     {/* Data Agendada */}
                     <div className="space-y-1.5">
-                        <label className="text-slate-800 font-semibold text-sm">
+                        <label className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block">
                             Data e Hora Agendada <span className="text-red-500">*</span>
                         </label>
                         <input
@@ -230,7 +230,7 @@ export default function NovoChamado() {
 
                     {/* Status */}
                     <div className="space-y-1.5">
-                        <label className="text-slate-800 font-semibold text-sm">Status</label>
+                        <label className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block">Status</label>
                         <div className="relative">
                             <select
                                 name="status"
@@ -249,7 +249,7 @@ export default function NovoChamado() {
 
                     {/* Descrição */}
                     <div className="space-y-1.5">
-                        <label className="text-slate-800 font-semibold text-sm">Descrição / Observações</label>
+                        <label className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block">Descrição / Observações</label>
                         <textarea
                             name="description"
                             value={form.description}

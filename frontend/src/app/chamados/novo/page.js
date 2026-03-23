@@ -163,9 +163,18 @@ export default function NovoChamado() {
 
                     {/* Tipo de Serviço */}
                     <div className="space-y-1.5">
-                        <label className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block">
-                            Tipo de Serviço <span className="text-red-500">*</span>
-                        </label>
+                        <div className="flex justify-between items-center">
+                            <label className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block">
+                                Tipo de Serviço <span className="text-red-500">*</span>
+                            </label>
+                            <button 
+                                type="button"
+                                onClick={() => router.push('/servicos/novo')}
+                                className="text-[11px] font-bold text-[#2ECC71] bg-[#eafaf1] px-2.5 py-1 rounded-md hover:bg-[#d5f5e3] transition-colors flex items-center gap-1"
+                            >
+                                + Adicionar Serviço
+                            </button>
+                        </div>
                         <Select required value={form.service_type_id} onValueChange={(val) => handleChange({ target: { name: 'service_type_id', value: val } })}>
                             <SelectTrigger className="w-full h-10 bg-white shadow-sm border-slate-200 text-slate-800 focus:ring-[#10b673] focus:ring-offset-0 focus:ring-1 data-[state=open]:border-[#10b673] data-[state=open]:ring-1 data-[state=open]:ring-[#10b673]">
                                 <SelectValue placeholder="Selecione o serviço..." />

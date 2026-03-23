@@ -372,8 +372,8 @@ function NovaVisita() {
                 {/* Registro de Uso de Produtos (Opcional para a Cobrança) */}
                 <section>
                     <div className="flex items-baseline gap-2 mb-2">
-                        <h2 className="text-sm font-bold text-slate-800">Produtos Utilizados</h2>
-                        <span className="text-xs text-slate-500">(Estoque)</span>
+                        <h2 className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block">Produtos Utilizados</h2>
+                        <span className="text-[10px] text-slate-400 tracking-normal">(Estoque)</span>
                     </div>
                     {produtos.length === 0 ? (
                         <div className="rounded-xl border border-slate-200 bg-white py-4 text-center">
@@ -408,7 +408,7 @@ function NovaVisita() {
 
                 {/* Registro Fotográfico e pH */}
                 <section>
-                    <h2 className="text-sm font-bold text-slate-800 mb-3">Registro e Medições</h2>
+                    <h2 className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block mb-3">Registro e Medições</h2>
                     
                     {/* Fotos */}
                     <div className="grid grid-cols-5 gap-3 mb-3">
@@ -478,7 +478,7 @@ function NovaVisita() {
             <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 p-4 space-y-3 z-20">
                 <div className="max-w-2xl mx-auto space-y-3">
                     <div>
-                        <label className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                        <label className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block mb-1">
                             Valor Cobrado
                         </label>
                         <div className="flex items-center gap-2 mt-1">

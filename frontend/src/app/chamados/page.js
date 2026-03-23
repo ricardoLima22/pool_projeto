@@ -76,7 +76,7 @@ export default function ListagemChamados() {
     const navTabs = ["TODOS", "PENDENTE", "CONCLUÍDO"];
 
     return (
-        <div className="min-h-screen bg-slate-50">
+        <div className="min-h-screen bg-[#fcfbf8]">
             {/* Header */}
             <header
                 className="px-5 pt-6 pb-8 rounded-b-3xl"

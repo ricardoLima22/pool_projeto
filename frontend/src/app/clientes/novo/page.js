@@ -64,8 +64,8 @@ export default function NovoCliente() {
 
     return (
         <main className="min-h-screen bg-[#fcfbf8] pb-24">
-            <div className="flex items-center gap-3 px-4 py-4 bg-white border-b border-slate-200">
-                <button onClick={() => router.back()} className="text-slate-800">
+            <div className="flex items-center gap-3 px-4 py-4 bg-white border-b border-slate-200 sticky top-0 z-10">
+                <button onClick={() => router.back()} className="text-slate-800 transition-colors">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
                 </button>
                 <h1 className="text-lg font-bold text-slate-800">Novo Cliente</h1>
@@ -73,55 +73,55 @@ export default function NovoCliente() {
 
             <form onSubmit={handleSalvar} className="px-4 pt-2 pb-6 space-y-1">
                 <div className="pt-4">
-                    <label className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block">Nome do Cliente</label>
+                    <label className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block mb-1">Nome do Cliente</label>
                     <input
                         required
                         type="text"
                         placeholder="Ex: Casa do João"
-                        className="w-full border-b-2 border-slate-200 bg-transparent py-3 text-slate-800 placeholder:text-slate-400 focus:border-[#008080] focus:outline-none transition-colors text-sm"
+                        className="w-full border-b-2 border-slate-200 bg-transparent py-3 text-slate-800 placeholder:text-slate-400 focus:border-[#008080] focus:outline-none transition-colors text-sm rounded-none appearance-none"
                         onChange={(e) => setNome(e.target.value)}
                     />
                 </div>
 
                 <div className="pt-4">
-                    <label className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block">WhatsApp (DDD + Número)</label>
+                    <label className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block mb-1">WhatsApp (DDD + Número)</label>
                     <input
                         required
                         type="tel"
                         placeholder="Ex: 27999887766"
-                        className="w-full border-b-2 border-slate-200 bg-transparent py-3 text-slate-800 placeholder:text-slate-400 focus:border-[#008080] focus:outline-none transition-colors text-sm"
+                        className="w-full border-b-2 border-slate-200 bg-transparent py-3 text-slate-800 placeholder:text-slate-400 focus:border-[#008080] focus:outline-none transition-colors text-sm rounded-none appearance-none"
                         onChange={(e) => setWhatsapp(e.target.value)}
                     />
                 </div>
 
                 <div className="pt-4">
-                    <label className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block">E-mail (Opcional)</label>
+                    <label className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block mb-1">E-mail (Opcional)</label>
                     <input
                         type="email"
                         placeholder="Ex: cliente@email.com"
-                        className="w-full border-b-2 border-slate-200 bg-transparent py-3 text-slate-800 placeholder:text-slate-400 focus:border-[#008080] focus:outline-none transition-colors text-sm"
+                        className="w-full border-b-2 border-slate-200 bg-transparent py-3 text-slate-800 placeholder:text-slate-400 focus:border-[#008080] focus:outline-none transition-colors text-sm rounded-none appearance-none"
                         onChange={(e) => setEmail(e.target.value)}
                     />
                 </div>
 
                 <div className="pt-4">
-                    <label className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block">Endereço</label>
+                    <label className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block mb-1">Endereço</label>
                     <input
                         type="text"
                         placeholder="Rua, Número, Bairro"
-                        className="w-full border-b-2 border-slate-200 bg-transparent py-3 text-slate-800 placeholder:text-slate-400 focus:border-[#008080] focus:outline-none transition-colors text-sm"
+                        className="w-full border-b-2 border-slate-200 bg-transparent py-3 text-slate-800 placeholder:text-slate-400 focus:border-[#008080] focus:outline-none transition-colors text-sm rounded-none appearance-none"
                         onChange={(e) => setEndereco(e.target.value)}
                     />
                 </div>
 
                 <div className="pt-4">
-                    <label className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block">Volume da Piscina (m³)</label>
+                    <label className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block mb-1">Volume da Piscina (m³)</label>
                     <input
                         required
                         type="number"
                         step="0.1"
                         placeholder="Ex: 45.5"
-                        className="w-full border-b-2 border-slate-200 bg-transparent py-3 text-slate-800 placeholder:text-slate-400 focus:border-[#008080] focus:outline-none transition-colors text-sm"
+                        className="w-full border-b-2 border-slate-200 bg-transparent py-3 text-slate-800 placeholder:text-slate-400 focus:border-[#008080] focus:outline-none transition-colors text-sm rounded-none appearance-none"
                         onChange={(e) => setVolume(e.target.value)}
                     />
                 </div>

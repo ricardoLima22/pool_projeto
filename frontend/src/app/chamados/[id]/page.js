@@ -4,6 +4,7 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '../../../lib/supabase';
 import { useParams, useRouter } from 'next/navigation';
+import { ArrowLeft } from 'lucide-react';
 
 export default function DetalhesChamado() {
     const [chamado, setChamado] = useState(null);
@@ -110,119 +111,145 @@ export default function DetalhesChamado() {
     }
 
     return (
-        <main className="min-h-screen bg-slate-50 p-4 pb-24">
-            <div className="flex items-center gap-4 mb-8">
-                <button onClick={() => router.back()} className="text-slate-500 text-2xl">←</button>
-                <h1 className="text-xl font-black text-slate-800">
+        <main className="min-h-screen bg-[#fcfbf8] md:p-8">
+            {/* Header */}
+            <div className="flex items-center gap-3 px-5 py-6">
+                <button onClick={() => router.back()} className="text-slate-800 hover:text-slate-500 transition-colors">
+                    <ArrowLeft className="h-5 w-5" />
+                </button>
+                <h1 className="text-xl font-black text-slate-800 tracking-tight">
                     {editando ? "Editar Chamado" : "Detalhes do Chamado"}
                 </h1>
             </div>
 
-            <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm mb-6">
-                {!editando ? (
-                    <div className="space-y-6">
-                        <div>
-                            <h2 className="text-xs font-bold text-slate-400 uppercase mb-1">Cliente</h2>
-                            <p className="text-lg font-bold text-slate-800">{chamado.customers?.name || 'Cliente Removido'}</p>
-                        </div>
-                        <div>
-                            <h2 className="text-xs font-bold text-slate-400 uppercase mb-1">Status</h2>
-                            <p className={`text-sm font-bold inline-block px-3 py-1 rounded-xl uppercase tracking-wider ${getStatusColor(chamado.status)}`}>
-                                {formatStatusName(chamado.status)}
-                            </p>
-                        </div>
-                        <div>
-                            <h2 className="text-xs font-bold text-slate-400 uppercase mb-1">Data Agendada</h2>
-                            <p className="text-lg font-bold text-slate-800">
-                                {chamado.scheduled_date ? new Date(chamado.scheduled_date).toLocaleDateString('pt-BR', { timeZone: 'UTC' }) : 'Não agendado'}
-                            </p>
-                        </div>
-                        <div>
-                            <h2 className="text-xs font-bold text-slate-400 uppercase mb-1">Tipo de Serviço</h2>
-                            <p className="text-lg font-bold text-slate-800">{chamado.service_types?.name || 'Serviço Padrão'}</p>
-                        </div>
-                        <div>
-                            <h2 className="text-xs font-bold text-slate-400 uppercase mb-1">Responsável (Piscineiro)</h2>
-                            <p className="text-lg font-bold text-slate-800">{chamado.profiles?.full_name || 'Não atribuído'}</p>
-                        </div>
-                        <div>
-                            <h2 className="text-xs font-bold text-slate-400 uppercase mb-1">Descrição</h2>
-                            <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100">
-                                <p className="text-slate-700 whitespace-pre-wrap">{chamado.description || 'Sem descrição cadastrada.'}</p>
+            <div className="px-5">
+                <div className="bg-white p-7 rounded-[32px] border border-slate-100 shadow-sm mb-10">
+                    {!editando ? (
+                        <div className="space-y-7">
+                            {/* Cliente */}
+                            <div>
+                                <h2 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">Cliente</h2>
+                                <p className="text-lg font-bold text-slate-800 leading-tight">
+                                    {chamado.customers?.name || 'Cliente Removido'}
+                                </p>
+                            </div>
+
+                            {/* Status */}
+                            <div>
+                                <h2 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Status</h2>
+                                <span className={`text-[11px] font-black px-3.5 py-1.5 rounded-lg uppercase tracking-wider ${getStatusColor(chamado.status)} shadow-sm border border-current opacity-80`}>
+                                    {formatStatusName(chamado.status)}
+                                </span>
+                            </div>
+
+                            {/* Data Agendada */}
+                            <div>
+                                <h2 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">Data Agendada</h2>
+                                <p className="text-lg font-bold text-slate-800 leading-tight">
+                                    {chamado.scheduled_date ? new Date(chamado.scheduled_date).toLocaleDateString('pt-BR', { timeZone: 'UTC' }) : 'Não agendado'}
+                                </p>
+                            </div>
+
+                            {/* Tipo de Serviço */}
+                            <div>
+                                <h2 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">Tipo de Serviço</h2>
+                                <p className="text-lg font-bold text-slate-800 leading-tight">
+                                    {chamado.service_types?.name || 'Serviço Padrão'}
+                                </p>
+                            </div>
+
+                            {/* Responsável */}
+                            <div>
+                                <h2 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">Responsável (Piscineiro)</h2>
+                                <p className="text-lg font-bold text-slate-800 leading-tight">
+                                    {chamado.profiles?.full_name || 'Não atribuído'}
+                                </p>
+                            </div>
+
+                            {/* Descrição */}
+                            <div>
+                                <h2 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Descrição</h2>
+                                <div className="bg-slate-50/80 p-5 rounded-2xl border border-slate-100 min-h-[100px]">
+                                    <p className="text-[15px] text-slate-600 leading-relaxed whitespace-pre-wrap">
+                                        {chamado.description || 'Nenhuma observação fornecida.'}
+                                    </p>
+                                </div>
+                            </div>
+
+                            {/* Botões de Ação */}
+                            <div className="pt-4 flex flex-col sm:flex-row gap-3">
+                                <button
+                                    onClick={() => setEditando(true)}
+                                    className="flex-1 bg-[#22c55e] hover:bg-[#16a34a] text-white py-4.5 rounded-2xl font-black shadow-md hover:shadow-lg transition-all text-sm uppercase tracking-widest active:scale-[0.98]"
+                                >
+                                    Editar Chamado
+                                </button>
+                                <button
+                                    onClick={handleDelete}
+                                    className="flex-1 bg-white hover:bg-red-50 text-red-500 py-4.5 rounded-2xl font-black border-2 border-red-500 transition-all text-sm uppercase tracking-widest active:scale-[0.98]"
+                                >
+                                    Excluir
+                                </button>
                             </div>
                         </div>
+                    ) : (
+                        <form onSubmit={handleUpdate} className="space-y-6">
+                            <div>
+                                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-2">Status</label>
+                                <select
+                                    value={status}
+                                    onChange={(e) => setStatus(e.target.value)}
+                                    className="w-full p-4 bg-slate-50 rounded-2xl border-none ring-1 ring-slate-200 focus:ring-2 focus:ring-[#22c55e] text-slate-700 font-bold transition-all outline-none"
+                                >
+                                    <option value="Pendente">Pendente</option>
+                                    <option value="Confirmada">Confirmada</option>
+                                    <option value="em_execucao">Em Execução</option>
+                                    <option value="Concluido">Concluído</option>
+                                    <option value="Cancelado">Cancelado</option>
+                                </select>
+                            </div>
 
-                        <div className="pt-6 mt-4 border-t border-slate-100 flex gap-4">
-                            <button
-                                onClick={() => setEditando(true)}
-                                className="flex-1 bg-blue-600 text-white py-4 rounded-2xl font-bold shadow-lg shadow-blue-200 active:scale-95 transition-all text-sm uppercase"
-                            >
-                                Editar Chamado
-                            </button>
-                            <button
-                                onClick={handleDelete}
-                                className="flex-1 bg-red-100 text-red-600 py-4 rounded-2xl font-bold active:scale-95 transition-all text-sm uppercase hover:bg-red-200"
-                            >
-                                Excluir
-                            </button>
-                        </div>
-                    </div>
-                ) : (
-                    <form onSubmit={handleUpdate} className="space-y-5 flex flex-col">
-                        <div>
-                            <label className="block text-xs font-bold text-slate-400 uppercase mb-2">Cliente (Somente Leitura)</label>
-                            <input
-                                disabled type="text" value={chamado.customers?.name || 'N/A'}
-                                className="w-full p-4 bg-slate-100 opacity-70 rounded-2xl border-none text-slate-500 cursor-not-allowed"
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-xs font-bold text-slate-400 uppercase mb-2">Status</label>
-                            <select
-                                value={status}
-                                onChange={(e) => setStatus(e.target.value)}
-                                className="w-full p-4 bg-slate-50 rounded-2xl border-none focus:ring-2 ring-blue-500 text-slate-700 font-medium"
-                            >
-                                <option value="Pendente">Pendente</option>
-                                <option value="Confirmada">Confirmada</option>
-                                <option value="em_execucao">Em Execução</option>
-                                <option value="Concluido">Concluído</option>
-                                <option value="Cancelado">Cancelado</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label className="block text-xs font-bold text-slate-400 uppercase mb-2">Data Agendada</label>
-                            <input
-                                type="date" value={scheduledDate} onChange={(e) => setScheduledDate(e.target.value)}
-                                className="w-full p-4 bg-slate-50 rounded-2xl border-none focus:ring-2 ring-blue-500 text-slate-700"
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-xs font-bold text-slate-400 uppercase mb-2">Descrição</label>
-                            <textarea
-                                value={description} onChange={(e) => setDescription(e.target.value)}
-                                rows={4}
-                                className="w-full p-4 bg-slate-50 rounded-2xl border-none focus:ring-2 ring-blue-500 text-slate-700 resize-none"
-                                placeholder="Detalhes do serviço..."
-                            />
-                        </div>
+                            <div>
+                                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-2">Data Agendada</label>
+                                <input
+                                    type="date"
+                                    value={scheduledDate}
+                                    onChange={(e) => setScheduledDate(e.target.value)}
+                                    className="w-full p-4 bg-slate-50 rounded-2xl border-none ring-1 ring-slate-200 focus:ring-2 focus:ring-[#22c55e] text-slate-700 font-bold transition-all outline-none"
+                                />
+                            </div>
 
-                        <div className="pt-6 border-t border-slate-100 flex gap-4 mt-2">
-                            <button
-                                type="button" onClick={() => setEditando(false)} disabled={salvando}
-                                className="flex-1 bg-slate-100 text-slate-600 py-4 rounded-2xl font-bold active:scale-95 transition-all"
-                            >
-                                Cancelar
-                            </button>
-                            <button
-                                type="submit" disabled={salvando}
-                                className="flex-1 bg-emerald-500 text-white py-4 rounded-2xl font-bold shadow-lg shadow-emerald-200 active:scale-95 transition-all"
-                            >
-                                {salvando ? 'Salvando...' : 'Salvar Alterações'}
-                            </button>
-                        </div>
-                    </form>
-                )}
+                            <div>
+                                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-2">Descrição / Observações</label>
+                                <textarea
+                                    value={description}
+                                    onChange={(e) => setDescription(e.target.value)}
+                                    rows={5}
+                                    className="w-full p-4 bg-slate-50 rounded-2xl border-none ring-1 ring-slate-200 focus:ring-2 focus:ring-[#22c55e] text-slate-700 font-medium transition-all outline-none resize-none"
+                                    placeholder="Detalhes adicionais sobre o serviço..."
+                                />
+                            </div>
+
+                            <div className="pt-4 flex flex-col sm:flex-row gap-3">
+                                <button
+                                    type="button"
+                                    onClick={() => setEditando(false)}
+                                    disabled={salvando}
+                                    className="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-600 py-4.5 rounded-2xl font-black transition-all text-sm uppercase tracking-widest"
+                                >
+                                    Cancelar
+                                </button>
+                                <button
+                                    type="submit"
+                                    disabled={salvando}
+                                    className="flex-1 bg-[#22c55e] hover:bg-[#16a34a] text-white py-4.5 rounded-2xl font-black shadow-md hover:shadow-lg transition-all text-sm uppercase tracking-widest disabled:opacity-50"
+                                >
+                                    {salvando ? 'Salvando...' : 'Salvar Detalhes'}
+                                </button>
+                            </div>
+                        </form>
+                    )}
+                </div>
             </div>
         </main>
     );

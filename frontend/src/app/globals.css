@@ -77,3 +77,10 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+/* Reset default iOS input styles globally */
+input, textarea, select {
+  -webkit-appearance: none;
+  appearance: none;
+  @apply bg-transparent;
+}

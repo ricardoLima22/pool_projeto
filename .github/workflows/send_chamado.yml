@@ -1,4 +1,4 @@
-name: 3. Enviar Novo Chamado (Acionado via API)
+name: 3. Enviar Novo Chamado
 
 on:
   repository_dispatch:

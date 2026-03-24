@@ -47,11 +47,11 @@ mongoose.connect(MONGODB_URI).then(async () => {
 
     if (piscineiro_id) {
         const SUPABASE_URL = process.env.SUPABASE_URL;
-        const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY;
+        const SUPABASE_KEY = process.env.SUPABASE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY;
         
-        if (SUPABASE_URL && SUPABASE_ANON_KEY) {
+        if (SUPABASE_URL && SUPABASE_KEY) {
             console.log(">> Buscando número do funcionário e endereço do cliente no Supabase...");
-            const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
             let query = supabase.from('profiles').select('phone');
             
             if (piscineiro_id) {
@@ -91,7 +91,7 @@ mongoose.connect(MONGODB_URI).then(async () => {
                 `*Descrição / Observações:*\n${descricao || 'Sem observações'}`;
 
         } else {
-            console.error("ERRO: A variável de ambiente SUPABASE_URL ou SUPABASE_ANON_KEY não está configurada no ambiente do GitHub Actions.");
+            console.error("ERRO: A variável de ambiente SUPABASE_URL ou SUPABASE_KEY não está configurada no ambiente do GitHub Actions.");
             process.exit(1);
         }
     }

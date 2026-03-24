@@ -52,7 +52,7 @@ export default function SplashScreen({ message = "Carregando sistema" }: { messa
         @keyframes dot-bounce { 0%,80%,100% { transform: scale(0.6); opacity: 0.4; } 40% { transform: scale(1); opacity: 1; } }
       `}</style>
       <div className="splash-logo-ring"></div>
-      <div className="splash-title">Pool Manager</div>
+      <div className="splash-title">Pool Light</div>
       <div className="splash-subtitle">{message}</div>
       <div className="splash-dots">
         <span></span>

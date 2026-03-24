@@ -4,6 +4,7 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '../../lib/supabase'; // Caminho relativo corrigido
 import { useRouter } from 'next/navigation';
+import SplashScreen from '../../components/SplashScreen';
 
 export default function ListagemClientes() {
     const [clientes, setClientes] = useState([]);
@@ -88,7 +89,7 @@ export default function ListagemClientes() {
                 </div>
 
                 {loading ? (
-                    <p className="text-center py-10 text-slate-400 animate-pulse font-medium">Carregando seus clientes...</p>
+                    <SplashScreen message="Carregando seus clientes..." />
                 ) : (
                     <div className="space-y-3">
                         {clientesFiltrados.map(cliente => (

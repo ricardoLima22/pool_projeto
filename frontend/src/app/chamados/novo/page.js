@@ -11,6 +11,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '../../../components/ui/select';
+import SplashScreen from '../../../components/SplashScreen';
 
 export default function NovoChamado() {
     const router = useRouter();
@@ -126,7 +127,7 @@ export default function NovoChamado() {
     };
 
     if (loading) {
-        return <p className="text-center py-10 text-slate-400 animate-pulse">Carregando informações...</p>;
+        return <SplashScreen message="Carregando informações..." />;
     }
 
     return (

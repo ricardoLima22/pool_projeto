@@ -5,6 +5,7 @@ import { supabase } from '../../lib/supabase';
 import { useRouter } from 'next/navigation';
 import { useWeather } from '../../hooks/useWeather';
 import { Droplets, LogOut, Camera, Users, UserPlus, Package, PlusCircle, BarChart3, Calendar, MapPin, Clock, TrendingUp, Waves, Thermometer } from "lucide-react";
+import SplashScreen from '../../components/SplashScreen';
 
 const StatCard = ({ icon, value, label }) => (
   <div className="bg-white rounded-xl p-4 shadow-sm border border-slate-200 text-center">
@@ -146,14 +147,7 @@ export default function Dashboard() {
     };
 
     if (loading) {
-        return (
-            <main className="min-h-screen bg-slate-50 flex items-center justify-center">
-                <div className="flex flex-col items-center">
-                    <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-                    <p className="mt-4 text-slate-500 font-bold uppercase tracking-widest text-sm">Carregando painel...</p>
-                </div>
-            </main>
-        );
+        return <SplashScreen message="Carregando painel..." />;
     }
 
     return (

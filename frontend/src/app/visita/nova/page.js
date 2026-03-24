@@ -4,10 +4,11 @@
 import { useState, useEffect, Suspense } from 'react';
 import { supabase } from '../../../lib/supabase';
 import { useSearchParams, useRouter } from 'next/navigation';
+import SplashScreen from '../../../components/SplashScreen';
 
 export default function NovaVisitaPage() {
     return (
-        <Suspense fallback={<p className="p-10 text-center animate-pulse">Carregando formulário...</p>}>
+        <Suspense fallback={<SplashScreen message="Carregando formulário..." />}>
             <NovaVisita />
         </Suspense>
     );

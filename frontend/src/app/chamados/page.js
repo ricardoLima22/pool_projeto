@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import { supabase } from '../../lib/supabase';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft, Search, Plus, Droplets, User, CalendarDays, Trash2, Wrench, ChevronRight } from 'lucide-react';
+import SplashScreen from '../../components/SplashScreen';
 
 export default function ListagemChamados() {
     const [chamados, setChamados] = useState([]);
@@ -153,7 +154,7 @@ export default function ListagemChamados() {
             {/* List */}
             <div className="px-5 py-4 space-y-3 pb-20">
                 {loading ? (
-                    <p className="text-center py-10 text-slate-400 animate-pulse">Carregando chamados...</p>
+                    <SplashScreen message="Carregando chamados..." />
                 ) : (
                     <>
                         {chamadosFiltrados.map((chamado) => {

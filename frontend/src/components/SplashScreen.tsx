@@ -9,7 +9,7 @@ export default function SplashScreen({ message = "Carregando sistema" }: { messa
         alignItems: "center",
         justifyContent: "center",
         minHeight: "100vh",
-        background: "linear-gradient(135deg, hsl(225, 72%, 45%), hsl(225, 100%, 57%))",
+        background: "linear-gradient(135deg, hsla(178, 39%, 35%, 1.00), hsla(186, 82%, 68%, 1.00))",
         fontFamily: "system-ui, -apple-system, sans-serif",
         overflow: "hidden",
       }}

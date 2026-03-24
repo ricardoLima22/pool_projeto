@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '../../lib/supabase';
 import { useRouter } from 'next/navigation';
+import SplashScreen from '../../components/SplashScreen';
 
 export default function Produtos() {
     const [produtos, setProdutos] = useState([]);
@@ -39,6 +40,10 @@ export default function Produtos() {
 
         buscarProdutos();
     }, [router]);
+
+    if (status === "Carregando...") {
+        return <SplashScreen message="Buscando produtos..." />;
+    }
 
     return (
         <main className="min-h-screen bg-slate-900 text-white p-6">

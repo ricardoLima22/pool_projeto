@@ -4,6 +4,7 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '../../../lib/supabase';
 import { useParams, useRouter } from 'next/navigation';
+import SplashScreen from '../../../components/SplashScreen';
 
 export default function DetalhesCliente() {
     const [cliente, setCliente] = useState(null);
@@ -79,11 +80,7 @@ export default function DetalhesCliente() {
     };
 
     if (loading) {
-        return (
-            <main className="min-h-screen bg-slate-50 p-6 flex justify-center items-center">
-                <p className="text-slate-400 animate-pulse font-bold text-lg">Carregando detalhes...</p>
-            </main>
-        );
+        return <SplashScreen message="Carregando detalhes..." />;
     }
 
     if (!cliente) {

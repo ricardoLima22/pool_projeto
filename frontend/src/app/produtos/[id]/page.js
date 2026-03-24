@@ -4,6 +4,7 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '../../../lib/supabase';
 import { useParams, useRouter } from 'next/navigation';
+import SplashScreen from '../../../components/SplashScreen';
 
 export default function DetalhesProduto() {
     const [produto, setProduto] = useState(null);
@@ -89,7 +90,7 @@ export default function DetalhesProduto() {
         }
     };
 
-    if (loading) return <p className="p-10 text-center animate-pulse">Carregando produto...</p>;
+    if (loading) return <SplashScreen message="Carregando produto..." />;
     if (!produto) return <p className="p-10 text-center text-red-500 font-bold">Produto não encontrado.</p>;
 
     return (

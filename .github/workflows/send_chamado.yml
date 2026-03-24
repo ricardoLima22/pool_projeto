@@ -27,5 +27,7 @@ jobs:
       - name: 4. Rodar Script de Envio de Mensagem
         env:
           MONGODB_URI: ${{ secrets.MONGODB_URI }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
           PAYLOAD: ${{ toJson(github.event.client_payload) }}
         run: node whatsapp_sender_func.js

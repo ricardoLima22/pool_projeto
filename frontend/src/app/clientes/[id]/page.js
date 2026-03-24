@@ -97,157 +97,167 @@ export default function DetalhesCliente() {
     }
 
     return (
-        <main className="min-h-screen bg-[#fcfbf8] md:p-6 lg:p-8">
-            {/* Header */}
-            <div className="flex items-center gap-3 px-5 py-6 md:px-0">
-                <button onClick={() => router.push('/clientes')} className="text-slate-800 hover:text-slate-500 transition-colors">
-                    <ArrowLeft className="h-4 w-4" strokeWidth={2.5} />
+        <div className="min-h-screen bg-[#fcfbf8] flex flex-col pb-28">
+            {/* Header Fixo igual ao Novo Cliente */}
+            <div className="bg-white px-4 py-4 sticky top-0 z-10 border-b border-slate-200 flex items-center gap-3">
+                <button
+                    onClick={() => router.push('/clientes')}
+                    className="text-slate-800 hover:text-slate-600 transition-colors"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m12 19-7-7 7-7" /><path d="M19 12H5" /></svg>
                 </button>
-                <h1 className="text-[15px] font-bold text-slate-800">
+                <h1 className="text-lg font-bold text-slate-800 tracking-wide">
                     {editando ? "Editar Cliente" : "Detalhes do Cliente"}
                 </h1>
             </div>
 
-            <div className="px-5 md:px-0 max-w-4xl">
-                <div className="bg-white p-6 rounded-[24px] border border-slate-200/80 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)] mb-10">
+            <main className="flex-1 px-4 py-6 max-w-2xl mx-auto w-full space-y-5">
+                <div className="bg-white rounded-2xl border border-slate-200 p-5 space-y-6 shadow-sm">
                     {!editando ? (
-                        <div className="flex flex-col h-full">
-                            <div className="space-y-5 flex-grow">
-                                {/* Nome */}
-                                <div>
-                                    <h2 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Nome</h2>
-                                    <p className="text-[15px] font-semibold text-slate-800">
-                                        {cliente.name || 'Nome não informado'}
-                                    </p>
-                                </div>
+                        <>
+                            {/* Nome */}
+                            <div className="space-y-1.5">
+                                <label className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block">Nome</label>
+                                <p className="text-[15px] font-semibold text-slate-800">
+                                    {cliente.name || 'Nome não informado'}
+                                </p>
+                            </div>
 
-                                {/* WhatsApp */}
-                                <div>
-                                    <h2 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">WhatsApp</h2>
-                                    <p className="text-[15px] font-semibold text-slate-800">
-                                        {cliente.whatsapp || 'Não informado'}
-                                    </p>
-                                </div>
+                            {/* WhatsApp */}
+                            <div className="space-y-1.5">
+                                <label className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block">WhatsApp</label>
+                                <p className="text-[15px] font-semibold text-slate-800">
+                                    {cliente.whatsapp || 'Não informado'}
+                                </p>
+                            </div>
 
-                                {/* E-mail */}
-                                <div>
-                                    <h2 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">E-mail</h2>
-                                    <p className="text-[15px] font-semibold text-slate-800">
-                                        {cliente.email || 'Não informado'}
-                                    </p>
-                                </div>
+                            {/* E-mail */}
+                            <div className="space-y-1.5">
+                                <label className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block">E-mail</label>
+                                <p className="text-[15px] font-semibold text-slate-800">
+                                    {cliente.email || 'Não informado'}
+                                </p>
+                            </div>
 
-                                {/* Endereço */}
-                                <div>
-                                    <h2 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Endereço</h2>
-                                    <p className="text-[15px] font-semibold text-slate-800">
-                                        {cliente.address || 'Não informado'}
-                                    </p>
-                                </div>
+                            {/* Endereço */}
+                            <div className="space-y-1.5">
+                                <label className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block">Endereço</label>
+                                <p className="text-[15px] font-semibold text-slate-800">
+                                    {cliente.address || 'Não informado'}
+                                </p>
+                            </div>
 
-                                {/* Volume */}
+                            {/* Volume */}
+                            <div className="space-y-1.5">
+                                <label className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block">Volume da Piscina (m³)</label>
                                 <div>
-                                    <h2 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">Volume da Piscina (m³)</h2>
                                     <span className={`inline-block text-[10px] font-bold px-3 py-1 rounded-xl uppercase tracking-wider border shadow-sm text-[#008080] border-[#008080]/30 bg-[#008080]/10`}>
                                         {cliente.pool_volume_m3} m³
                                     </span>
                                 </div>
                             </div>
-
-                            {/* Botões de Ação */}
-                            <div className="pt-8 flex flex-col sm:flex-row gap-3">
-                                <button
-                                    onClick={() => setEditando(true)}
-                                    className="flex-1 bg-[#2ECC71] hover:bg-[#27ae60] text-white py-3.5 rounded-xl font-bold uppercase text-[12px] tracking-wide active:scale-[0.98] transition-all"
-                                >
-                                    Editar Cliente
-                                </button>
-                                <button
-                                    onClick={handleDelete}
-                                    className="flex-1 bg-white hover:bg-slate-50 text-red-500 py-3.5 rounded-xl font-bold uppercase text-[12px] tracking-wide border border-slate-200 active:scale-[0.98] transition-all"
-                                >
-                                    Excluir Cliente
-                                </button>
-                            </div>
-                        </div>
+                        </>
                     ) : (
-                        <form onSubmit={handleUpdate} className="flex flex-col h-full space-y-5">
-                            <div>
-                                <label className="text-[10px] font-bold text-[#008080] uppercase tracking-widest block mb-1">Nome *</label>
+                        <form id="edit-form" onSubmit={handleUpdate} className="space-y-5">
+                            <div className="space-y-1.5">
+                                <label className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block">Nome *</label>
                                 <input
                                     required
                                     type="text"
                                     value={nome}
                                     onChange={(e) => setNome(e.target.value)}
-                                    className="w-full p-3 bg-white rounded-xl border border-slate-200 focus:border-[#008080] focus:ring-1 focus:ring-[#008080] text-slate-700 font-medium transition-all outline-none text-[14px]"
+                                    className="flex h-10 w-full items-center justify-between rounded-md border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-[#10b673] focus:border-[#10b673] focus:ring-1 shadow-sm"
                                 />
                             </div>
 
-                            <div>
-                                <label className="text-[10px] font-bold text-[#008080] uppercase tracking-widest block mb-1">WhatsApp *</label>
+                            <div className="space-y-1.5">
+                                <label className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block">WhatsApp *</label>
                                 <input
                                     required
                                     type="tel"
                                     value={whatsapp}
                                     onChange={(e) => setWhatsapp(e.target.value)}
-                                    className="w-full p-3 bg-white rounded-xl border border-slate-200 focus:border-[#008080] focus:ring-1 focus:ring-[#008080] text-slate-700 font-medium transition-all outline-none text-[14px]"
+                                    className="flex h-10 w-full items-center justify-between rounded-md border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-[#10b673] focus:border-[#10b673] focus:ring-1 shadow-sm"
                                 />
                             </div>
 
-                            <div>
-                                <label className="text-[10px] font-bold text-[#008080] uppercase tracking-widest block mb-1">E-mail *</label>
+                            <div className="space-y-1.5">
+                                <label className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block">E-mail *</label>
                                 <input
                                     required
                                     type="email"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
-                                    className="w-full p-3 bg-white rounded-xl border border-slate-200 focus:border-[#008080] focus:ring-1 focus:ring-[#008080] text-slate-700 font-medium transition-all outline-none text-[14px]"
+                                    className="flex h-10 w-full items-center justify-between rounded-md border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-[#10b673] focus:border-[#10b673] focus:ring-1 shadow-sm"
                                 />
                             </div>
 
-                            <div>
-                                <label className="text-[10px] font-bold text-[#008080] uppercase tracking-widest block mb-1">Endereço</label>
+                            <div className="space-y-1.5">
+                                <label className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block">Endereço</label>
                                 <input
                                     type="text"
                                     value={endereco}
                                     onChange={(e) => setEndereco(e.target.value)}
-                                    className="w-full p-3 bg-white rounded-xl border border-slate-200 focus:border-[#008080] focus:ring-1 focus:ring-[#008080] text-slate-700 font-medium transition-all outline-none text-[14px]"
+                                    className="flex h-10 w-full items-center justify-between rounded-md border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-[#10b673] focus:border-[#10b673] focus:ring-1 shadow-sm"
                                 />
                             </div>
 
-                            <div>
-                                <label className="text-[10px] font-bold text-[#008080] uppercase tracking-widest block mb-1">Volume (m³) *</label>
+                            <div className="space-y-1.5">
+                                <label className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block">Volume (m³) *</label>
                                 <input
                                     required
                                     type="number"
                                     step="0.1"
                                     value={volume}
                                     onChange={(e) => setVolume(e.target.value)}
-                                    className="w-full p-3 bg-white rounded-xl border border-slate-200 focus:border-[#008080] focus:ring-1 focus:ring-[#008080] text-slate-700 font-medium transition-all outline-none text-[14px]"
+                                    className="flex h-10 w-full items-center justify-between rounded-md border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-[#10b673] focus:border-[#10b673] focus:ring-1 shadow-sm"
                                 />
-                            </div>
-
-                            <div className="pt-6 flex flex-col sm:flex-row gap-3">
-                                <button
-                                    type="button"
-                                    onClick={() => setEditando(false)}
-                                    disabled={salvando}
-                                    className="flex-1 bg-white hover:bg-slate-50 text-slate-500 py-3.5 rounded-xl font-bold uppercase text-[12px] tracking-wide border border-slate-200 active:scale-[0.98] transition-all"
-                                >
-                                    Cancelar
-                                </button>
-                                <button
-                                    type="submit"
-                                    disabled={salvando}
-                                    className="flex-1 bg-[#2ECC71] hover:bg-[#27ae60] text-white py-3.5 rounded-xl font-bold uppercase text-[12px] tracking-wide shadow-sm hover:shadow-md active:scale-[0.98] transition-all disabled:opacity-50"
-                                >
-                                    {salvando ? 'Salvando...' : 'Salvar Detalhes'}
-                                </button>
                             </div>
                         </form>
                     )}
                 </div>
+            </main>
+
+            {/* Footer com Botões */}
+            <div className="fixed bottom-0 left-0 right-0 px-4 py-4 bg-[#fcfbf8] border-t border-slate-200 z-10 shadow-[0_-4px_15px_-3px_rgba(0,0,0,0.05)]">
+                <div className="max-w-2xl mx-auto flex gap-3">
+                    {!editando ? (
+                        <>
+                            <button
+                                onClick={() => setEditando(true)}
+                                className="flex-1 bg-[#2ECC71] hover:bg-[#27ae60] text-white py-3.5 rounded-xl font-bold uppercase text-[12px] tracking-wide active:scale-[0.98] transition-all shadow-sm"
+                            >
+                                Editar Cliente
+                            </button>
+                            <button
+                                onClick={handleDelete}
+                                className="flex-1 bg-white hover:bg-slate-50 text-red-500 py-3.5 rounded-xl font-bold uppercase text-[12px] tracking-wide border border-slate-200 active:scale-[0.98] transition-all"
+                            >
+                                Excluir
+                            </button>
+                        </>
+                    ) : (
+                        <>
+                            <button
+                                type="button"
+                                onClick={() => setEditando(false)}
+                                disabled={salvando}
+                                className="flex-1 bg-white hover:bg-slate-50 text-slate-600 border border-slate-200 py-3.5 rounded-xl font-bold uppercase text-[12px] tracking-wide active:scale-[0.98] transition-all"
+                            >
+                                Cancelar
+                            </button>
+                            <button
+                                type="submit"
+                                form="edit-form"
+                                disabled={salvando}
+                                className="flex-1 bg-[#2ECC71] hover:bg-[#27ae60] text-white py-3.5 rounded-xl font-bold uppercase text-[12px] tracking-wide active:scale-[0.98] transition-all shadow-sm disabled:opacity-50"
+                            >
+                                {salvando ? 'Salvando...' : 'Salvar'}
+                            </button>
+                        </>
+                    )}
+                </div>
             </div>
-        </main>
+        </div>
     );
 }

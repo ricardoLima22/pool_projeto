@@ -18,6 +18,7 @@ export default function NovoChamado() {
     const [loading, setLoading] = useState(true);
     const [submitting, setSubmitting] = useState(false);
     const [companyId, setCompanyId] = useState(null);
+    const [companySession, setCompanySession] = useState('');
 
     // Listas para os ComboBoxes
     const [clientes, setClientes] = useState([]);
@@ -51,6 +52,11 @@ export default function NovoChamado() {
 
             if (profile?.company_id) {
                 setCompanyId(profile.company_id);
+
+                const { data: companyInfo } = await supabase.from('companies').select('whatsapp_session').eq('id', profile.company_id).single();
+                if (companyInfo && companyInfo.whatsapp_session) {
+                    setCompanySession(companyInfo.whatsapp_session);
+                }
 
                 // 1. Clientes
                 const cRes = await supabase
@@ -122,6 +128,40 @@ export default function NovoChamado() {
             alert(`Erro do banco: ${error.message || JSON.stringify(error)}`);
             setSubmitting(false);
         } else {
+            if (companySession) {
+                try {
+                    const clienteSelecionado = clientes.find(c => c.id === form.customer_id);
+                    const servicoSelecionado = servicos.find(s => s.id === form.service_type_id);
+
+                    const botResponse = await fetch('/api/trigger-chamado', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            session_id: companySession,
+                            piscineiro_id: form.piscineiro_id,
+                            customer_id: form.customer_id,
+                            cliente_nome: clienteSelecionado?.name || 'Não informado',
+                            status: form.status,
+                            data_agendada: form.scheduled_date ? new Date(form.scheduled_date).toLocaleString('pt-BR') : 'Não informada',
+                            tipo_servico: servicoSelecionado?.name || 'Geral',
+                            descricao: form.description
+                        })
+                    });
+
+                    if (botResponse.ok) {
+                        alert('✅ Chamado salvo e notificação enviada para o funcionário pelo WhatsApp!');
+                    } else {
+                        console.error("Falha ao acionar bot do chamado:", await botResponse.text());
+                        alert("⚠️ O chamado foi salvo, mas houve um erro ao notificar o funcionário no WhatsApp.");
+                    }
+                } catch (err) {
+                    console.error("Erro fatal ao acionar bot:", err);
+                    alert("⚠️ Chamado salvo, mas o sistema de notificação está inacessível no momento.");
+                }
+            } else {
+                alert("⚠️ Chamado salvo, mas não foi enviada notificação porque a sessão de WhatsApp da empresa não está configurada.");
+            }
+
             router.push('/chamados');
         }
     };

@@ -45,6 +45,10 @@ export default function ListagemClientes() {
         c.name.toLowerCase().includes(busca.toLowerCase())
     );
 
+    if (loading) {
+        return <SplashScreen message="Carregando seus clientes..." />;
+    }
+
     return (
         <main className="min-h-screen bg-[#fcfbf8]">
             {/* Header */}
@@ -88,11 +92,8 @@ export default function ListagemClientes() {
                     />
                 </div>
 
-                {loading ? (
-                    <SplashScreen message="Carregando seus clientes..." />
-                ) : (
-                    <div className="space-y-3">
-                        {clientesFiltrados.map(cliente => (
+                <div className="space-y-3">
+                    {clientesFiltrados.map(cliente => (
                             <button
                                 key={cliente.id}
                                 onClick={() => router.push(`/clientes/${cliente.id}`)}
@@ -118,7 +119,6 @@ export default function ListagemClientes() {
                             </div>
                         )}
                     </div>
-                )}
             </div>
         </main>
     );

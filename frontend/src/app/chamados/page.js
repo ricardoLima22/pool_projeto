@@ -76,6 +76,10 @@ export default function ListagemChamados() {
 
     const navTabs = ["TODOS", "PENDENTE", "CONCLUÍDO"];
 
+    if (loading) {
+        return <SplashScreen message="Carregando chamados..." />;
+    }
+
     return (
         <div className="min-h-screen bg-[#fcfbf8]">
             {/* Header */}
@@ -153,11 +157,8 @@ export default function ListagemChamados() {
 
             {/* List */}
             <div className="px-5 py-4 space-y-3 pb-20">
-                {loading ? (
-                    <SplashScreen message="Carregando chamados..." />
-                ) : (
-                    <>
-                        {chamadosFiltrados.map((chamado) => {
+                <>
+                    {chamadosFiltrados.map((chamado) => {
                             const isPendente = chamado.status?.toLowerCase() === 'pendente';
                             return (
                                 <div
@@ -259,8 +260,7 @@ export default function ListagemChamados() {
                                 <p className="text-slate-500 text-sm font-medium">Nenhum chamado encontrado nesta categoria.</p>
                             </div>
                         )}
-                    </>
-                )}
+                </>
             </div>
         </div>
     );

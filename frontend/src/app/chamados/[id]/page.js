@@ -83,13 +83,13 @@ export default function DetalhesChamado() {
 
     const getStatusColor = (st) => {
         switch(st?.toLowerCase()) {
-            case 'pendente': return 'text-amber-600 bg-amber-50';
+            case 'pendente': return 'text-orange-500 border-orange-200 bg-orange-50/50';
             case 'concluido': 
             case 'concluído': 
-            case 'confirmada': return 'text-emerald-600 bg-emerald-50';
-            case 'em_execucao': return 'text-blue-600 bg-blue-50';
-            case 'cancelado': return 'text-red-600 bg-red-50';
-            default: return 'text-slate-600 bg-slate-50';
+            case 'confirmada': return 'text-emerald-500 border-emerald-200 bg-emerald-50/50';
+            case 'em_execucao': return 'text-blue-500 border-blue-200 bg-blue-50/50';
+            case 'cancelado': return 'text-red-500 border-red-200 bg-red-50/50';
+            default: return 'text-slate-500 border-slate-200 bg-slate-50/50';
         }
     };
 
@@ -111,95 +111,98 @@ export default function DetalhesChamado() {
     }
 
     return (
-        <main className="min-h-screen bg-[#fcfbf8] md:p-8">
+        <main className="min-h-screen bg-[#fcfbf8] md:p-6 lg:p-8">
             {/* Header */}
-            <div className="flex items-center gap-3 px-5 py-6">
+            <div className="flex items-center gap-3 px-5 py-6 md:px-0">
                 <button onClick={() => router.back()} className="text-slate-800 hover:text-slate-500 transition-colors">
-                    <ArrowLeft className="h-5 w-5" />
+                    <ArrowLeft className="h-4 w-4" strokeWidth={2.5} />
                 </button>
-                <h1 className="text-xl font-black text-slate-800 tracking-tight">
+                <h1 className="text-[15px] font-bold text-slate-800">
                     {editando ? "Editar Chamado" : "Detalhes do Chamado"}
                 </h1>
             </div>
 
-            <div className="px-5">
-                <div className="bg-white p-7 rounded-[32px] border border-slate-100 shadow-sm mb-10">
+            <div className="px-5 md:px-0 max-w-4xl">
+                <div className="bg-white p-6 rounded-[24px] border border-slate-200/80 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)] mb-10">
                     {!editando ? (
-                        <div className="space-y-7">
-                            {/* Cliente */}
-                            <div>
-                                <h2 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">Cliente</h2>
-                                <p className="text-lg font-bold text-slate-800 leading-tight">
-                                    {chamado.customers?.name || 'Cliente Removido'}
-                                </p>
-                            </div>
-
-                            {/* Status */}
-                            <div>
-                                <h2 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Status</h2>
-                                <span className={`text-[11px] font-black px-3.5 py-1.5 rounded-lg uppercase tracking-wider ${getStatusColor(chamado.status)} shadow-sm border border-current opacity-80`}>
-                                    {formatStatusName(chamado.status)}
-                                </span>
-                            </div>
-
-                            {/* Data Agendada */}
-                            <div>
-                                <h2 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">Data Agendada</h2>
-                                <p className="text-lg font-bold text-slate-800 leading-tight">
-                                    {chamado.scheduled_date ? new Date(chamado.scheduled_date).toLocaleDateString('pt-BR', { timeZone: 'UTC' }) : 'Não agendado'}
-                                </p>
-                            </div>
-
-                            {/* Tipo de Serviço */}
-                            <div>
-                                <h2 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">Tipo de Serviço</h2>
-                                <p className="text-lg font-bold text-slate-800 leading-tight">
-                                    {chamado.service_types?.name || 'Serviço Padrão'}
-                                </p>
-                            </div>
-
-                            {/* Responsável */}
-                            <div>
-                                <h2 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">Responsável (Piscineiro)</h2>
-                                <p className="text-lg font-bold text-slate-800 leading-tight">
-                                    {chamado.profiles?.full_name || 'Não atribuído'}
-                                </p>
-                            </div>
-
-                            {/* Descrição */}
-                            <div>
-                                <h2 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Descrição</h2>
-                                <div className="bg-slate-50/80 p-5 rounded-2xl border border-slate-100 min-h-[100px]">
-                                    <p className="text-[15px] text-slate-600 leading-relaxed whitespace-pre-wrap">
-                                        {chamado.description || 'Nenhuma observação fornecida.'}
+                        <div className="flex flex-col h-full">
+                            <div className="space-y-5 flex-grow">
+                                {/* Cliente */}
+                                <div>
+                                    <h2 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Cliente</h2>
+                                    <p className="text-[15px] font-semibold text-slate-800">
+                                        {chamado.customers?.name || 'Cliente Removido'}
                                     </p>
+                                </div>
+
+                                {/* Status */}
+                                <div>
+                                    <h2 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">Status</h2>
+                                    <span className={`inline-block text-[10px] font-bold px-3 py-1 rounded-xl uppercase tracking-wider border shadow-sm ${getStatusColor(chamado.status)}`}>
+                                        {formatStatusName(chamado.status)}
+                                    </span>
+                                </div>
+
+                                {/* Data Agendada */}
+                                <div>
+                                    <h2 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Data Agendada</h2>
+                                    <p className="text-[15px] font-semibold text-slate-800">
+                                        {chamado.scheduled_date ? new Date(chamado.scheduled_date).toLocaleDateString('pt-BR', { timeZone: 'UTC' }) : 'Não agendado'}
+                                    </p>
+                                </div>
+
+                                {/* Tipo de Serviço */}
+                                <div>
+                                    <h2 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Tipo de Serviço</h2>
+                                    <p className="text-[15px] font-semibold text-slate-800">
+                                        {chamado.service_types?.name || 'Serviço Padrão'}
+                                    </p>
+                                </div>
+
+                                {/* Responsável */}
+                                <div>
+                                    <h2 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Responsável (Piscineiro)</h2>
+                                    <p className="text-[15px] font-semibold text-slate-800">
+                                        {chamado.profiles?.full_name || 'Não atribuído'}
+                                    </p>
+                                </div>
+
+                                {/* Descrição */}
+                                <div>
+                                    <h2 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Descrição</h2>
+                                    <div className="bg-slate-50 border border-slate-100 rounded-xl p-4 min-h-[80px]">
+                                        <p className="text-[14px] text-slate-600 whitespace-pre-wrap leading-relaxed">
+                                            {chamado.description || 'Sem descrição cadastrada.'}
+                                        </p>
+                                    </div>
                                 </div>
                             </div>
 
                             {/* Botões de Ação */}
-                            <div className="pt-4 flex flex-col sm:flex-row gap-3">
+                            <div className="pt-8 flex flex-col sm:flex-row gap-3">
                                 <button
                                     onClick={() => setEditando(true)}
-                                    className="flex-1 bg-[#22c55e] hover:bg-[#16a34a] text-white py-4.5 rounded-2xl font-black shadow-md hover:shadow-lg transition-all text-sm uppercase tracking-widest active:scale-[0.98]"
+                                    className="flex-1 bg-[#2ECC71] hover:bg-[#27ae60] text-white py-3.5 rounded-xl font-bold uppercase text-[12px] tracking-wide active:scale-[0.98] transition-all"
                                 >
                                     Editar Chamado
                                 </button>
                                 <button
                                     onClick={handleDelete}
-                                    className="flex-1 bg-white hover:bg-red-50 text-red-500 py-4.5 rounded-2xl font-black border-2 border-red-500 transition-all text-sm uppercase tracking-widest active:scale-[0.98]"
+                                    className="flex-1 bg-white hover:bg-slate-50 text-red-500 py-3.5 rounded-xl font-bold uppercase text-[12px] tracking-wide border border-slate-200 active:scale-[0.98] transition-all"
                                 >
                                     Excluir
                                 </button>
                             </div>
                         </div>
+
                     ) : (
-                        <form onSubmit={handleUpdate} className="space-y-6">
+                        <form onSubmit={handleUpdate} className="flex flex-col h-full space-y-5">
                             <div>
-                                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-2">Status</label>
+                                <label className="text-[10px] font-bold text-[#008080] uppercase tracking-widest block mb-1">Status *</label>
                                 <select
                                     value={status}
                                     onChange={(e) => setStatus(e.target.value)}
-                                    className="w-full p-4 bg-slate-50 rounded-2xl border-none ring-1 ring-slate-200 focus:ring-2 focus:ring-[#22c55e] text-slate-700 font-bold transition-all outline-none"
+                                    className="w-full p-3 bg-white rounded-xl border border-slate-200 focus:border-[#008080] focus:ring-1 focus:ring-[#008080] text-slate-700 font-medium transition-all outline-none text-[14px]"
                                 >
                                     <option value="Pendente">Pendente</option>
                                     <option value="Confirmada">Confirmada</option>
@@ -210,41 +213,41 @@ export default function DetalhesChamado() {
                             </div>
 
                             <div>
-                                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-2">Data Agendada</label>
+                                <label className="text-[10px] font-bold text-[#008080] uppercase tracking-widest block mb-1">Data Agendada *</label>
                                 <input
                                     type="date"
                                     value={scheduledDate}
                                     onChange={(e) => setScheduledDate(e.target.value)}
-                                    className="w-full p-4 bg-slate-50 rounded-2xl border-none ring-1 ring-slate-200 focus:ring-2 focus:ring-[#22c55e] text-slate-700 font-bold transition-all outline-none"
+                                    className="w-full p-3 bg-white rounded-xl border border-slate-200 focus:border-[#008080] focus:ring-1 focus:ring-[#008080] text-slate-700 font-medium transition-all outline-none text-[14px]"
                                 />
                             </div>
 
-                            <div>
-                                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-2">Descrição / Observações</label>
+                            <div className="flex-grow">
+                                <label className="text-[10px] font-bold text-[#008080] uppercase tracking-widest block mb-1">Descrição / Observações</label>
                                 <textarea
                                     value={description}
                                     onChange={(e) => setDescription(e.target.value)}
                                     rows={5}
-                                    className="w-full p-4 bg-slate-50 rounded-2xl border-none ring-1 ring-slate-200 focus:ring-2 focus:ring-[#22c55e] text-slate-700 font-medium transition-all outline-none resize-none"
+                                    className="w-full p-3 bg-white rounded-xl border border-slate-200 focus:border-[#008080] focus:ring-1 focus:ring-[#008080] text-[14px] text-slate-700 transition-all outline-none resize-none"
                                     placeholder="Detalhes adicionais sobre o serviço..."
                                 />
                             </div>
 
-                            <div className="pt-4 flex flex-col sm:flex-row gap-3">
+                            <div className="pt-6 flex flex-col sm:flex-row gap-3">
                                 <button
                                     type="button"
                                     onClick={() => setEditando(false)}
                                     disabled={salvando}
-                                    className="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-600 py-4.5 rounded-2xl font-black transition-all text-sm uppercase tracking-widest"
+                                    className="flex-1 bg-white hover:bg-slate-50 text-slate-500 py-3.5 rounded-xl font-bold uppercase text-[12px] tracking-wide border border-slate-200 active:scale-[0.98] transition-all"
                                 >
                                     Cancelar
                                 </button>
                                 <button
                                     type="submit"
                                     disabled={salvando}
-                                    className="flex-1 bg-[#22c55e] hover:bg-[#16a34a] text-white py-4.5 rounded-2xl font-black shadow-md hover:shadow-lg transition-all text-sm uppercase tracking-widest disabled:opacity-50"
+                                    className="flex-1 bg-[#2ECC71] hover:bg-[#27ae60] text-white py-3.5 rounded-xl font-bold uppercase text-[12px] tracking-wide shadow-sm hover:shadow-md active:scale-[0.98] transition-all disabled:opacity-50"
                                 >
-                                    {salvando ? 'Salvando...' : 'Salvar Detalhes'}
+                                    {salvando ? 'Salvando...' : 'Salvar Alterações'}
                                 </button>
                             </div>
                         </form>

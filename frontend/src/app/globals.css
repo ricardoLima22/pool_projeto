@@ -5,8 +5,8 @@
   --color-border: hsl(215 20% 90%);
   --color-input: hsl(215 20% 93%);
   --color-ring: hsl(190 90% 45%);
-  --color-background: hsl(215 50% 6%);
-  --color-foreground: hsl(210 40% 98%);
+  --color-background: hsl(48, 20%, 98%); /* FCFBF8 */
+  --color-foreground: hsl(215, 50%, 10%);
   
   --color-primary: hsl(190 90% 45%);
   --color-primary-foreground: hsl(0 0% 100%);
@@ -69,13 +69,7 @@
   border-color: var(--color-border);
 }
 
-html {
-  height: -webkit-fill-available;
-}
-
 body {
-  min-height: 100vh;
-  min-height: -webkit-fill-available;
   background-color: var(--color-background);
   color: var(--color-foreground);
   font-family: 'Inter', sans-serif;

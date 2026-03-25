@@ -151,7 +151,7 @@ export default function Dashboard() {
     }
 
     return (
-        <div className="min-h-screen bg-slate-50 pb-20 font-sans">
+        <div className="min-h-[100dvh] bg-slate-50 pb-20 font-sans">
             {/* Header */}
             <header className="gradient-hero px-6 pt-6 pb-10 text-white shadow-md">
                 <div className="max-w-4xl mx-auto">

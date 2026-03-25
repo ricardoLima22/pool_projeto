@@ -167,7 +167,7 @@ export default function NovoChamado() {
     }
 
     return (
-        <div className="min-h-screen bg-[#fcfbf8]">
+        <div className="min-h-[100dvh] bg-[#fcfbf8]">
             {/* Header */}
             <div className="flex items-center gap-3 px-4 py-4 bg-white border-b border-slate-200">
                 <button

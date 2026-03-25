@@ -180,140 +180,138 @@ export default function NovoChamado() {
             </div>
 
             {/* Form */}
-            <main className="max-w-2xl mx-auto w-full">
-                <form onSubmit={handleSubmit} className="px-4 pb-6 space-y-1">
-                    {/* Cliente */}
-                    <div className="pt-4">
-                        <label className="text-[11px] font-semibold tracking-wide text-[#0e5c74] uppercase block">
-                            CLIENTE <span className="text-red-500 ml-0.5">*</span>
-                        </label>
-                        <select
-                            required
-                            name="customer_id"
-                            value={form.customer_id}
-                            onChange={handleChange}
-                            className="w-full border-b-2 border-slate-200 bg-transparent py-3 text-slate-800 focus:border-[#0e5c74] focus:outline-none transition-colors text-sm appearance-none"
-                        >
-                            <option value="">Selecione um cliente...</option>
-                            {clientes.map(c => (
-                                <option key={c.id} value={c.id}>{c.name}</option>
-                            ))}
-                        </select>
-                    </div>
+            <form onSubmit={handleSubmit} className="px-4 pb-6 space-y-1">
+                {/* Cliente */}
+                <div className="pt-4">
+                    <label className="text-[11px] font-semibold tracking-wide text-[#0e5c74] uppercase block">
+                        CLIENTE <span className="text-red-500 ml-0.5">*</span>
+                    </label>
+                    <select
+                        required
+                        name="customer_id"
+                        value={form.customer_id}
+                        onChange={handleChange}
+                        className="w-full border-b-2 border-slate-200 bg-transparent py-3 text-slate-800 focus:border-[#0e5c74] focus:outline-none transition-colors text-sm appearance-none"
+                    >
+                        <option value="">Selecione um cliente...</option>
+                        {clientes.map(c => (
+                            <option key={c.id} value={c.id}>{c.name}</option>
+                        ))}
+                    </select>
+                </div>
 
-                    {/* Endereço */}
-                    <div className="pt-4">
-                        <label className="text-[11px] font-semibold tracking-wide text-[#0e5c74] uppercase block">
-                            ENDEREÇO
-                        </label>
-                        <input
-                            type="text"
-                            name="address"
-                            placeholder="Informe o endereço do serviço..."
-                            value={form.address || ''}
-                            onChange={handleChange}
-                            className="w-full border-b-2 border-slate-200 bg-transparent py-3 text-slate-800 placeholder:text-slate-400 focus:border-[#0e5c74] focus:outline-none transition-colors text-sm"
-                        />
-                    </div>
+                {/* Endereço */}
+                <div className="pt-4">
+                    <label className="text-[11px] font-semibold tracking-wide text-[#0e5c74] uppercase block">
+                        ENDEREÇO
+                    </label>
+                    <input
+                        type="text"
+                        name="address"
+                        placeholder="Informe o endereço do serviço..."
+                        value={form.address || ''}
+                        onChange={handleChange}
+                        className="w-full border-b-2 border-slate-200 bg-transparent py-3 text-slate-800 placeholder:text-slate-400 focus:border-[#0e5c74] focus:outline-none transition-colors text-sm"
+                    />
+                </div>
 
-                    {/* Tipo de Serviço */}
-                    <div className="pt-4">
-                        <label className="text-[11px] font-semibold tracking-wide text-[#0e5c74] uppercase block">
-                            TIPO DE SERVIÇO <span className="text-red-500 ml-0.5">*</span>
-                        </label>
-                        <select
-                            required
-                            name="service_type_id"
-                            value={form.service_type_id}
-                            onChange={handleChange}
-                            className="w-full border-b-2 border-slate-200 bg-transparent py-3 text-slate-800 focus:border-[#0e5c74] focus:outline-none transition-colors text-sm appearance-none"
-                        >
-                            <option value="">Selecione o serviço...</option>
-                            {servicos.map(s => (
-                                <option key={s.id} value={s.id}>{s.name}</option>
-                            ))}
-                        </select>
-                    </div>
+                {/* Tipo de Serviço */}
+                <div className="pt-4">
+                    <label className="text-[11px] font-semibold tracking-wide text-[#0e5c74] uppercase block">
+                        TIPO DE SERVIÇO <span className="text-red-500 ml-0.5">*</span>
+                    </label>
+                    <select
+                        required
+                        name="service_type_id"
+                        value={form.service_type_id}
+                        onChange={handleChange}
+                        className="w-full border-b-2 border-slate-200 bg-transparent py-3 text-slate-800 focus:border-[#0e5c74] focus:outline-none transition-colors text-sm appearance-none"
+                    >
+                        <option value="">Selecione o serviço...</option>
+                        {servicos.map(s => (
+                            <option key={s.id} value={s.id}>{s.name}</option>
+                        ))}
+                    </select>
+                </div>
 
-                    {/* Funcionário Responsável */}
-                    <div className="pt-4">
-                        <label className="text-[11px] font-semibold tracking-wide text-[#0e5c74] uppercase block">
-                            ATRIBUIR AO FUNCIONÁRIO <span className="text-red-500 ml-0.5">*</span>
-                        </label>
-                        <select
-                            required
-                            name="piscineiro_id"
-                            value={form.piscineiro_id}
-                            onChange={handleChange}
-                            className="w-full border-b-2 border-slate-200 bg-transparent py-3 text-slate-800 focus:border-[#0e5c74] focus:outline-none transition-colors text-sm appearance-none"
-                        >
-                            <option value="">Selecione o funcionário...</option>
-                            {funcionarios.map(f => (
-                                <option key={f.id} value={f.id}>{f.full_name}</option>
-                            ))}
-                        </select>
-                    </div>
+                {/* Funcionário Responsável */}
+                <div className="pt-4">
+                    <label className="text-[11px] font-semibold tracking-wide text-[#0e5c74] uppercase block">
+                        ATRIBUIR AO FUNCIONÁRIO <span className="text-red-500 ml-0.5">*</span>
+                    </label>
+                    <select
+                        required
+                        name="piscineiro_id"
+                        value={form.piscineiro_id}
+                        onChange={handleChange}
+                        className="w-full border-b-2 border-slate-200 bg-transparent py-3 text-slate-800 focus:border-[#0e5c74] focus:outline-none transition-colors text-sm appearance-none"
+                    >
+                        <option value="">Selecione o funcionário...</option>
+                        {funcionarios.map(f => (
+                            <option key={f.id} value={f.id}>{f.full_name}</option>
+                        ))}
+                    </select>
+                </div>
 
-                    {/* Data Agendada */}
-                    <div className="pt-4">
-                        <label className="text-[11px] font-semibold tracking-wide text-[#0e5c74] uppercase block">
-                            DATA E HORA AGENDADA <span className="text-red-500 ml-0.5">*</span>
-                        </label>
-                        <input
-                            type="datetime-local"
-                            name="scheduled_date"
-                            value={form.scheduled_date}
-                            onChange={handleChange}
-                            className="w-full border-b-2 border-slate-200 bg-transparent py-3 text-slate-800 placeholder:text-slate-400 focus:border-[#0e5c74] focus:outline-none transition-colors text-sm"
-                            required
-                        />
-                    </div>
+                {/* Data Agendada */}
+                <div className="pt-4">
+                    <label className="text-[11px] font-semibold tracking-wide text-[#0e5c74] uppercase block">
+                        DATA E HORA AGENDADA <span className="text-red-500 ml-0.5">*</span>
+                    </label>
+                    <input
+                        type="datetime-local"
+                        name="scheduled_date"
+                        value={form.scheduled_date}
+                        onChange={handleChange}
+                        className="w-full border-b-2 border-slate-200 bg-transparent py-3 text-slate-800 placeholder:text-slate-400 focus:border-[#0e5c74] focus:outline-none transition-colors text-sm"
+                        required
+                    />
+                </div>
 
-                    {/* Status */}
-                    <div className="pt-4">
-                        <label className="text-[11px] font-semibold tracking-wide text-[#0e5c74] uppercase block">
-                            STATUS
-                        </label>
-                        <select
-                            name="status"
-                            value={form.status}
-                            onChange={handleChange}
-                            className="w-full border-b-2 border-slate-200 bg-transparent py-3 text-slate-800 focus:border-[#0e5c74] focus:outline-none transition-colors text-sm appearance-none"
-                        >
-                            <option value="Pendente">Pendente</option>
-                            <option value="Em Andamento">Em Andamento</option>
-                            <option value="Concluido">Concluído</option>
-                            <option value="Cancelado">Cancelado</option>
-                        </select>
-                    </div>
+                {/* Status */}
+                <div className="pt-4">
+                    <label className="text-[11px] font-semibold tracking-wide text-[#0e5c74] uppercase block">
+                        STATUS
+                    </label>
+                    <select
+                        name="status"
+                        value={form.status}
+                        onChange={handleChange}
+                        className="w-full border-b-2 border-slate-200 bg-transparent py-3 text-slate-800 focus:border-[#0e5c74] focus:outline-none transition-colors text-sm appearance-none"
+                    >
+                        <option value="Pendente">Pendente</option>
+                        <option value="Em Andamento">Em Andamento</option>
+                        <option value="Concluido">Concluído</option>
+                        <option value="Cancelado">Cancelado</option>
+                    </select>
+                </div>
 
-                    {/* Descrição */}
-                    <div className="pt-4">
-                        <label className="text-[11px] font-semibold tracking-wide text-[#0e5c74] uppercase block">
-                            DESCRIÇÃO / OBSERVAÇÕES
-                        </label>
-                        <textarea
-                            name="description"
-                            value={form.description}
-                            onChange={handleChange}
-                            placeholder="Detalhes adicionais sobre o serviço..."
-                            rows={4}
-                            className="w-full border-b-2 border-slate-200 bg-transparent py-3 text-slate-800 placeholder:text-slate-400 focus:border-[#0e5c74] focus:outline-none transition-colors text-sm resize-none"
-                            maxLength={1000}
-                        />
-                    </div>
+                {/* Descrição */}
+                <div className="pt-4">
+                    <label className="text-[11px] font-semibold tracking-wide text-[#0e5c74] uppercase block">
+                        DESCRIÇÃO / OBSERVAÇÕES
+                    </label>
+                    <textarea
+                        name="description"
+                        value={form.description}
+                        onChange={handleChange}
+                        placeholder="Detalhes adicionais sobre o serviço..."
+                        rows={4}
+                        className="w-full border-b-2 border-slate-200 bg-transparent py-3 text-slate-800 placeholder:text-slate-400 focus:border-[#0e5c74] focus:outline-none transition-colors text-sm resize-none"
+                        maxLength={1000}
+                    />
+                </div>
 
-                    <div className="pt-8">
-                        <button
-                            type="submit"
-                            disabled={submitting}
-                            className="w-full bg-[#22c55e] hover:bg-[#16a34a] text-white py-4 rounded-xl font-bold text-sm tracking-wide shadow-sm active:scale-[0.98] transition-all disabled:opacity-50 disabled:active:scale-100 uppercase"
-                        >
-                            {submitting ? 'Salvando...' : 'ABRIR CHAMADO'}
-                        </button>
-                    </div>
-                </form>
-            </main>
+                <div className="pt-8">
+                    <button
+                        type="submit"
+                        disabled={submitting}
+                        className="w-full bg-[#22c55e] hover:bg-[#16a34a] text-white py-4 rounded-xl font-bold text-sm tracking-wide shadow-sm active:scale-[0.98] transition-all disabled:opacity-50 disabled:active:scale-100 uppercase"
+                    >
+                        {submitting ? 'Salvando...' : 'ABRIR CHAMADO'}
+                    </button>
+                </div>
+            </form>
         </div>
     );
 }

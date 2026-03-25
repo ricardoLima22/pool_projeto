@@ -4,13 +4,6 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '../../../lib/supabase';
 import { useRouter } from 'next/navigation';
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '../../../components/ui/select';
 import SplashScreen from '../../../components/SplashScreen';
 
 export default function NovoChamado() {
@@ -32,7 +25,8 @@ export default function NovoChamado() {
         service_type_id: '',
         scheduled_date: '',
         description: '',
-        status: 'Pendente'
+        status: 'Pendente',
+        address: ''
     });
 
     useEffect(() => {
@@ -105,6 +99,8 @@ export default function NovoChamado() {
             return;
         }
 
+        const finalDescription = form.address ? `Endereço: ${form.address}\n\n${form.description}` : form.description;
+
         const payload = {
             id: crypto.randomUUID(),
             created_at: new Date().toISOString(),
@@ -113,7 +109,7 @@ export default function NovoChamado() {
             piscineiro_id: form.piscineiro_id,
             service_type_id: form.service_type_id,
             scheduled_date: new Date(form.scheduled_date).toISOString(),
-            description: form.description,
+            description: finalDescription,
             status: form.status
         };
         
@@ -144,7 +140,7 @@ export default function NovoChamado() {
                             status: form.status,
                             data_agendada: form.scheduled_date ? new Date(form.scheduled_date).toLocaleString('pt-BR') : 'Não informada',
                             tipo_servico: servicoSelecionado?.name || 'Geral',
-                            descricao: form.description
+                            descricao: finalDescription
                         })
                     });
 
@@ -171,9 +167,9 @@ export default function NovoChamado() {
     }
 
     return (
-        <div className="min-h-screen bg-[#fcfbf8] flex flex-col">
+        <div className="min-h-screen bg-[#fcfbf8]">
             {/* Header */}
-            <div className="bg-white px-4 py-4 sticky top-0 z-10 border-b border-slate-200 flex items-center gap-3">
+            <div className="flex items-center gap-3 px-4 py-4 bg-white border-b border-slate-200">
                 <button
                     onClick={() => router.back()}
                     className="text-slate-800 hover:text-slate-600 transition-colors"
@@ -183,128 +179,142 @@ export default function NovoChamado() {
                 <h1 className="text-lg font-bold text-slate-800 tracking-wide">Novo Chamado</h1>
             </div>
 
-            <main className="flex-1 px-4 py-6 max-w-2xl mx-auto w-full space-y-5 pb-28">
-                <form onSubmit={handleSubmit} className="bg-white rounded-2xl border border-slate-200 p-5 space-y-5 shadow-sm">
+            {/* Form */}
+            <main className="max-w-2xl mx-auto w-full">
+                <form onSubmit={handleSubmit} className="px-4 pb-6 space-y-1">
                     {/* Cliente */}
-                    <div className="space-y-1.5">
-                        <label className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block">
-                            Cliente <span className="text-red-500">*</span>
+                    <div className="pt-4">
+                        <label className="text-[11px] font-semibold tracking-wide text-[#0e5c74] uppercase block">
+                            CLIENTE <span className="text-red-500 ml-0.5">*</span>
                         </label>
-                        <Select required value={form.customer_id} onValueChange={(val) => handleChange({ target: { name: 'customer_id', value: val } })}>
-                            <SelectTrigger className="w-full h-10 bg-white shadow-sm border-slate-200 text-slate-800 focus:ring-[#10b673] focus:ring-offset-0 focus:ring-1 data-[state=open]:border-[#10b673] data-[state=open]:ring-1 data-[state=open]:ring-[#10b673]">
-                                <SelectValue placeholder="Selecione um cliente..." />
-                            </SelectTrigger>
-                            <SelectContent className="bg-white">
-                                {clientes.map(c => (
-                                    <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
+                        <select
+                            required
+                            name="customer_id"
+                            value={form.customer_id}
+                            onChange={handleChange}
+                            className="w-full border-b-2 border-slate-200 bg-transparent py-3 text-slate-800 focus:border-[#0e5c74] focus:outline-none transition-colors text-sm appearance-none"
+                        >
+                            <option value="">Selecione um cliente...</option>
+                            {clientes.map(c => (
+                                <option key={c.id} value={c.id}>{c.name}</option>
+                            ))}
+                        </select>
+                    </div>
+
+                    {/* Endereço */}
+                    <div className="pt-4">
+                        <label className="text-[11px] font-semibold tracking-wide text-[#0e5c74] uppercase block">
+                            ENDEREÇO
+                        </label>
+                        <input
+                            type="text"
+                            name="address"
+                            placeholder="Informe o endereço do serviço..."
+                            value={form.address || ''}
+                            onChange={handleChange}
+                            className="w-full border-b-2 border-slate-200 bg-transparent py-3 text-slate-800 placeholder:text-slate-400 focus:border-[#0e5c74] focus:outline-none transition-colors text-sm"
+                        />
                     </div>
 
                     {/* Tipo de Serviço */}
-                    <div className="space-y-1.5">
-                        <div className="flex justify-between items-center">
-                            <label className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block">
-                                Tipo de Serviço <span className="text-red-500">*</span>
-                            </label>
-                            <button 
-                                type="button"
-                                onClick={() => router.push('/servicos/novo')}
-                                className="text-[11px] font-bold text-[#2ECC71] bg-[#eafaf1] px-2.5 py-1 rounded-md hover:bg-[#d5f5e3] transition-colors flex items-center gap-1"
-                            >
-                                + Adicionar Serviço
-                            </button>
-                        </div>
-                        <Select required value={form.service_type_id} onValueChange={(val) => handleChange({ target: { name: 'service_type_id', value: val } })}>
-                            <SelectTrigger className="w-full h-10 bg-white shadow-sm border-slate-200 text-slate-800 focus:ring-[#10b673] focus:ring-offset-0 focus:ring-1 data-[state=open]:border-[#10b673] data-[state=open]:ring-1 data-[state=open]:ring-[#10b673]">
-                                <SelectValue placeholder="Selecione o serviço..." />
-                            </SelectTrigger>
-                            <SelectContent className="bg-white">
-                                {servicos.map(s => (
-                                    <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
+                    <div className="pt-4">
+                        <label className="text-[11px] font-semibold tracking-wide text-[#0e5c74] uppercase block">
+                            TIPO DE SERVIÇO <span className="text-red-500 ml-0.5">*</span>
+                        </label>
+                        <select
+                            required
+                            name="service_type_id"
+                            value={form.service_type_id}
+                            onChange={handleChange}
+                            className="w-full border-b-2 border-slate-200 bg-transparent py-3 text-slate-800 focus:border-[#0e5c74] focus:outline-none transition-colors text-sm appearance-none"
+                        >
+                            <option value="">Selecione o serviço...</option>
+                            {servicos.map(s => (
+                                <option key={s.id} value={s.id}>{s.name}</option>
+                            ))}
+                        </select>
                     </div>
 
                     {/* Funcionário Responsável */}
-                    <div className="space-y-1.5">
-                        <label className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block">
-                            Atribuir ao Funcionário <span className="text-red-500">*</span>
+                    <div className="pt-4">
+                        <label className="text-[11px] font-semibold tracking-wide text-[#0e5c74] uppercase block">
+                            ATRIBUIR AO FUNCIONÁRIO <span className="text-red-500 ml-0.5">*</span>
                         </label>
-                        <Select required value={form.piscineiro_id} onValueChange={(val) => handleChange({ target: { name: 'piscineiro_id', value: val } })}>
-                            <SelectTrigger className="w-full h-10 bg-white shadow-sm border-slate-200 text-slate-800 focus:ring-[#10b673] focus:ring-offset-0 focus:ring-1 data-[state=open]:border-[#10b673] data-[state=open]:ring-1 data-[state=open]:ring-[#10b673]">
-                                <SelectValue placeholder="Selecione o funcionário..." />
-                            </SelectTrigger>
-                            <SelectContent className="bg-white">
-                                {funcionarios.map(f => (
-                                    <SelectItem key={f.id} value={f.id}>{f.full_name}</SelectItem>
-                                ))}
-                                {funcionarios.length === 0 && (
-                                    <SelectItem value="none" disabled>⚠️ Nenhum funcionário encontrado</SelectItem>
-                                )}
-                            </SelectContent>
-                        </Select>
+                        <select
+                            required
+                            name="piscineiro_id"
+                            value={form.piscineiro_id}
+                            onChange={handleChange}
+                            className="w-full border-b-2 border-slate-200 bg-transparent py-3 text-slate-800 focus:border-[#0e5c74] focus:outline-none transition-colors text-sm appearance-none"
+                        >
+                            <option value="">Selecione o funcionário...</option>
+                            {funcionarios.map(f => (
+                                <option key={f.id} value={f.id}>{f.full_name}</option>
+                            ))}
+                        </select>
                     </div>
 
                     {/* Data Agendada */}
-                    <div className="space-y-1.5">
-                        <label className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block">
-                            Data e Hora Agendada <span className="text-red-500">*</span>
+                    <div className="pt-4">
+                        <label className="text-[11px] font-semibold tracking-wide text-[#0e5c74] uppercase block">
+                            DATA E HORA AGENDADA <span className="text-red-500 ml-0.5">*</span>
                         </label>
                         <input
                             type="datetime-local"
                             name="scheduled_date"
                             value={form.scheduled_date}
                             onChange={handleChange}
-                            className="flex h-10 w-full items-center justify-between rounded-md border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder:text-slate-500 focus:outline-none focus:ring-[#10b673] focus:border-[#10b673] focus:ring-1 focus:ring-offset-0 shadow-sm"
+                            className="w-full border-b-2 border-slate-200 bg-transparent py-3 text-slate-800 placeholder:text-slate-400 focus:border-[#0e5c74] focus:outline-none transition-colors text-sm"
                             required
                         />
                     </div>
 
                     {/* Status */}
-                    <div className="space-y-1.5">
-                        <label className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block">Status</label>
-                        <Select value={form.status} onValueChange={(val) => handleChange({ target: { name: 'status', value: val } })}>
-                            <SelectTrigger className="w-full h-10 bg-white shadow-sm border-slate-200 text-slate-800 focus:ring-[#10b673] focus:ring-offset-0 focus:ring-1 data-[state=open]:border-[#10b673] data-[state=open]:ring-1 data-[state=open]:ring-[#10b673]">
-                                <SelectValue placeholder="Selecione o status..." />
-                            </SelectTrigger>
-                            <SelectContent className="bg-white">
-                                <SelectItem value="Pendente">Pendente</SelectItem>
-                                <SelectItem value="Concluido">Concluído</SelectItem>
-                                <SelectItem value="Cancelado">Cancelado</SelectItem>
-                            </SelectContent>
-                        </Select>
+                    <div className="pt-4">
+                        <label className="text-[11px] font-semibold tracking-wide text-[#0e5c74] uppercase block">
+                            STATUS
+                        </label>
+                        <select
+                            name="status"
+                            value={form.status}
+                            onChange={handleChange}
+                            className="w-full border-b-2 border-slate-200 bg-transparent py-3 text-slate-800 focus:border-[#0e5c74] focus:outline-none transition-colors text-sm appearance-none"
+                        >
+                            <option value="Pendente">Pendente</option>
+                            <option value="Em Andamento">Em Andamento</option>
+                            <option value="Concluido">Concluído</option>
+                            <option value="Cancelado">Cancelado</option>
+                        </select>
                     </div>
 
                     {/* Descrição */}
-                    <div className="space-y-1.5">
-                        <label className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block">Descrição / Observações</label>
+                    <div className="pt-4">
+                        <label className="text-[11px] font-semibold tracking-wide text-[#0e5c74] uppercase block">
+                            DESCRIÇÃO / OBSERVAÇÕES
+                        </label>
                         <textarea
                             name="description"
                             value={form.description}
                             onChange={handleChange}
                             placeholder="Detalhes adicionais sobre o serviço..."
-                            className="flex min-h-[120px] w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-[#10b673] focus:border-[#10b673] focus:ring-1 focus:ring-offset-0 shadow-sm resize-none"
+                            rows={4}
+                            className="w-full border-b-2 border-slate-200 bg-transparent py-3 text-slate-800 placeholder:text-slate-400 focus:border-[#0e5c74] focus:outline-none transition-colors text-sm resize-none"
                             maxLength={1000}
                         />
                     </div>
+
+                    <div className="pt-8">
+                        <button
+                            type="submit"
+                            disabled={submitting}
+                            className="w-full bg-[#22c55e] hover:bg-[#16a34a] text-white py-4 rounded-xl font-bold text-sm tracking-wide shadow-sm active:scale-[0.98] transition-all disabled:opacity-50 disabled:active:scale-100 uppercase"
+                        >
+                            {submitting ? 'Salvando...' : 'ABRIR CHAMADO'}
+                        </button>
+                    </div>
                 </form>
             </main>
-
-            {/* Footer */}
-            <div className="fixed bottom-0 left-0 right-0 px-4 py-4 bg-[#fcfbf8] border-t border-slate-200 z-10 shadow-[0_-4px_15px_-3px_rgba(0,0,0,0.05)]">
-                <div className="max-w-2xl mx-auto">
-                    <button
-                        onClick={handleSubmit}
-                        disabled={submitting}
-                        className="w-full bg-[#2ECC71] hover:bg-[#27ae60] text-white py-3.5 rounded-xl font-bold text-sm tracking-wide shadow-sm active:scale-[0.98] transition-all disabled:opacity-50 disabled:active:scale-100 uppercase"
-                    >
-                        {submitting ? 'Salvando...' : 'ABRIR CHAMADO'}
-                    </button>
-                </div>
-            </div>
         </div>
     );
 }
+

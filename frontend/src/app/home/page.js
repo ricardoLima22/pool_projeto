@@ -67,6 +67,10 @@ export default function Dashboard() {
 
     useEffect(() => {
         async function fetchUserAndData() {
+            // Sincroniza a cor da barra de status do iOS com o header
+            const metaTheme = document.querySelector('meta[name="theme-color"]');
+            if (metaTheme) metaTheme.setAttribute('content', '#0bd2eb'); // Cor aproximada do hsl(190 90% 45%)
+
             setLoading(true);
             const { data: { user }, error: authError } = await supabase.auth.getUser();
 
@@ -136,6 +140,11 @@ export default function Dashboard() {
         }
 
         fetchUserAndData();
+
+        return () => {
+            const metaTheme = document.querySelector('meta[name="theme-color"]');
+            if (metaTheme) metaTheme.setAttribute('content', '#ffffff');
+        };
     }, [router]);
 
     const handleLogout = async () => {

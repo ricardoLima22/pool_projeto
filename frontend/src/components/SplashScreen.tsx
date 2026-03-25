@@ -1,6 +1,15 @@
-import React from 'react';
+'use client';
+
+import React, { useEffect } from 'react';
 
 export default function SplashScreen({ message = "Carregando sistema" }: { message?: string }) {
+  useEffect(() => {
+    const metaTheme = document.querySelector('meta[name="theme-color"]');
+    if (metaTheme) metaTheme.setAttribute('content', '#1b6c6c');
+    return () => {
+      if (metaTheme) metaTheme.setAttribute('content', '#ffffff');
+    };
+  }, []);
   return (
     <div
       style={{

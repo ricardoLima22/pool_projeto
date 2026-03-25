@@ -15,7 +15,15 @@ export default function ListagemChamados() {
     const router = useRouter();
 
     useEffect(() => {
+        // Sincroniza a cor da barra de status do iOS com o header
+        const metaTheme = document.querySelector('meta[name="theme-color"]');
+        if (metaTheme) metaTheme.setAttribute('content', '#1e40af'); // Cor aproximada do hsl(225 75% 48%)
+
         fetchChamados();
+
+        return () => {
+            if (metaTheme) metaTheme.setAttribute('content', '#ffffff');
+        };
     }, []);
 
     async function fetchChamados() {

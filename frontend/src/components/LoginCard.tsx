@@ -20,6 +20,9 @@ const LoginCard = () => {
   const isValid = email.length > 3 && password.length > 3;
 
   useEffect(() => {
+    const metaTheme = document.querySelector('meta[name="theme-color"]');
+    if (metaTheme) metaTheme.setAttribute('content', '#081017');
+
     // Verifica se fomos redirecionados com o aviso de funcionário sem acesso
     if (typeof window !== "undefined") {
       const params = new URLSearchParams(window.location.search);
@@ -29,6 +32,10 @@ const LoginCard = () => {
         window.history.replaceState({}, document.title, window.location.pathname);
       }
     }
+
+    return () => {
+      if (metaTheme) metaTheme.setAttribute('content', '#ffffff');
+    };
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {

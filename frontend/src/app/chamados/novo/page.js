@@ -55,7 +55,7 @@ export default function NovoChamado() {
                 // 1. Clientes
                 const cRes = await supabase
                     .from('customers')
-                    .select('id, name')
+                    .select('id, name, address')
                     .eq('company_id', profile.company_id)
                     .order('name');
                 setClientes(cRes.data || []);
@@ -85,7 +85,13 @@ export default function NovoChamado() {
     }
 
     const handleChange = (e) => {
-        setForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
+        const { name, value } = e.target;
+        if (name === 'customer_id') {
+            const cliente = clientes.find(c => c.id === value);
+            setForm(prev => ({ ...prev, customer_id: value, address: cliente?.address || '' }));
+        } else {
+            setForm(prev => ({ ...prev, [name]: value }));
+        }
     };
 
     const handleSubmit = async (e) => {
@@ -206,10 +212,10 @@ export default function NovoChamado() {
                     <input
                         type="text"
                         name="address"
-                        placeholder="Informe o endereço do serviço..."
+                        placeholder="Endereço não cadastrado"
                         value={form.address || ''}
-                        onChange={handleChange}
-                        className="w-full border-b-2 border-slate-200 bg-transparent py-3 text-slate-800 placeholder:text-slate-400 focus:border-[#008080] focus:outline-none transition-colors text-sm rounded-none appearance-none"
+                        readOnly
+                        className="w-full border-b-2 border-slate-200 bg-transparent py-3 text-slate-500 placeholder:text-slate-400 focus:outline-none text-sm rounded-none appearance-none cursor-not-allowed"
                     />
                 </div>
 

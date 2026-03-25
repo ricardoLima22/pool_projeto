@@ -63,9 +63,14 @@ mongoose.connect(MONGODB_URI).then(async () => {
                 console.error("Erro ao buscar funcionário no banco de dados ou telefone não cadastrado.", error || '');
                 process.exit(1);
             }
-            // Formatar número para garantir DDI 55 e apenas números
+            // Verificar se o número inclui o DDI explicitamente pelo caractere '+'
+            let isInternational = data.phone.trim().startsWith('+');
             let wpLimpo = data.phone.replace(/\D/g, '');
-            if (wpLimpo.length <= 11) wpLimpo = `55${wpLimpo}`;
+            
+            // Se for número nacional ou não tiver o '+', adicionamos o 55 como padrão
+            if (!isInternational && wpLimpo.length <= 11) {
+                wpLimpo = `55${wpLimpo}`;
+            }
             numeroDestino = wpLimpo;
             console.log(`Número do funcionário encontrado com sucesso: ${numeroDestino}`);
 

@@ -67,9 +67,9 @@ export default function Dashboard() {
 
     useEffect(() => {
         async function fetchUserAndData() {
-            // Sincroniza a cor da barra de status do iOS com o header
-            const metaTheme = document.querySelector('meta[name="theme-color"]');
-            if (metaTheme) metaTheme.setAttribute('content', '#0bd2eb'); // Cor aproximada do hsl(190 90% 45%)
+            // iOS Safari Notch Sync
+            document.documentElement.style.backgroundColor = '#122b3a';
+            document.body.style.backgroundColor = '#122b3a';
 
             setLoading(true);
             const { data: { user }, error: authError } = await supabase.auth.getUser();
@@ -142,8 +142,8 @@ export default function Dashboard() {
         fetchUserAndData();
 
         return () => {
-            const metaTheme = document.querySelector('meta[name="theme-color"]');
-            if (metaTheme) metaTheme.setAttribute('content', '#ffffff');
+            document.documentElement.style.backgroundColor = '#fcfbf8';
+            document.body.style.backgroundColor = '#fcfbf8';
         };
     }, [router]);
 
@@ -160,9 +160,9 @@ export default function Dashboard() {
     }
 
     return (
-        <div className="min-h-screen bg-slate-50 pb-24 font-sans">
+        <div className="min-h-screen font-sans flex flex-col">
             {/* Header */}
-            <header className="gradient-hero px-6 pt-6 pb-10 text-white shadow-md">
+            <header className="gradient-hero px-6 pt-[calc(1.5rem+env(safe-area-inset-top))] pb-10 text-white shadow-md">
                 <div className="max-w-4xl mx-auto">
                     <div className="flex items-center justify-between mb-6">
                         <div className="flex items-center gap-2">
@@ -182,8 +182,9 @@ export default function Dashboard() {
             </header>
 
             {/* Main Content */}
-            <main className="max-w-4xl mx-auto px-5 -mt-8 relative z-20">
-                {/* Weather Card */}
+            <div className="flex-1 bg-slate-50 pb-24">
+                <main className="max-w-4xl mx-auto px-5 -mt-8 relative z-20">
+                    {/* Weather Card */}
                 <div className="mb-4 animate-slide-up bg-white/40 backdrop-blur-sm rounded-xl p-4 border border-cyan-100 shadow-sm">
                     {weatherLoading ? (
                         <div className="flex items-center gap-3 text-slate-600 justify-center py-2">
@@ -295,6 +296,7 @@ export default function Dashboard() {
                     </div>
                 </div>
             </main>
+            </div>
         </div>
     );
 };

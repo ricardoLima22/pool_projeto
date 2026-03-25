@@ -20,8 +20,8 @@ const LoginCard = () => {
   const isValid = email.length > 3 && password.length > 3;
 
   useEffect(() => {
-    const metaTheme = document.querySelector('meta[name="theme-color"]');
-    if (metaTheme) metaTheme.setAttribute('content', '#081017');
+    document.documentElement.style.backgroundColor = '#081017';
+    document.body.style.backgroundColor = '#081017';
 
     // Verifica se fomos redirecionados com o aviso de funcionário sem acesso
     if (typeof window !== "undefined") {
@@ -34,7 +34,8 @@ const LoginCard = () => {
     }
 
     return () => {
-      if (metaTheme) metaTheme.setAttribute('content', '#ffffff');
+      document.documentElement.style.backgroundColor = '#fcfbf8';
+      document.body.style.backgroundColor = '#fcfbf8';
     };
   }, []);
 

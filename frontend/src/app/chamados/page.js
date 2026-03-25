@@ -15,14 +15,15 @@ export default function ListagemChamados() {
     const router = useRouter();
 
     useEffect(() => {
-        // Sincroniza a cor da barra de status do iOS com o header
-        const metaTheme = document.querySelector('meta[name="theme-color"]');
-        if (metaTheme) metaTheme.setAttribute('content', '#1e40af'); // Cor aproximada do hsl(225 75% 48%)
+        // Sincroniza a cor da barra de status do iOS
+        document.documentElement.style.backgroundColor = '#1e40af';
+        document.body.style.backgroundColor = '#1e40af';
 
         fetchChamados();
 
         return () => {
-            if (metaTheme) metaTheme.setAttribute('content', '#ffffff');
+            document.documentElement.style.backgroundColor = '#fcfbf8';
+            document.body.style.backgroundColor = '#fcfbf8';
         };
     }, []);
 
@@ -89,10 +90,10 @@ export default function ListagemChamados() {
     }
 
     return (
-        <div className="min-h-screen bg-[#fcfbf8] pb-24">
+        <div className="min-h-screen flex flex-col">
             {/* Header */}
             <header
-                className="px-5 pt-6 pb-8 rounded-b-3xl"
+                className="px-5 pt-[calc(1.5rem+env(safe-area-inset-top))] pb-8 rounded-b-3xl"
                 style={{ background: "linear-gradient(135deg, hsl(225 75% 48%), hsl(225 85% 60%))" }}
             >
                 <div className="flex items-center justify-between mb-5">
@@ -143,6 +144,7 @@ export default function ListagemChamados() {
                 </div>
             </header>
 
+            <div className="flex-1 bg-[#fcfbf8] pb-24">
             {/* Filter Tabs */}
             <div className="px-5 -mt-3">
                 <div className="bg-white rounded-xl border border-slate-200 p-1 flex gap-1 shadow-sm">
@@ -269,6 +271,7 @@ export default function ListagemChamados() {
                             </div>
                         )}
                 </>
+            </div>
             </div>
         </div>
     );

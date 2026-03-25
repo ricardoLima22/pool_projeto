@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 
 const PoolBackground = () => {
   return (
-    <div className="absolute inset-0 bg-background overflow-hidden -z-10 pointer-events-none">
+    <div className="absolute inset-0 bg-[#081017] overflow-hidden -z-10 pointer-events-none">
       {/* Subtle animated caustic circles */}
       <motion.div
         className="absolute top-[-20%] right-[-10%] w-[600px] h-[600px] rounded-full opacity-[0.07]"

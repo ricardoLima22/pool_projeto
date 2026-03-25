@@ -69,7 +69,13 @@
   border-color: var(--color-border);
 }
 
+html {
+  height: -webkit-fill-available;
+}
+
 body {
+  min-height: 100vh;
+  min-height: -webkit-fill-available;
   background-color: var(--color-background);
   color: var(--color-foreground);
   font-family: 'Inter', sans-serif;

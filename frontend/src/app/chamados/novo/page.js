@@ -183,7 +183,7 @@ export default function NovoChamado() {
             <form onSubmit={handleSubmit} className="px-4 pb-6 space-y-1">
                 {/* Cliente */}
                 <div className="pt-4">
-                    <label className="text-[11px] font-semibold tracking-wide text-[#0e5c74] uppercase block">
+                    <label className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block">
                         CLIENTE <span className="text-red-500 ml-0.5">*</span>
                     </label>
                     <select
@@ -191,7 +191,7 @@ export default function NovoChamado() {
                         name="customer_id"
                         value={form.customer_id}
                         onChange={handleChange}
-                        className="w-full border-b-2 border-slate-200 bg-transparent py-3 text-slate-800 focus:border-[#0e5c74] focus:outline-none transition-colors text-sm appearance-none"
+                        className="w-full border-b-2 border-slate-200 bg-transparent py-3 text-slate-800 focus:border-[#008080] focus:outline-none transition-colors text-sm appearance-none"
                     >
                         <option value="">Selecione um cliente...</option>
                         {clientes.map(c => (
@@ -202,7 +202,7 @@ export default function NovoChamado() {
 
                 {/* Endereço */}
                 <div className="pt-4">
-                    <label className="text-[11px] font-semibold tracking-wide text-[#0e5c74] uppercase block">
+                    <label className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block">
                         ENDEREÇO
                     </label>
                     <input
@@ -211,13 +211,13 @@ export default function NovoChamado() {
                         placeholder="Informe o endereço do serviço..."
                         value={form.address || ''}
                         onChange={handleChange}
-                        className="w-full border-b-2 border-slate-200 bg-transparent py-3 text-slate-800 placeholder:text-slate-400 focus:border-[#0e5c74] focus:outline-none transition-colors text-sm"
+                        className="w-full border-b-2 border-slate-200 bg-transparent py-3 text-slate-800 placeholder:text-slate-400 focus:border-[#008080] focus:outline-none transition-colors text-sm"
                     />
                 </div>
 
                 {/* Tipo de Serviço */}
                 <div className="pt-4">
-                    <label className="text-[11px] font-semibold tracking-wide text-[#0e5c74] uppercase block">
+                    <label className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block">
                         TIPO DE SERVIÇO <span className="text-red-500 ml-0.5">*</span>
                     </label>
                     <select
@@ -225,7 +225,7 @@ export default function NovoChamado() {
                         name="service_type_id"
                         value={form.service_type_id}
                         onChange={handleChange}
-                        className="w-full border-b-2 border-slate-200 bg-transparent py-3 text-slate-800 focus:border-[#0e5c74] focus:outline-none transition-colors text-sm appearance-none"
+                        className="w-full border-b-2 border-slate-200 bg-transparent py-3 text-slate-800 focus:border-[#008080] focus:outline-none transition-colors text-sm appearance-none"
                     >
                         <option value="">Selecione o serviço...</option>
                         {servicos.map(s => (
@@ -236,7 +236,7 @@ export default function NovoChamado() {
 
                 {/* Funcionário Responsável */}
                 <div className="pt-4">
-                    <label className="text-[11px] font-semibold tracking-wide text-[#0e5c74] uppercase block">
+                    <label className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block">
                         ATRIBUIR AO FUNCIONÁRIO <span className="text-red-500 ml-0.5">*</span>
                     </label>
                     <select
@@ -244,7 +244,7 @@ export default function NovoChamado() {
                         name="piscineiro_id"
                         value={form.piscineiro_id}
                         onChange={handleChange}
-                        className="w-full border-b-2 border-slate-200 bg-transparent py-3 text-slate-800 focus:border-[#0e5c74] focus:outline-none transition-colors text-sm appearance-none"
+                        className="w-full border-b-2 border-slate-200 bg-transparent py-3 text-slate-800 focus:border-[#008080] focus:outline-none transition-colors text-sm appearance-none"
                     >
                         <option value="">Selecione o funcionário...</option>
                         {funcionarios.map(f => (
@@ -255,7 +255,7 @@ export default function NovoChamado() {
 
                 {/* Data Agendada */}
                 <div className="pt-4">
-                    <label className="text-[11px] font-semibold tracking-wide text-[#0e5c74] uppercase block">
+                    <label className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block">
                         DATA E HORA AGENDADA <span className="text-red-500 ml-0.5">*</span>
                     </label>
                     <input
@@ -263,21 +263,21 @@ export default function NovoChamado() {
                         name="scheduled_date"
                         value={form.scheduled_date}
                         onChange={handleChange}
-                        className="w-full border-b-2 border-slate-200 bg-transparent py-3 text-slate-800 placeholder:text-slate-400 focus:border-[#0e5c74] focus:outline-none transition-colors text-sm"
+                        className="w-full border-b-2 border-slate-200 bg-transparent py-3 text-slate-800 placeholder:text-slate-400 focus:border-[#008080] focus:outline-none transition-colors text-sm"
                         required
                     />
                 </div>
 
                 {/* Status */}
                 <div className="pt-4">
-                    <label className="text-[11px] font-semibold tracking-wide text-[#0e5c74] uppercase block">
+                    <label className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block">
                         STATUS
                     </label>
                     <select
                         name="status"
                         value={form.status}
                         onChange={handleChange}
-                        className="w-full border-b-2 border-slate-200 bg-transparent py-3 text-slate-800 focus:border-[#0e5c74] focus:outline-none transition-colors text-sm appearance-none"
+                        className="w-full border-b-2 border-slate-200 bg-transparent py-3 text-slate-800 focus:border-[#008080] focus:outline-none transition-colors text-sm appearance-none"
                     >
                         <option value="Pendente">Pendente</option>
                         <option value="Em Andamento">Em Andamento</option>
@@ -288,7 +288,7 @@ export default function NovoChamado() {
 
                 {/* Descrição */}
                 <div className="pt-4">
-                    <label className="text-[11px] font-semibold tracking-wide text-[#0e5c74] uppercase block">
+                    <label className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block">
                         DESCRIÇÃO / OBSERVAÇÕES
                     </label>
                     <textarea
@@ -297,7 +297,7 @@ export default function NovoChamado() {
                         onChange={handleChange}
                         placeholder="Detalhes adicionais sobre o serviço..."
                         rows={4}
-                        className="w-full border-b-2 border-slate-200 bg-transparent py-3 text-slate-800 placeholder:text-slate-400 focus:border-[#0e5c74] focus:outline-none transition-colors text-sm resize-none"
+                        className="w-full border-b-2 border-slate-200 bg-transparent py-3 text-slate-800 placeholder:text-slate-400 focus:border-[#008080] focus:outline-none transition-colors text-sm resize-none"
                         maxLength={1000}
                     />
                 </div>
@@ -306,7 +306,7 @@ export default function NovoChamado() {
                     <button
                         type="submit"
                         disabled={submitting}
-                        className="w-full bg-[#22c55e] hover:bg-[#16a34a] text-white py-4 rounded-xl font-bold text-sm tracking-wide shadow-sm active:scale-[0.98] transition-all disabled:opacity-50 disabled:active:scale-100 uppercase"
+                        className="w-full bg-[#2ECC71] hover:bg-[#27ae60] text-white py-3.5 rounded-xl font-bold text-sm tracking-wide shadow-sm active:scale-95 transition-all text-center disabled:opacity-50 disabled:active:scale-100 uppercase"
                     >
                         {submitting ? 'Salvando...' : 'ABRIR CHAMADO'}
                     </button>

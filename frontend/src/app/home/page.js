@@ -68,6 +68,9 @@ export default function Dashboard() {
     useEffect(() => {
         async function fetchUserAndData() {
             // iOS Safari Notch Sync
+            const metaTheme = document.querySelector('meta[name="theme-color"]');
+            if (metaTheme) metaTheme.setAttribute('content', '#122b3a');
+            
             document.documentElement.style.backgroundColor = '#122b3a';
             document.body.style.backgroundColor = '#122b3a';
 
@@ -142,6 +145,9 @@ export default function Dashboard() {
         fetchUserAndData();
 
         return () => {
+            const metaTheme = document.querySelector('meta[name="theme-color"]');
+            if (metaTheme) metaTheme.setAttribute('content', '#ffffff');
+            
             document.documentElement.style.backgroundColor = '#fcfbf8';
             document.body.style.backgroundColor = '#fcfbf8';
         };

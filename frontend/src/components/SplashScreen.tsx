@@ -4,9 +4,15 @@ import React, { useEffect } from 'react';
 
 export default function SplashScreen({ message = "Carregando sistema" }: { message?: string }) {
   useEffect(() => {
+    const metaTheme = document.querySelector('meta[name="theme-color"]');
+    if (metaTheme) metaTheme.setAttribute('content', '#1b6c6c');
+
     document.documentElement.style.backgroundColor = '#1b6c6c';
     document.body.style.backgroundColor = '#1b6c6c';
     return () => {
+      const metaTheme = document.querySelector('meta[name="theme-color"]');
+      if (metaTheme) metaTheme.setAttribute('content', '#ffffff');
+
       document.documentElement.style.backgroundColor = '#fcfbf8';
       document.body.style.backgroundColor = '#fcfbf8';
     };

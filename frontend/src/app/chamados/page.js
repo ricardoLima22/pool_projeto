@@ -16,12 +16,18 @@ export default function ListagemChamados() {
 
     useEffect(() => {
         // Sincroniza a cor da barra de status do iOS
+        const metaTheme = document.querySelector('meta[name="theme-color"]');
+        if (metaTheme) metaTheme.setAttribute('content', '#1e40af');
+        
         document.documentElement.style.backgroundColor = '#1e40af';
         document.body.style.backgroundColor = '#1e40af';
 
         fetchChamados();
 
         return () => {
+            const metaTheme = document.querySelector('meta[name="theme-color"]');
+            if (metaTheme) metaTheme.setAttribute('content', '#ffffff');
+            
             document.documentElement.style.backgroundColor = '#fcfbf8';
             document.body.style.backgroundColor = '#fcfbf8';
         };

@@ -84,12 +84,13 @@ export default function EmployeeDashboard() {
                         .eq('profile_id', profileId)
                         .in('status', ['pendente', 'Pendente', 'em_execucao', 'Em Execução', 'agendado', 'Agendado']),
 
-                    // Lista de chamados para o funcionário (sem forçar a data atual para garantir que apareça)
+                    // Lista de chamados para o funcionário (filtrado apenas para os criados HOJE)
                     supabase.from('service_requests')
                         .select('*, customers(*), service_types(name)')
                         .eq('company_id', companyId)
                         .eq('profile_id', profileId)
                         .in('status', ['pendente', 'Pendente', 'em_execucao', 'Em Execução', 'Confirmada', 'agendado', 'Agendado'])
+                        .gte('created_at', todayStr)
                         .order('created_at', { ascending: false })
                         .limit(5)
                 ]);

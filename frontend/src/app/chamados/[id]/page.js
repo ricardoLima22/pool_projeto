@@ -27,7 +27,7 @@ export default function DetalhesChamado() {
             if (!id) return;
             const { data, error } = await supabase
                 .from('service_requests')
-                .select('*, customers(name), profiles!piscineiro_id(full_name), service_types(name)')
+                .select('*, customers(name, address), profiles!piscineiro_id(full_name), service_types(name)')
                 .eq('id', id)
                 .single();
 

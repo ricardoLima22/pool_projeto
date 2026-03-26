@@ -273,13 +273,31 @@ export default function DetalhesChamado() {
                     </div>
                 ) : (
                     <div className="pt-8 flex gap-3 pb-4">
-                        <button
-                            type="button"
-                            onClick={() => router.push(`/visita/nova?clienteId=${chamado.customer_id}&chamadoId=${id}`)}
-                            className="w-full bg-[#2ECC71] hover:bg-[#27ae60] text-white py-3.5 rounded-xl font-bold text-sm tracking-wide shadow-sm active:scale-95 transition-all text-center uppercase"
-                        >
-                            REGISTRAR VISITA
-                        </button>
+                        {(chamado?.status?.toLowerCase() === 'concluido' || chamado?.status?.toLowerCase() === 'concluído') ? (
+                            <button
+                                type="button"
+                                disabled
+                                className="w-full bg-slate-300 text-white flex-1 py-3.5 rounded-xl font-bold text-sm tracking-wide shadow-sm text-center uppercase cursor-not-allowed opacity-80"
+                            >
+                                VISITA REGISTRADA
+                            </button>
+                        ) : chamado?.status?.toLowerCase() === 'cancelado' ? (
+                            <button
+                                type="button"
+                                disabled
+                                className="w-full bg-slate-300 text-white flex-1 py-3.5 rounded-xl font-bold text-sm tracking-wide shadow-sm text-center uppercase cursor-not-allowed opacity-80"
+                            >
+                                CHAMADO CANCELADO
+                            </button>
+                        ) : (
+                            <button
+                                type="button"
+                                onClick={() => router.push(`/visita/nova?clienteId=${chamado.customer_id}&chamadoId=${id}`)}
+                                className="w-full bg-[#2ECC71] hover:bg-[#27ae60] text-white py-3.5 rounded-xl font-bold text-sm tracking-wide shadow-sm active:scale-95 transition-all text-center uppercase"
+                            >
+                                REGISTRAR VISITA
+                            </button>
+                        )}
                     </div>
                 )}
             </form>

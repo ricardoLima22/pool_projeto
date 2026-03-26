@@ -12,9 +12,13 @@ export default function ListagemChamados() {
     const [busca, setBusca] = useState('');
     const [filtroStatus, setFiltroStatus] = useState("TODOS");
     const [loading, setLoading] = useState(true);
+    const [userRole, setUserRole] = useState('');
     const router = useRouter();
 
     useEffect(() => {
+        const role = localStorage.getItem('user_role');
+        if (role) setUserRole(role.toLowerCase());
+
         // Sincroniza a cor da barra de status do iOS
         const metaTheme = document.querySelector('meta[name="theme-color"]');
         if (metaTheme) metaTheme.setAttribute('content', '#1e40af');
@@ -22,7 +26,7 @@ export default function ListagemChamados() {
         document.documentElement.style.backgroundColor = '#1e40af';
         document.body.style.backgroundColor = '#1e40af';
 
-        fetchChamados();
+        fetchChamados(role?.toLowerCase());
 
         return () => {
             const metaTheme = document.querySelector('meta[name="theme-color"]');
@@ -33,7 +37,7 @@ export default function ListagemChamados() {
         };
     }, []);
 
-    async function fetchChamados() {
+    async function fetchChamados(role) {
         setLoading(true);
         const { data: { user } } = await supabase.auth.getUser();
 
@@ -45,11 +49,16 @@ export default function ListagemChamados() {
                 .single();
 
             if (profile?.company_id) {
-                const { data, error } = await supabase
+                let query = supabase
                     .from('service_requests')
                     .select('*, customers(name), profiles!piscineiro_id(full_name), service_types(name)')
-                    .eq('company_id', profile.company_id)
-                    .order('created_at', { ascending: false });
+                    .eq('company_id', profile.company_id);
+
+                if (role === 'funcionario') {
+                    query = query.eq('piscineiro_id', user.id);
+                }
+
+                const { data, error } = await query.order('created_at', { ascending: false });
 
                 if (error) {
                     console.error("Erro ao buscar chamados:", error);
@@ -112,13 +121,15 @@ export default function ListagemChamados() {
                             <p className="text-white/60 text-xs mt-0.5">Gerencie seus serviços</p>
                         </div>
                     </div>
-                    <button
-                        onClick={() => router.push('/chamados/novo')}
-                        className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-sm font-bold text-white bg-white/20 backdrop-blur-sm hover:bg-white/30 transition-colors"
-                    >
-                        <Plus className="h-4 w-4" />
-                        Novo
-                    </button>
+                    {userRole !== 'funcionario' && (
+                        <button
+                            onClick={() => router.push('/chamados/novo')}
+                            className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-sm font-bold text-white bg-white/20 backdrop-blur-sm hover:bg-white/30 transition-colors"
+                        >
+                            <Plus className="h-4 w-4" />
+                            Novo
+                        </button>
+                    )}
                 </div>
 
                 {/* Stats */}
@@ -246,12 +257,14 @@ export default function ListagemChamados() {
                                                 </p>
                                             </div>
                                             <div className="flex items-center gap-1.5">
-                                                <button 
-                                                    onClick={(e) => handleDelete(chamado.id, e)}
-                                                    className="p-2 rounded-xl text-slate-400 hover:text-red-500 hover:bg-red-50 transition-colors"
-                                                >
-                                                    <Trash2 className="h-4 w-4" />
-                                                </button>
+                                                {userRole !== 'funcionario' && (
+                                                    <button 
+                                                        onClick={(e) => handleDelete(chamado.id, e)}
+                                                        className="p-2 rounded-xl text-slate-400 hover:text-red-500 hover:bg-red-50 transition-colors"
+                                                    >
+                                                        <Trash2 className="h-4 w-4" />
+                                                    </button>
+                                                )}
                                                 <button
                                                     onClick={(e) => {
                                                         e.stopPropagation();

@@ -224,35 +224,41 @@ function NovaVisita() {
             sent_to_whatsapp: true
         }]);
 
-        if (!visitError) {
-            // Dar baixa no estoque
-            for (const pId of Object.keys(quantidades)) {
-                const qtdUsada = quantidades[pId];
-                if (qtdUsada > 0) {
-                    const originalProduto = produtos.find(p => p.id === pId);
-                    if (originalProduto) {
-                        await supabase
-                            .from('products')
-                            .update({ stock_quantity: originalProduto.stock_quantity - qtdUsada })
-                            .eq('id', pId);
-                    }
+        if (visitError) {
+            console.error("Erro ao salvar visita:", visitError);
+            alert("Erro ao salvar a visita no sistema: " + visitError.message);
+            setEnviando(false);
+            return;
+        }
+
+        // Se chegou aqui, a visita foi salva com sucesso
+        // Dar baixa no estoque
+        for (const pId of Object.keys(quantidades)) {
+            const qtdUsada = quantidades[pId];
+            if (qtdUsada > 0) {
+                const originalProduto = produtos.find(p => p.id === pId);
+                if (originalProduto) {
+                    await supabase
+                        .from('products')
+                        .update({ stock_quantity: originalProduto.stock_quantity - qtdUsada })
+                        .eq('id', pId);
                 }
             }
+        }
 
-            // Fechar chamado automaticamente se a visita veio de um
-            if (chamadoId) {
-                const { error: updateErr, data: updData } = await supabase
-                    .from('service_requests')
-                    .update({ status: 'Concluido' })
-                    .eq('id', chamadoId)
-                    .select();
+        // Fechar chamado automaticamente se a visita veio de um
+        if (chamadoId) {
+            const { error: updateErr, data: updData } = await supabase
+                .from('service_requests')
+                .update({ status: 'Concluido' })
+                .eq('id', chamadoId)
+                .select();
 
-                if (updateErr) {
-                    console.error("ERRO SUPABASE UPDATE CHAMADO:", updateErr);
-                    alert("Erro ao fechar o chamado no sistema: " + updateErr.message);
-                } else if (!updData || updData.length === 0) {
-                    alert("Aviso: O chamado não foi encontrado para atualização ou você não tem permissão para alterá-lo (RLS).");
-                }
+            if (updateErr) {
+                console.error("ERRO SUPABASE UPDATE CHAMADO:", updateErr);
+                alert("A visita foi salva, mas ocorreu um erro ao tentar fechar o chamado: " + updateErr.message);
+            } else if (!updData || updData.length === 0) {
+                alert("Visita salva. Aviso: O chamado não pôde ser atualizado para Concluído.");
             }
         }
 

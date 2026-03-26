@@ -18,6 +18,7 @@ function NovaVisita() {
     const searchParams = useSearchParams();
     //const router = useRouter();
     const clienteId = searchParams.get('clienteId');
+    const chamadoId = searchParams.get('chamadoId');
     const [cliente, setCliente] = useState(null);
     const [clientesList, setClientesList] = useState([]);
     const [produtos, setProdutos] = useState([]);
@@ -236,6 +237,14 @@ function NovaVisita() {
                             .eq('id', pId);
                     }
                 }
+            }
+
+            // Fechar chamado automaticamente se a visita veio de um
+            if (chamadoId) {
+                await supabase
+                    .from('service_requests')
+                    .update({ status: 'Concluido' })
+                    .eq('id', chamadoId);
             }
         }
 

@@ -17,29 +17,29 @@ export const ChamadoCard = ({
 }) => {
   const priorityColor =
     priority === "Alta"
-      ? "text-red-500 bg-red-100/50"
+      ? "text-destructive bg-destructive/10"
       : priority === "Média"
-      ? "text-amber-500 bg-amber-100/50"
-      : "text-emerald-500 bg-emerald-100/50";
+      ? "text-warning bg-warning/10"
+      : "text-success bg-success/10";
 
   return (
-    <div onClick={onClick} className="bg-white rounded-xl p-4 shadow-sm border border-slate-200 hover:shadow-md transition-shadow cursor-pointer group">
+    <div onClick={onClick} className="bg-card rounded-xl p-4 shadow-sm border border-border hover:shadow-md transition-shadow cursor-pointer group">
       <div className="flex items-start gap-3">
-        <div className="bg-cyan-50 rounded-full p-2.5 mt-0.5 border border-cyan-100">
-          <Wrench className="h-5 w-5 text-cyan-600" />
+        <div className="bg-primary/10 rounded-full p-2.5 mt-0.5">
+          <Wrench className="h-5 w-5 text-primary" />
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between">
-            <p className="font-semibold text-slate-800">{title}</p>
-            <ChevronRight className="h-4 w-4 text-slate-400 group-hover:text-cyan-500 transition-colors" />
+            <p className="font-semibold text-card-foreground">{title}</p>
+            <ChevronRight className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
           </div>
-          <p className="text-sm text-slate-500 mt-0.5">{client}</p>
-          <div className="flex items-center gap-1 text-xs text-slate-400 mt-1">
+          <p className="text-sm text-muted-foreground mt-0.5">{client}</p>
+          <div className="flex items-center gap-1 text-xs text-muted-foreground mt-1">
             <MapPin className="h-3 w-3" />
             <span className="truncate">{address}</span>
           </div>
           <div className="flex items-center gap-3 mt-2">
-            <div className="flex items-center gap-1 text-xs text-slate-500">
+            <div className="flex items-center gap-1 text-xs text-muted-foreground">
               <Clock className="h-3 w-3" />
               {time}
             </div>
@@ -54,3 +54,4 @@ export const ChamadoCard = ({
     </div>
   );
 };
+

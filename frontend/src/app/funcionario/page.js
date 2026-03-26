@@ -125,47 +125,42 @@ export default function EmployeeDashboard() {
     }
 
     return (
-        <div className="min-h-screen bg-slate-50 font-sans">
-            {/* Header com estilo gradiente da Lovable adaptado */}
-            <header className="bg-gradient-to-br from-cyan-900 to-[#0e273c] px-6 pt-[calc(1.5rem+env(safe-area-inset-top))] pb-10 text-white shadow-md rounded-b-[2rem]">
+        <div className="min-h-screen bg-background">
+            {/* Header */}
+            <header className="gradient-hero px-6 pt-6 pb-10 text-primary-foreground">
                 <div className="max-w-4xl mx-auto">
                     <div className="flex items-center justify-between mb-6">
                         <div className="flex items-center gap-2">
-                            <Droplets className="h-6 w-6 text-cyan-400" />
-                            <span className="font-bold text-lg tracking-tight">Pool Light</span>
+                            <Droplets className="h-6 w-6 text-primary" />
+                            <span className="font-bold text-lg">Pool Light</span>
                         </div>
-                        <button onClick={handleLogout} className="flex items-center gap-2 text-sm opacity-80 hover:opacity-100 transition-opacity bg-white/10 px-3 py-1.5 rounded-full font-medium">
+                        <button onClick={handleLogout} className="flex items-center gap-2 text-sm opacity-80 hover:opacity-100 transition-opacity">
                             <LogOut className="h-4 w-4" />
                             Sair
                         </button>
                     </div>
-                    <div className="animate-fade-in">
-                        <h1 className="text-2xl font-bold tracking-tight">{greeting}, {profile?.full_name?.split(' ')[0] || 'Usuário'}!</h1>
-                        <p className="text-sm opacity-80 mt-1 font-medium">Veja seus clientes e chamados do dia</p>
-                    </div>
+                    <h1 className="text-2xl font-bold animate-fade-in">{greeting}, {profile?.full_name?.split(' ')[0] || 'Usuário'}!</h1>
+                    <p className="text-sm opacity-75 mt-1">Veja seus clientes e chamados do dia</p>
                 </div>
             </header>
 
             {/* Main Content */}
-            <main className="max-w-4xl mx-auto px-5 -mt-6 relative z-10 pb-20">
+            <main className="max-w-4xl mx-auto px-6 -mt-6">
                 {/* Weather Card */}
-                <div className="mb-4 animate-slide-up bg-white/90 backdrop-blur-md rounded-2xl p-4 border border-cyan-100/50 shadow-sm">
+                <div className="mb-4 animate-slide-up bg-primary/20 backdrop-blur-sm rounded-xl p-4 border border-primary/30">
                     {weatherLoading ? (
-                        <div className="flex items-center gap-3 text-slate-600 justify-center py-2">
-                            <Thermometer className="h-5 w-5 animate-pulse text-cyan-600" />
-                            <span className="text-sm font-bold uppercase tracking-widest text-cyan-900/50">Buscando clima...</span>
+                        <div className="flex items-center gap-3 text-primary-foreground">
+                            <span className="text-sm animate-pulse">Carregando clima...</span>
                         </div>
                     ) : weather ? (
-                        <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-4">
-                                <span className="text-4xl drop-shadow-sm">{weather.icon}</span>
-                                <div>
-                                    <div className="flex items-baseline gap-2">
-                                        <span className="text-2xl font-black text-slate-800 tracking-tighter">{weather.temperature}°C</span>
-                                        <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest bg-slate-100 px-2 py-0.5 rounded-md">{weather.city}</span>
-                                    </div>
-                                    <p className="text-xs font-bold text-slate-400 mt-0.5">{weather.description}</p>
+                        <div className="flex items-center gap-3">
+                            <span className="text-3xl">{weather.icon}</span>
+                            <div>
+                                <div className="flex items-baseline gap-1.5">
+                                    <span className="text-2xl font-bold text-card-foreground">{weather.temperature}°C</span>
+                                    <span className="text-sm font-medium text-muted-foreground uppercase tracking-wide">{weather.city}</span>
                                 </div>
+                                <p className="text-xs text-muted-foreground">{weather.description}</p>
                             </div>
                         </div>
                     ) : null}
@@ -173,29 +168,29 @@ export default function EmployeeDashboard() {
 
                 {/* Stats Row */}
                 <div className="grid grid-cols-2 gap-3 mb-8 animate-slide-up" style={{ animationDelay: "0.1s" }}>
-                    <div className="bg-white rounded-2xl p-4 shadow-sm border border-slate-100/80 text-center hover:shadow-md transition-shadow">
-                        <div className="flex justify-center text-blue-500 mb-2"><Users className="h-5 w-5" /></div>
-                        <p className="text-2xl font-black text-slate-800 tracking-tight">{dataLoading ? '...' : stats.activeCustomers}+</p>
-                        <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mt-1">Clientes na Empresa</p>
+                    <div className="bg-card rounded-xl p-4 shadow-sm border border-border text-center">
+                        <div className="flex justify-center text-primary mb-1"><Users className="h-4 w-4" /></div>
+                        <p className="text-xl font-bold text-card-foreground">{dataLoading ? '...' : stats.activeCustomers}</p>
+                        <p className="text-xs text-muted-foreground">Clientes atribuídos</p>
                     </div>
-                    <div className="bg-white rounded-2xl p-4 shadow-sm border border-slate-100/80 text-center hover:shadow-md transition-shadow">
-                        <div className="flex justify-center text-amber-500 mb-2"><AlertCircle className="h-5 w-5" /></div>
-                        <p className="text-2xl font-black text-slate-800 tracking-tight">{dataLoading ? '...' : stats.pendingTickets}</p>
-                        <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mt-1">Chamados Abertos</p>
+                    <div className="bg-card rounded-xl p-4 shadow-sm border border-border text-center">
+                        <div className="flex justify-center text-warning mb-1"><AlertCircle className="h-4 w-4" /></div>
+                        <p className="text-xl font-bold text-card-foreground">{dataLoading ? '...' : stats.pendingTickets}</p>
+                        <p className="text-xs text-muted-foreground">Chamados abertos</p>
                     </div>
                 </div>
 
                 {/* Chamados Section */}
                 <section className="animate-slide-up" style={{ animationDelay: "0.2s" }}>
-                    <div className="flex items-center justify-between mb-4 px-1">
-                        <h2 className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Meus Chamados (Hoje)</h2>
-                        <span onClick={() => router.push('/chamados')} className="text-xs text-cyan-600 font-bold cursor-pointer hover:text-cyan-700 transition-colors uppercase tracking-wider">Ver todos</span>
+                    <div className="flex items-center justify-between mb-4">
+                        <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Chamados</h2>
+                        <span onClick={() => router.push('/chamados')} className="text-xs text-primary font-medium cursor-pointer hover:underline">Ver todos</span>
                     </div>
                     <div className="space-y-3">
                         {dataLoading ? (
                             <div className="space-y-3 animate-pulse">
-                                <div className="bg-white/60 h-24 rounded-2xl border border-slate-100"></div>
-                                <div className="bg-white/60 h-24 rounded-2xl border border-slate-100"></div>
+                                <div className="bg-card h-24 rounded-xl border border-border"></div>
+                                <div className="bg-card h-24 rounded-xl border border-border"></div>
                             </div>
                         ) : upcomingVisits.length > 0 ? (
                             upcomingVisits.map((visit) => {
@@ -214,35 +209,35 @@ export default function EmployeeDashboard() {
                                 );
                             })
                         ) : (
-                            <div className="bg-white rounded-2xl p-6 text-center border border-slate-100/80 shadow-sm">
-                                <p className="text-slate-500 font-medium text-sm">Nenhum chamado pendente para hoje.</p>
+                            <div className="bg-card rounded-xl p-6 text-center border border-border mt-4">
+                                <p className="text-muted-foreground font-medium text-sm">Nenhum chamado pendente para hoje.</p>
                             </div>
                         )}
                     </div>
                 </section>
 
                 {/* Clientes Section */}
-                <section className="mt-8 mb-4 animate-slide-up" style={{ animationDelay: "0.3s" }}>
-                    <div className="flex items-center justify-between mb-4 px-1">
-                        <h2 className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Acesso Rápido Clientes</h2>
-                        <span onClick={() => router.push('/clientes')} className="text-xs text-cyan-600 font-bold cursor-pointer hover:text-cyan-700 transition-colors uppercase tracking-wider">Ver todos</span>
+                <section className="mt-8 mb-8 animate-slide-up" style={{ animationDelay: "0.3s" }}>
+                    <div className="flex items-center justify-between mb-4">
+                        <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Meus Clientes</h2>
+                        <span onClick={() => router.push('/clientes')} className="text-xs text-primary font-medium cursor-pointer hover:underline">Ver todos</span>
                     </div>
                     <div className="space-y-3">
                         {dataLoading ? (
-                             <div className="bg-white/60 h-20 rounded-2xl border border-slate-100 animate-pulse"></div>
+                             <div className="bg-card h-20 rounded-xl border border-border animate-pulse"></div>
                         ) : myCustomers.length > 0 ? (
                             myCustomers.map((customer) => (
                                 <ClientCard 
                                     key={customer.id}
                                     name={customer.name} 
                                     address={customer.address || 'Sem endereço'} 
-                                    phone={customer.whatsapp || '---'} 
+                                    phone={customer.whatsapp || 'Não informado'} 
                                     onClick={() => router.push(`/clientes/${customer.id}`)}
                                 />
                             ))
                         ) : (
-                            <div className="bg-white rounded-2xl p-6 text-center border border-slate-100/80 shadow-sm">
-                                <p className="text-slate-500 font-medium text-sm">Nenhum cliente disponível no momento.</p>
+                            <div className="bg-card rounded-xl p-6 text-center border border-border mt-4">
+                                <p className="text-muted-foreground font-medium text-sm">Nenhum cliente disponível no momento.</p>
                             </div>
                         )}
                     </div>

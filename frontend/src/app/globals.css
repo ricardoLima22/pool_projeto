@@ -2,23 +2,23 @@
 @import "tailwindcss";
 
 @theme inline {
-  --color-border: hsl(215 20% 90%);
-  --color-input: hsl(215 20% 93%);
-  --color-ring: hsl(190 90% 45%);
-  --color-background: hsl(48, 20%, 98%); /* FCFBF8 */
-  --color-foreground: hsl(215, 50%, 10%);
+  --color-border: hsl(200 20% 90%);
+  --color-input: hsl(200 20% 90%);
+  --color-ring: hsl(187 80% 42%);
+  --color-background: hsl(195 30% 96%); /* Very light blue background */
+  --color-foreground: hsl(200 50% 10%);
   
-  --color-primary: hsl(190 90% 45%);
+  --color-primary: hsl(187 80% 42%);
   --color-primary-foreground: hsl(0 0% 100%);
   
-  --color-secondary: hsl(210 20% 94%);
-  --color-secondary-foreground: hsl(215 50% 10%);
+  --color-secondary: hsl(200 25% 92%);
+  --color-secondary-foreground: hsl(200 50% 10%);
 
   --color-destructive: hsl(0 84% 60%);
   --color-destructive-foreground: hsl(0 0% 100%);
 
-  --color-muted: hsl(210 20% 94%);
-  --color-muted-foreground: hsl(215 15% 50%);
+  --color-muted: hsl(200 20% 94%);
+  --color-muted-foreground: hsl(200 10% 50%);
 
   --color-accent: hsl(160 84% 45%);
   --color-accent-foreground: hsl(0 0% 100%);
@@ -27,11 +27,11 @@
   --color-warning: hsl(38 92% 50%);
   --color-warning-foreground: hsl(0 0% 100%);
 
-  --color-popover: hsl(210 40% 98%);
-  --color-popover-foreground: hsl(215 50% 10%);
+  --color-popover: hsl(0 0% 100%);
+  --color-popover-foreground: hsl(200 50% 10%);
 
-  --color-card: hsl(210 40% 98%);
-  --color-card-foreground: hsl(215 50% 10%);
+  --color-card: hsl(0 0% 100%);
+  --color-card-foreground: hsl(200 50% 10%);
 
   --radius-lg: 0.75rem;
   --radius-md: calc(0.75rem - 2px);

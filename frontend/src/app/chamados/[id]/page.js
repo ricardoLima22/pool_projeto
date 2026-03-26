@@ -275,7 +275,7 @@ export default function DetalhesChamado() {
                     <div className="pt-8 flex gap-3 pb-4">
                         <button
                             type="button"
-                            onClick={() => router.push(`/chamados/${id}/visita`)}
+                            onClick={() => router.push(`/visita/nova?clienteId=${chamado.customer_id}`)}
                             className="w-full bg-[#2ECC71] hover:bg-[#27ae60] text-white py-3.5 rounded-xl font-bold text-sm tracking-wide shadow-sm active:scale-95 transition-all text-center uppercase"
                         >
                             REGISTRAR VISITA

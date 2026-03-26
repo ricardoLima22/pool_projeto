@@ -260,6 +260,8 @@ function NovaVisita() {
             } else if (!updData || updData.length === 0) {
                 alert("Visita salva. Aviso: O chamado não pôde ser atualizado para Concluído.");
             }
+        } else {
+            alert("Aviso Técnico: A Visita foi salva, mas o ID do chamado NÃO foi recebido na URL (chamadoId está vazio). O chamado continuará pendente. (Você provavelmente está usando a versão do aplicativo salva em cache, limpe o histórico do navegador ou faça Logoff/Login).");
         }
 
         // Limpa o número do WhatsApp (mantém apenas dígitos)

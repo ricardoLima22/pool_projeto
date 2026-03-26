@@ -14,7 +14,7 @@ jobs:
       - name: 2. Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '20'
 
       - name: 3. Instalar Dependências WWebJS
         # Instala as libs de chrome e os pacotes npm na pasta raiz

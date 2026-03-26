@@ -94,8 +94,7 @@ export default function Dashboard() {
                     : userProfile.roles?.name;
                     
                 if (roleName?.toLowerCase() === 'funcionario') {
-                    await supabase.auth.signOut();
-                    router.push('/login?erro=funcionario');
+                    router.push('/funcionario');
                     return;
                 }
 

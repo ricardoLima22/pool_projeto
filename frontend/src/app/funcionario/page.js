@@ -82,16 +82,15 @@ export default function EmployeeDashboard() {
                         .select('*', { count: 'exact', head: true })
                         .eq('company_id', companyId)
                         .eq('profile_id', profileId)
-                        .in('status', ['pendente', 'Pendente', 'em_execucao', 'Em Execução']),
+                        .in('status', ['pendente', 'Pendente', 'em_execucao', 'Em Execução', 'agendado', 'Agendado']),
 
-                    // Lista de chamados para hoje/próximos do funcionário
+                    // Lista de chamados para o funcionário (sem forçar a data atual para garantir que apareça)
                     supabase.from('service_requests')
-                        .select('*, customers!inner(*), service_types(name)')
+                        .select('*, customers(*), service_types(name)')
                         .eq('company_id', companyId)
                         .eq('profile_id', profileId)
-                        .in('status', ['pendente', 'Pendente', 'em_execucao', 'Em Execução', 'Confirmada'])
-                        .gte('scheduled_date', todayStr)
-                        .order('scheduled_date', { ascending: true })
+                        .in('status', ['pendente', 'Pendente', 'em_execucao', 'Em Execução', 'Confirmada', 'agendado', 'Agendado'])
+                        .order('created_at', { ascending: false })
                         .limit(5)
                 ]);
 
@@ -194,8 +193,11 @@ export default function EmployeeDashboard() {
                             </div>
                         ) : upcomingVisits.length > 0 ? (
                             upcomingVisits.map((visit) => {
-                                const visitDate = new Date(visit.scheduled_date);
-                                const timeString = visitDate.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+                                let timeString = '--:--';
+                                if (visit.scheduled_date) {
+                                    const visitDate = new Date(visit.scheduled_date);
+                                    timeString = visitDate.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+                                }
                                 return (
                                     <ChamadoCard
                                         key={visit.id}

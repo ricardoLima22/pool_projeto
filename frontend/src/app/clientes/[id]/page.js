@@ -16,12 +16,16 @@ export default function DetalhesCliente() {
     const [endereco, setEndereco] = useState('');
     const [volume, setVolume] = useState('');
     const [salvando, setSalvando] = useState(false);
+    const [userRole, setUserRole] = useState('');
 
     const params = useParams();
     const router = useRouter();
     const { id } = params;
 
     useEffect(() => {
+        const role = localStorage.getItem('user_role');
+        if (role) setUserRole(role.toLowerCase());
+
         async function fetchCliente() {
             if (!id) return;
             const { data, error } = await supabase
@@ -130,20 +134,22 @@ export default function DetalhesCliente() {
                             </div>
                         </div>
 
-                        <div className="pt-8 flex gap-4">
-                            <button
-                                onClick={() => setEditando(true)}
-                                className="flex-1 bg-[#2ECC71] hover:bg-[#27ae60] text-white py-3.5 rounded-xl font-bold text-sm tracking-wide shadow-sm active:scale-95 transition-all text-center uppercase"
-                            >
-                                Editar Cliente
-                            </button>
-                            <button
-                                onClick={handleDelete}
-                                className="flex-1 bg-white border border-red-500 text-red-500 hover:bg-red-50 py-3.5 rounded-xl font-bold active:scale-95 transition-all text-sm uppercase text-center"
-                            >
-                                Excluir Cliente
-                            </button>
-                        </div>
+                        {userRole !== 'funcionario' && (
+                            <div className="pt-8 flex gap-4">
+                                <button
+                                    onClick={() => setEditando(true)}
+                                    className="flex-1 bg-[#2ECC71] hover:bg-[#27ae60] text-white py-3.5 rounded-xl font-bold text-sm tracking-wide shadow-sm active:scale-95 transition-all text-center uppercase"
+                                >
+                                    Editar Cliente
+                                </button>
+                                <button
+                                    onClick={handleDelete}
+                                    className="flex-1 bg-white border border-red-500 text-red-500 hover:bg-red-50 py-3.5 rounded-xl font-bold active:scale-95 transition-all text-sm uppercase text-center"
+                                >
+                                    Excluir Cliente
+                                </button>
+                            </div>
+                        )}
                     </div>
                 ) : (
                     <form onSubmit={handleUpdate} className="space-y-1 flex flex-col">

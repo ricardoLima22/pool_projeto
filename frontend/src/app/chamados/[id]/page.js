@@ -17,12 +17,16 @@ export default function DetalhesChamado() {
     const [description, setDescription] = useState('');
     const [scheduledDate, setScheduledDate] = useState('');
     const [salvando, setSalvando] = useState(false);
+    const [userRole, setUserRole] = useState('');
 
     const params = useParams();
     const router = useRouter();
     const { id } = params;
 
     useEffect(() => {
+        const role = localStorage.getItem('user_role');
+        if (role) setUserRole(role.toLowerCase());
+
         async function fetchChamado() {
             if (!id) return;
             const { data, error } = await supabase
@@ -228,44 +232,46 @@ export default function DetalhesChamado() {
                 </div>
 
                 {/* Botões */}
-                <div className="pt-8 flex gap-3">
-                    {!editando ? (
-                        <>
-                            <button
-                                type="button"
-                                onClick={() => setEditando(true)}
-                                className="flex-1 bg-[#2ECC71] hover:bg-[#27ae60] text-white py-3.5 rounded-xl font-bold text-sm tracking-wide shadow-sm active:scale-95 transition-all text-center"
-                            >
-                                EDITAR CHAMADO
-                            </button>
-                            <button
-                                type="button"
-                                onClick={handleDelete}
-                                className="flex-1 bg-white hover:bg-slate-50 text-red-500 py-3.5 rounded-xl border border-red-200 font-bold text-sm tracking-wide shadow-sm active:scale-95 transition-all text-center"
-                            >
-                                EXCLUIR
-                            </button>
-                        </>
-                    ) : (
-                        <>
-                            <button
-                                type="button"
-                                onClick={() => setEditando(false)}
-                                disabled={salvando}
-                                className="flex-1 bg-white hover:bg-slate-50 text-slate-500 border border-slate-200 py-3.5 rounded-xl font-bold text-sm tracking-wide shadow-sm active:scale-95 transition-all text-center"
-                            >
-                                CANCELAR
-                            </button>
-                            <button
-                                type="submit"
-                                disabled={salvando}
-                                className="flex-1 bg-[#2ECC71] hover:bg-[#27ae60] text-white py-3.5 rounded-xl font-bold text-sm tracking-wide shadow-sm active:scale-95 transition-all text-center disabled:opacity-50"
-                            >
-                                {salvando ? 'SALVANDO...' : 'SALVAR'}
-                            </button>
-                        </>
-                    )}
-                </div>
+                {userRole !== 'funcionario' && (
+                    <div className="pt-8 flex gap-3">
+                        {!editando ? (
+                            <>
+                                <button
+                                    type="button"
+                                    onClick={() => setEditando(true)}
+                                    className="flex-1 bg-[#2ECC71] hover:bg-[#27ae60] text-white py-3.5 rounded-xl font-bold text-sm tracking-wide shadow-sm active:scale-95 transition-all text-center"
+                                >
+                                    EDITAR CHAMADO
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={handleDelete}
+                                    className="flex-1 bg-white hover:bg-slate-50 text-red-500 py-3.5 rounded-xl border border-red-200 font-bold text-sm tracking-wide shadow-sm active:scale-95 transition-all text-center"
+                                >
+                                    EXCLUIR
+                                </button>
+                            </>
+                        ) : (
+                            <>
+                                <button
+                                    type="button"
+                                    onClick={() => setEditando(false)}
+                                    disabled={salvando}
+                                    className="flex-1 bg-white hover:bg-slate-50 text-slate-500 border border-slate-200 py-3.5 rounded-xl font-bold text-sm tracking-wide shadow-sm active:scale-95 transition-all text-center"
+                                >
+                                    CANCELAR
+                                </button>
+                                <button
+                                    type="submit"
+                                    disabled={salvando}
+                                    className="flex-1 bg-[#2ECC71] hover:bg-[#27ae60] text-white py-3.5 rounded-xl font-bold text-sm tracking-wide shadow-sm active:scale-95 transition-all text-center disabled:opacity-50"
+                                >
+                                    {salvando ? 'SALVANDO...' : 'SALVAR'}
+                                </button>
+                            </>
+                        )}
+                    </div>
+                )}
             </form>
         </main>
     );

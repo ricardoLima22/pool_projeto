@@ -232,21 +232,21 @@ export default function DetalhesChamado() {
                 </div>
 
                 {/* Botões */}
-                {userRole !== 'funcionario' && (
+                {userRole !== 'funcionario' ? (
                     <div className="pt-8 flex gap-3">
                         {!editando ? (
                             <>
                                 <button
                                     type="button"
                                     onClick={() => setEditando(true)}
-                                    className="flex-1 bg-[#2ECC71] hover:bg-[#27ae60] text-white py-3.5 rounded-xl font-bold text-sm tracking-wide shadow-sm active:scale-95 transition-all text-center"
+                                    className="flex-1 bg-[#2ECC71] hover:bg-[#27ae60] text-white py-3.5 rounded-xl font-bold text-sm tracking-wide shadow-sm active:scale-95 transition-all text-center uppercase"
                                 >
                                     EDITAR CHAMADO
                                 </button>
                                 <button
                                     type="button"
                                     onClick={handleDelete}
-                                    className="flex-1 bg-white hover:bg-slate-50 text-red-500 py-3.5 rounded-xl border border-red-200 font-bold text-sm tracking-wide shadow-sm active:scale-95 transition-all text-center"
+                                    className="flex-1 bg-white hover:bg-slate-50 text-red-500 py-3.5 rounded-xl border border-red-200 font-bold text-sm tracking-wide shadow-sm active:scale-95 transition-all text-center uppercase"
                                 >
                                     EXCLUIR
                                 </button>
@@ -257,19 +257,29 @@ export default function DetalhesChamado() {
                                     type="button"
                                     onClick={() => setEditando(false)}
                                     disabled={salvando}
-                                    className="flex-1 bg-white hover:bg-slate-50 text-slate-500 border border-slate-200 py-3.5 rounded-xl font-bold text-sm tracking-wide shadow-sm active:scale-95 transition-all text-center"
+                                    className="flex-1 bg-white hover:bg-slate-50 text-slate-500 border border-slate-200 py-3.5 rounded-xl font-bold text-sm tracking-wide shadow-sm active:scale-95 transition-all text-center uppercase"
                                 >
                                     CANCELAR
                                 </button>
                                 <button
                                     type="submit"
                                     disabled={salvando}
-                                    className="flex-1 bg-[#2ECC71] hover:bg-[#27ae60] text-white py-3.5 rounded-xl font-bold text-sm tracking-wide shadow-sm active:scale-95 transition-all text-center disabled:opacity-50"
+                                    className="flex-1 bg-[#2ECC71] hover:bg-[#27ae60] text-white py-3.5 rounded-xl font-bold text-sm tracking-wide shadow-sm active:scale-95 transition-all text-center uppercase disabled:opacity-50"
                                 >
                                     {salvando ? 'SALVANDO...' : 'SALVAR'}
                                 </button>
                             </>
                         )}
+                    </div>
+                ) : (
+                    <div className="pt-8 flex gap-3 pb-4">
+                        <button
+                            type="button"
+                            onClick={() => router.push(`/chamados/${id}/visita`)}
+                            className="w-full bg-[#2ECC71] hover:bg-[#27ae60] text-white py-3.5 rounded-xl font-bold text-sm tracking-wide shadow-sm active:scale-95 transition-all text-center uppercase"
+                        >
+                            REGISTRAR VISITA
+                        </button>
                     </div>
                 )}
             </form>

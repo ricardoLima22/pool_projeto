@@ -241,10 +241,18 @@ function NovaVisita() {
 
             // Fechar chamado automaticamente se a visita veio de um
             if (chamadoId) {
-                await supabase
+                const { error: updateErr, data: updData } = await supabase
                     .from('service_requests')
                     .update({ status: 'Concluido' })
-                    .eq('id', chamadoId);
+                    .eq('id', chamadoId)
+                    .select();
+
+                if (updateErr) {
+                    console.error("ERRO SUPABASE UPDATE CHAMADO:", updateErr);
+                    alert("Erro ao fechar o chamado no sistema: " + updateErr.message);
+                } else if (!updData || updData.length === 0) {
+                    alert("Aviso: O chamado não foi encontrado para atualização ou você não tem permissão para alterá-lo (RLS).");
+                }
             }
         }
 

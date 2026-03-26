@@ -205,7 +205,6 @@ export default function EmployeeDashboard() {
                                         title={visit.service_types?.name || 'Serviço'}
                                         client={visit.customers?.name || 'Cliente Desconhecido'}
                                         address={visit.customers?.address || 'Sem endereço'}
-                                        priority={visit.status === 'em_execucao' ? 'Média' : 'Alta'}
                                         time={timeString}
                                         onClick={() => router.push(`/chamados/${visit.id}`)}
                                     />

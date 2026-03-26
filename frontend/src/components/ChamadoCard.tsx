@@ -4,24 +4,15 @@ export const ChamadoCard = ({
   title,
   client,
   address,
-  priority,
   time,
   onClick,
 }: {
   title: string;
   client: string;
   address: string;
-  priority: string;
   time: string;
   onClick?: () => void;
 }) => {
-  const priorityColor =
-    priority === "Alta"
-      ? "text-destructive bg-destructive/10"
-      : priority === "Média"
-      ? "text-warning bg-warning/10"
-      : "text-success bg-success/10";
-
   return (
     <div onClick={onClick} className="bg-card rounded-xl p-4 shadow-sm border border-border hover:shadow-md transition-shadow cursor-pointer group">
       <div className="flex items-start gap-3">
@@ -43,11 +34,6 @@ export const ChamadoCard = ({
               <Clock className="h-3 w-3" />
               {time}
             </div>
-            <span
-              className={`text-xs font-medium px-2 py-0.5 rounded-full ${priorityColor}`}
-            >
-              {priority}
-            </span>
           </div>
         </div>
       </div>

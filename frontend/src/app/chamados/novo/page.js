@@ -105,7 +105,7 @@ export default function NovoChamado() {
             return;
         }
 
-        const finalDescription = form.address ? `Endereço: ${form.address}\n\n${form.description}` : form.description;
+        const finalDescription = form.description || '';
 
         const payload = {
             id: crypto.randomUUID(),

@@ -221,9 +221,19 @@ export default function NovoChamado() {
 
                 {/* Tipo de Serviço */}
                 <div className="pt-4">
-                    <label className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block mb-1">
-                        TIPO DE SERVIÇO <span className="text-red-500 ml-0.5">*</span>
-                    </label>
+                    <div className="flex items-center justify-between mb-1">
+                        <label className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block">
+                            TIPO DE SERVIÇO <span className="text-red-500 ml-0.5">*</span>
+                        </label>
+                        <button
+                            type="button"
+                            onClick={() => router.push('/servicos/novo')}
+                            className="text-[#008080] hover:text-[#006666] text-xs font-bold uppercase tracking-wide flex items-center gap-1 transition-colors"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+                            Adicionar
+                        </button>
+                    </div>
                     <select
                         required
                         name="service_type_id"

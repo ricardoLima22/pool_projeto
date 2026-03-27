@@ -1,9 +1,10 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
 from database import supabase # Importamos o cliente que configuramos acima
 from pydantic import BaseModel
 from schemas import ProdutoSchema
+from security import verificar_token
 
-router = APIRouter(prefix="/produtos", tags=["Produtos"])
+router = APIRouter(prefix="/produtos", tags=["Produtos"], dependencies=[Depends(verificar_token)])
 
 
 @router.post("/")

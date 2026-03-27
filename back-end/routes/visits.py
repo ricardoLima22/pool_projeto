@@ -1,9 +1,10 @@
 # backend/routes/visits.py
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
 from database import supabase
 from schemas import VisitaSchema
+from security import verificar_token
 
-router = APIRouter(prefix="/visitas", tags=["Visitas"])
+router = APIRouter(prefix="/visitas", tags=["Visitas"], dependencies=[Depends(verificar_token)])
 
 @router.post("/")
 async def registrar_visita(visita: VisitaSchema):

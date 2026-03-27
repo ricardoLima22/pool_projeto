@@ -1,8 +1,9 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
 from database import supabase
 from schemas import ClienteSchema
+from security import verificar_token
 
-router = APIRouter(prefix="/clientes", tags=["Clientes"])
+router = APIRouter(prefix="/clientes", tags=["Clientes"], dependencies=[Depends(verificar_token)])
 
 @router.post("/")
 async def cadastrar_cliente(cliente: ClienteSchema):

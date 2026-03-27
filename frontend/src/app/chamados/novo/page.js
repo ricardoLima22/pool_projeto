@@ -119,7 +119,9 @@ export default function NovoChamado() {
             status: form.status
         };
         
-        console.log("Enviando pro banco:", payload);
+        if (process.env.NODE_ENV === 'development') {
+            console.log("Enviando pro banco:", payload);
+        }
 
         const { error } = await supabase
             .from('service_requests')

@@ -60,21 +60,21 @@ export default function NovoChamado() {
                     .order('name');
                 setClientes(cRes.data || []);
 
-                // 2. Funcionários. Trazemos o nome da role para filtrar só quem é Funcionario
+                // 2. Cargos e Funcionários separados para cruzar os dados exatos (Garante que só Funcionario apareça)
+                const { data: allRoles } = await supabase.from('roles').select('id, name');
+
                 const pRes = await supabase
                     .from('profiles')
-                    .select('id, full_name, roles(name)')
+                    .select('id, full_name, role_id') // puxamos agora o role_id diretamente
                     .eq('company_id', profile.company_id)
                     .order('full_name');
                 
-                console.log("Resposta Profiles/Roles:", pRes);
-                
-                // Filtramos fora o 'Dono' para mostrar qualquer outro tipo de funcionário
-                // Filtramos fora o 'Dono'. Se a pessoa não tiver cargo preenchido (null), mostramos também por segurança.
+                // Filtramos SOMENTE quem o banco de dados confirma que é da tabela de Funcionarios
                 const funcList = (pRes.data || []).filter(p => {
-                    const rName = Array.isArray(p.roles) ? p.roles[0]?.name : p.roles?.name;
-                    return !rName || !rName.toLowerCase().startsWith('dono');
+                    const cargoDela = allRoles?.find(r => r.id === p.role_id);
+                    return cargoDela && cargoDela.name.toLowerCase() === 'funcionario';
                 });
+                
                 setFuncionarios(funcList);
 
                 // 3. Tipos de Serviço

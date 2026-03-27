@@ -72,7 +72,7 @@ export default function NovoChamado() {
                 // Filtramos SOMENTE quem o banco de dados confirma que é da tabela de Funcionarios
                 const funcList = (pRes.data || []).filter(p => {
                     const cargoDela = allRoles?.find(r => r.id === p.role_id);
-                    return cargoDela && cargoDela.name.toLowerCase() === 'funcionario';
+                    return cargoDela && cargoDela.name.toLowerCase() === 'Funcionario';
                 });
                 
                 setFuncionarios(funcList);

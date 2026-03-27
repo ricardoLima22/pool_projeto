@@ -7,7 +7,10 @@ app = FastAPI()
 # CONFIGURAÇÃO DE CORS - Importante para o Frontend conseguir falar com o Backend
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"], 
+    allow_origins=[
+        "http://localhost:3000",
+        "https://pool-projeto.vercel.app"
+    ], 
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

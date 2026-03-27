@@ -70,9 +70,10 @@ export default function NovoChamado() {
                 console.log("Resposta Profiles/Roles:", pRes);
                 
                 // Filtramos fora o 'Dono' para mostrar qualquer outro tipo de funcionário
+                // Filtramos fora o 'Dono'. Se a pessoa não tiver cargo preenchido (null), mostramos também por segurança.
                 const funcList = (pRes.data || []).filter(p => {
                     const rName = Array.isArray(p.roles) ? p.roles[0]?.name : p.roles?.name;
-                    return rName && !rName.toLowerCase().startsWith('dono');
+                    return !rName || !rName.toLowerCase().startsWith('dono');
                 });
                 setFuncionarios(funcList);
 

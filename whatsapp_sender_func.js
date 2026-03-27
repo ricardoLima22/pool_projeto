@@ -49,13 +49,16 @@ mongoose.connect(MONGODB_URI).then(async () => {
         const SUPABASE_URL = process.env.SUPABASE_URL;
         // Priorizar a Chave de Serviço OBRIGATORIAMENTE para furar o bloqueio de RLS (Segurança)
         const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_KEY;
+        const isUsingServiceRole = !!process.env.SUPABASE_SERVICE_ROLE_KEY;
         
         if (SUPABASE_URL && SUPABASE_KEY) {
-            console.log(">> Buscando número do funcionário e endereço do cliente no Supabase...");
+            console.log(`>> Buscando funcionário ID: ${piscineiro_id}`);
+            console.log(`>> Usando Service Role Key? ${isUsingServiceRole ? 'SIM' : 'NÃO (Cuidado, o RLS vai bloquear)'}`);
             const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
             
             // Buscar perfil
             const { data, error } = await supabase.from('profiles').select('phone').eq('id', piscineiro_id).single();
+
             
             if (error || !data || !data.phone) {
                 console.error("Erro ao buscar funcionário no banco de dados ou telefone não cadastrado.", error || '');

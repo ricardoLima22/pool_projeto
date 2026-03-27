@@ -30,5 +30,6 @@ jobs:
           MONGODB_URI: ${{ secrets.MONGODB_URI }}
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           PAYLOAD: ${{ toJson(github.event.client_payload) }}
         run: node whatsapp_sender_func.js

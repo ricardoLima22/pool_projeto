@@ -67,8 +67,13 @@ export default function NovoChamado() {
                     .eq('company_id', profile.company_id)
                     .order('full_name');
                 
-                // Filtramos apenas quem tem o role "Funcionario" (case insensitive caso o banco seja diferente)
-                const funcList = (pRes.data || []).filter(p => !Array.isArray(p.roles) && p.roles?.name?.toLowerCase() === 'funcionario' || (Array.isArray(p.roles) && p.roles[0]?.name?.toLowerCase() === 'funcionario'));
+                console.log("Resposta Profiles/Roles:", pRes);
+                
+                // Filtramos fora o 'Dono' para mostrar qualquer outro tipo de funcionário
+                const funcList = (pRes.data || []).filter(p => {
+                    const rName = Array.isArray(p.roles) ? p.roles[0]?.name : p.roles?.name;
+                    return rName && !rName.toLowerCase().startsWith('dono');
+                });
                 setFuncionarios(funcList);
 
                 // 3. Tipos de Serviço

@@ -109,12 +109,16 @@ mongoose.connect(MONGODB_URI).then(async () => {
                             imgA.resize(Jimp.AUTO, targetHeight);
                             imgD.resize(Jimp.AUTO, targetHeight);
 
-                            const collageWidth = imgA.bitmap.width + imgD.bitmap.width;
-                            // Fundo da lona branco caso haja transparência
-                            const collage = new Jimp(collageWidth, targetHeight, 0xFFFFFFFF);
+                            // Adicionando um espaço de 20px (divisória) entre as imagens
+                            const divisorWidth = 20; 
+                            const collageWidth = imgA.bitmap.width + imgD.bitmap.width + divisorWidth;
+                            
+                            // Fundo da lona escuro (Preto) para a divisória ficar visível
+                            const collage = new Jimp(collageWidth, targetHeight, 0x000000FF);
                             
                             collage.composite(imgA, 0, 0);
-                            collage.composite(imgD, imgA.bitmap.width, 0);
+                            // Cola a segunda imagem com 20px de margem, criando a divisória no meio
+                            collage.composite(imgD, imgA.bitmap.width + divisorWidth, 0);
 
                             // --- DESCOMENTE OU COMENTE ESTE BLOCO ABAIXO CASO QUEIRA TESTAR COM/SEM O TEXTO NAS FOTOS ---
                             const comTextoEscritoNaFoto = true; // Flag pro seu Teste!
@@ -130,7 +134,7 @@ mongoose.connect(MONGODB_URI).then(async () => {
                                 }
                                 
                                 printWithShadow(0, 30, "ANTES", imgA.bitmap.width);
-                                printWithShadow(imgA.bitmap.width, 30, "DEPOIS", imgD.bitmap.width);
+                                printWithShadow(imgA.bitmap.width + divisorWidth, 30, "DEPOIS", imgD.bitmap.width);
                             }
                             // --------------------------------------------------------------------------------------------
 

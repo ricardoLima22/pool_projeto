@@ -99,25 +99,20 @@ mongoose.connect(MONGODB_URI).then(async () => {
                     await delay(2000);
 
                     if (foto_antes_url && foto_depois_url) {
-                        console.log("-> 2 FOTOS DETECTADAS. Evitando fusão. Enviando pacote nativo em Lote para formar Álbum...");
+                        console.log("-> 2 FOTOS DETECTADAS. Evitando fusão. Tentando Envio de Álbum em Única Mensagem...");
                         try {
-                            // Ao disparar duas envios sincronicamente sem "delay", o front-end do 
-                            // celular agrupá-las-á num único balão visual em Álbum!
-                            const promiseDepois = sock.sendMessage(result.jid, { 
-                                image: { url: foto_depois_url }, 
-                                caption: "✨ *Depois*" 
+                            // Estrutura de Álbum/Carrossel para tentar agrupar num só balão verde 
+                            // as imagens baixadas sem colá-las fisicamente!
+                            await sock.sendMessage(result.jid, {
+                                albumMessage: [
+                                    { image: { url: foto_antes_url }, caption: "📸 *Antes*" },
+                                    { image: { url: foto_depois_url }, caption: "✨ *Depois*" }
+                                ]
                             });
-
-                            const promiseAntes = sock.sendMessage(result.jid, { 
-                                image: { url: foto_antes_url }, 
-                                caption: "📸 *Antes*" 
-                            });
-
-                            await Promise.all([promiseDepois, promiseAntes]);
-                            await delay(3000);
+                            await delay(4000);
 
                         } catch (e) {
-                            console.error("Erro ao enviar Álbum Síncrono. Retornando ao envio sequencial seguro:", e.message);
+                            console.error("Modo de Álbum Nativo não suportado pelo protocolo atual (Falha). Revertendo para Isoladas:", e.message);
                             await sock.sendMessage(result.jid, { image: { url: foto_antes_url }, caption: "📸 *Antes*" });
                             await delay(2000);
                             await sock.sendMessage(result.jid, { image: { url: foto_depois_url }, caption: "✨ *Depois*" });
@@ -127,7 +122,7 @@ mongoose.connect(MONGODB_URI).then(async () => {
                         // Se mandou SOMENTE UMA FOTO
                         const u = foto_antes_url || foto_depois_url;
                         const leg = foto_antes_url ? "📸 *Antes do Serviço*" : "✨ *Depois do Serviço*";
-                        console.log("-> Apenas 1 foto enviada. Ignorando lote.");
+                        console.log("-> Apenas 1 foto enviada. Ignorando Álbum.");
                         try {
                             await sock.sendMessage(result.jid, { image: { url: u }, caption: leg });
                             await delay(2000);

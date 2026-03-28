@@ -116,16 +116,19 @@ mongoose.connect(MONGODB_URI).then(async () => {
                             collage.composite(imgA, 0, 0);
                             collage.composite(imgD, imgA.bitmap.width, 0);
 
-                            // --- DESCOMENTADO O MODO 'LIMPO' ---
-                            const comTextoEscritoNaFoto = false; // <-- Alterado para False conforme pedido!
+                            // --- DESCOMENTE OU COMENTE ESTE BLOCO ABAIXO CASO QUEIRA TESTAR COM/SEM O TEXTO NAS FOTOS ---
+                            const comTextoEscritoNaFoto = true; // Flag pro seu Teste!
 
                             if (comTextoEscritoNaFoto) {
                                 const font = await Jimp.loadFont(Jimp.FONT_SANS_64_WHITE);
                                 const fontShadow = await Jimp.loadFont(Jimp.FONT_SANS_64_BLACK);
+                                
+                                // Função simples para "sombra" pra melhorar a leitura (Borda preta nas letras brancas)
                                 function printWithShadow(x, y, text, w) {
                                     collage.print(fontShadow, x+3, y+3, { text, alignmentX: Jimp.HORIZONTAL_ALIGN_CENTER }, w, targetHeight);
                                     collage.print(font, x, y, { text, alignmentX: Jimp.HORIZONTAL_ALIGN_CENTER }, w, targetHeight);
                                 }
+                                
                                 printWithShadow(0, 30, "ANTES", imgA.bitmap.width);
                                 printWithShadow(imgA.bitmap.width, 30, "DEPOIS", imgD.bitmap.width);
                             }

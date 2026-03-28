@@ -17,13 +17,10 @@ jobs:
           node-version: '20'
           cache: 'npm'
 
-      - name: 3. Instalar Dependências WWebJS
-        # Instala as libs de chrome e os pacotes npm na pasta raiz
+      - name: 3. Instalar Dependências Básicas
         run: |
-          sudo apt-get update
-          sudo apt-get install -y libgbm-dev libnss3 libasound2 libatk-bridge2.0-0 libgtk-3-0
           npm init -y
-          npm install whatsapp-web.js qrcode-terminal mongoose puppeteer @supabase/supabase-js dotenv
+          npm install mongoose @supabase/supabase-js dotenv
 
       - name: 4. Rodar Script de Autenticação (Ler QR Code)
         env:

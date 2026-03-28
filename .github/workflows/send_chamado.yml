@@ -18,12 +18,10 @@ jobs:
           node-version: '20'
           cache: 'npm'
 
-      - name: 3. Instalar Dependências WWebJS
+      - name: 3. Instalar Dependências Básicas
         run: |
-          sudo apt-get update
-          sudo apt-get install -y libgbm-dev libnss3 libasound2 libatk-bridge2.0-0 libgtk-3-0
           npm init -y
-          npm install whatsapp-web.js mongoose puppeteer @supabase/supabase-js dotenv
+          npm install mongoose @supabase/supabase-js dotenv
 
       - name: 4. Rodar Script de Envio de Mensagem
         env:

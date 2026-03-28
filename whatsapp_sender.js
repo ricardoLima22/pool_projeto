@@ -39,7 +39,7 @@ mongoose.connect(MONGODB_URI).then(async () => {
     
     const { useMongoDBAuthState } = require('./MongoAuthState');
     const makeWASocket = require('@whiskeysockets/baileys').default;
-    const { DisconnectReason, delay } = require('@whiskeysockets/baileys');
+    const { DisconnectReason, delay, Browsers } = require('@whiskeysockets/baileys');
     const pino = require('pino');
 
     const { state, saveCreds } = await useMongoDBAuthState(session_id);
@@ -48,7 +48,7 @@ mongoose.connect(MONGODB_URI).then(async () => {
         auth: state,
         printQRInTerminal: false,
         logger: pino({ level: "silent" }),
-        browser: ["Pool App Worker", "Chrome", "1.0.0"]
+        browser: Browsers.macOS('Desktop')
     });
 
     sock.ev.on('creds.update', saveCreds);

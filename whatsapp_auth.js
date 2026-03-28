@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const { createClient } = require('@supabase/supabase-js');
 const { useMongoDBAuthState, AuthDataModel } = require('./MongoAuthState');
 const makeWASocket = require('@whiskeysockets/baileys').default;
-const { DisconnectReason } = require('@whiskeysockets/baileys');
+const { DisconnectReason, Browsers } = require('@whiskeysockets/baileys');
 const pino = require('pino');
 const qrcode = require('qrcode-terminal');
 
@@ -82,7 +82,7 @@ mongoose.connect(MONGODB_URI).then(async () => {
         auth: state,
         printQRInTerminal: false, // Printamos o QR manualmente na mesma UI velha por costume
         logger: pino({ level: "silent" }), // Silencia os logs do Baileys para não poluir
-        browser: ["Pool App", "Chrome", "1.0"]
+        browser: Browsers.macOS('Desktop')
     });
 
     sock.ev.on('creds.update', saveCreds);

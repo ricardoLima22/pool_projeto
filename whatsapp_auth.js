@@ -44,8 +44,10 @@ async function getPendingCompanyToAuthenticate() {
     for (const company of companies) {
         if (!company.whatsapp_session) continue;
         
-        // Verifica se a empresa já tem credenciais salvas no Mongo (significa que já leu QR pelo menos uma vez)
-        const exists = await AuthDataModel.exists({ sessionId: company.whatsapp_session, key: 'creds' });
+        // Verifica se a empresa já tem a chave 'creds' salva na sua respectiva coleção do Mongo
+        const collection = mongoose.connection.db.collection(company.whatsapp_session);
+        const exists = await collection.findOne({ _id: 'creds' });
+        
         if (!exists) {
             console.log(`- [PENDENTE] Empresa "${company.name}" (Sessão: ${company.whatsapp_session}) PRECISA SER AUTENTICADA!`);
             return company; 

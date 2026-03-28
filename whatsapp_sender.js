@@ -99,50 +99,27 @@ mongoose.connect(MONGODB_URI).then(async () => {
                     await delay(2000);
 
                     if (foto_antes_url && foto_depois_url) {
-                        console.log("-> 2 FOTOS DETECTADAS. Gerando Mosaico (Antes vs Depois) via Jimp para poupar rede...");
+                        console.log("-> 2 FOTOS DETECTADAS. Evitando fusão. Enviando como Álbum Nativo...");
                         try {
-                            const Jimp = require('jimp');
-                            const imgA = await Jimp.read(foto_antes_url);
-                            const imgD = await Jimp.read(foto_depois_url);
-
-                            const targetHeight = 800; // Padronizar a altura
-                            imgA.resize(Jimp.AUTO, targetHeight);
-                            imgD.resize(Jimp.AUTO, targetHeight);
-
-                            const collageWidth = imgA.bitmap.width + imgD.bitmap.width;
-                            // Fundo da lona branco caso haja transparência
-                            const collage = new Jimp(collageWidth, targetHeight, 0xFFFFFFFF);
-                            
-                            collage.composite(imgA, 0, 0);
-                            collage.composite(imgD, imgA.bitmap.width, 0);
-
-                            // --- DESCOMENTADO O MODO 'LIMPO' ---
-                            const comTextoEscritoNaFoto = false; // <-- Alterado para False conforme pedido!
-
-                            if (comTextoEscritoNaFoto) {
-                                // const font = await Jimp.loadFont(Jimp.FONT_SANS_64_WHITE);
-                                // const fontShadow = await Jimp.loadFont(Jimp.FONT_SANS_64_BLACK);
-                                // function printWithShadow(x, y, text, w) {
-                                //     collage.print(fontShadow, x+3, y+3, { text, alignmentX: Jimp.HORIZONTAL_ALIGN_CENTER }, w, targetHeight);
-                                //     collage.print(font, x, y, { text, alignmentX: Jimp.HORIZONTAL_ALIGN_CENTER }, w, targetHeight);
-                                // }
-                                // printWithShadow(0, 30, "ANTES", imgA.bitmap.width);
-                                // printWithShadow(imgA.bitmap.width, 30, "DEPOIS", imgD.bitmap.width);
-                            }
-                            // --------------------------------------------------------------------------------------------
-
-                            const imageBuffer = await collage.getBufferAsync(Jimp.MIME_JPEG);
-
-                            console.log("-> Mosaico gerado com sucesso! Enviando 1 único pacote de Mídia...");
-                            await sock.sendMessage(result.jid, { 
-                                image: imageBuffer, 
-                                caption: "📸 *FOTOS DO SERVIÇO (Antes e Depois)*" 
+                            // Envia as duas URLs ao mesmo tempo, sem delay entre elas. 
+                            // Isso força o Front-End do WhatsApp a agrupar visualmente as imagens num "Álbum/Grid".
+                            const promiseAntes = sock.sendMessage(result.jid, { 
+                                image: { url: foto_antes_url }, 
+                                caption: "📸 *Antes*" 
                             });
-                            await delay(2000);
+                            
+                            const promiseDepois = sock.sendMessage(result.jid, { 
+                                image: { url: foto_depois_url }, 
+                                caption: "✨ *Depois*" 
+                            });
+
+                            // Espera o envio síncrono dos dois pacotes
+                            await Promise.all([promiseAntes, promiseDepois]);
+                            await delay(3000);
 
                         } catch (e) {
-                            console.error("Erro interno do Jimp ao gerar Mosaico. Revertendo para envio isolado:", e.message);
-                            // Fallback clássico
+                            console.error("Erro interno ao enviar as fotos. Revertendo para envio isolado:", e.message);
+                            // Fallback de segurança
                             await sock.sendMessage(result.jid, { image: { url: foto_antes_url }, caption: "📸 *Antes*" });
                             await delay(2000);
                             await sock.sendMessage(result.jid, { image: { url: foto_depois_url }, caption: "✨ *Depois*" });

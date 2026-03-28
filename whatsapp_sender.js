@@ -39,12 +39,14 @@ mongoose.connect(MONGODB_URI).then(async () => {
     
     const { useMongoDBAuthState } = require('./MongoAuthState');
     const makeWASocket = require('@whiskeysockets/baileys').default;
-    const { DisconnectReason, delay, Browsers } = require('@whiskeysockets/baileys');
+    const { DisconnectReason, delay, Browsers, fetchLatestBaileysVersion } = require('@whiskeysockets/baileys');
     const pino = require('pino');
 
     const { state, saveCreds } = await useMongoDBAuthState(session_id);
+    const { version } = await fetchLatestBaileysVersion();
 
     const sock = makeWASocket({
+        version,
         auth: state,
         printQRInTerminal: false,
         logger: pino({ level: "silent" }),

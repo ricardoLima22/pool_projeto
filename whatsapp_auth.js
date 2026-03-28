@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const { createClient } = require('@supabase/supabase-js');
 const { useMongoDBAuthState, AuthDataModel } = require('./MongoAuthState');
 const makeWASocket = require('@whiskeysockets/baileys').default;
-const { DisconnectReason, Browsers } = require('@whiskeysockets/baileys');
+const { DisconnectReason, Browsers, fetchLatestBaileysVersion } = require('@whiskeysockets/baileys');
 const pino = require('pino');
 const qrcode = require('qrcode-terminal');
 
@@ -76,9 +76,11 @@ mongoose.connect(MONGODB_URI).then(async () => {
 
     // Inicia AuthAdapter customizado para MongoDB
     const { state, saveCreds } = await useMongoDBAuthState(session_id);
+    const { version } = await fetchLatestBaileysVersion();
 
     // Inicia o Socket do WhatsApp
     const sock = makeWASocket({
+        version,
         auth: state,
         printQRInTerminal: false, // Printamos o QR manualmente na mesma UI velha por costume
         logger: pino({ level: "silent" }), // Silencia os logs do Baileys para não poluir

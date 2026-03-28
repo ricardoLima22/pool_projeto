@@ -1,0 +1,35 @@
+name: 3. Sincronização Diária de Sessões
+
+on:
+  schedule:
+    # Roda todos os dias às 06:00 AM (Horário de Brasília) / 09:00 AM (UTC)
+    - cron: '0 9 * * *'
+  workflow_dispatch: # Permite ativar manualmente também
+
+jobs:
+  sync_whatsapp:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'npm'
+
+    - name: Prevenir Conflitos no NPM (Opcional)
+      run: rm -rf node_modules package-lock.json
+
+    - name: Install Dependencies
+      run: npm install
+
+    - name: Executar Sync Script
+      env:
+        MONGODB_URI: ${{ secrets.MONGODB_URI }}
+        SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+        SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+        SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+      run: node whatsapp_sync.js

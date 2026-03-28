@@ -10,7 +10,8 @@ const qrcode = require('qrcode-terminal');
 // Database Configurations
 const MONGODB_URI = process.env.MONGODB_URI;
 const SUPABASE_URL = process.env.SUPABASE_URL;
-const SUPABASE_KEY = process.env.SUPABASE_KEY;
+// Tenta usar a SERVICE_ROLE (com bypass de RLS) para que os scripts backend consigam ler as tabelas!
+const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_KEY;
 
 if (!MONGODB_URI || !SUPABASE_URL || !SUPABASE_KEY) {
     console.error("Erro: Variáveis de ambiente MONGODB_URI, SUPABASE_URL ou SUPABASE_KEY não configuradas.");

@@ -110,73 +110,80 @@ mongoose.connect(MONGODB_URI).then(async () => {
     const { DisconnectReason, delay, Browsers, fetchLatestBaileysVersion } = require('@whiskeysockets/baileys');
     const pino = require('pino');
 
-    const { state, saveCreds } = await useMongoDBAuthState(session_id);
-    const { version } = await fetchLatestBaileysVersion();
+    async function connectWhatsApp() {
+        const { state, saveCreds } = await useMongoDBAuthState(session_id);
+        const { version } = await fetchLatestBaileysVersion();
 
-    const sock = makeWASocket({
-        version,
-        auth: state,
-        printQRInTerminal: false,
-        logger: pino({ level: "silent" }),
-        browser: Browsers.macOS('Desktop')
-    });
+        const sock = makeWASocket({
+            version,
+            auth: state,
+            printQRInTerminal: false,
+            logger: pino({ level: "silent" }),
+            browser: Browsers.macOS('Desktop')
+        });
 
-    sock.ev.on('creds.update', saveCreds);
+        sock.ev.on('creds.update', saveCreds);
 
-    let enviou = false;
+        let enviou = false;
 
-    sock.ev.on('connection.update', async (update) => {
-        const { connection, lastDisconnect } = update;
+        sock.ev.on('connection.update', async (update) => {
+            const { connection, lastDisconnect } = update;
 
-        if (connection === 'close') {
-            const shouldReconnect = (lastDisconnect.error)?.output?.statusCode !== DisconnectReason.loggedOut;
-            console.log('Conexão com WhatsApp foi fechada. Reconectar:', shouldReconnect);
-            if (!enviou) {
-                console.error("Conexão caiu antes do envio concluir.");
-                process.exit(1);
-            }
-        } else if (connection === 'open') {
-            console.log('>> 2. Conexão Socket aberta!');
-
-            try {
-                // Formatação correta para o padrão Baileys (JID)
-                let numeroLimpo = String(numeroDestino).replace(/\D/g, '');
-                if (numeroLimpo.length <= 11) {
-                    if (!numeroLimpo.startsWith('55')) {
-                        numeroLimpo = '55' + numeroLimpo;
-                    }
-                }
-                const jid = `${numeroLimpo}@s.whatsapp.net`;
-
-                // Verifica se o número existe no Whatsapp
-                console.log(`Verificando se o número ${jid} está registrado no WhatsApp...`);
-                const [result] = await sock.onWhatsApp(jid);
-                
-                if (!result || !result.exists) {
-                    console.error(`Erro: O número ${numeroLimpo} não possui um WhatsApp válido ou não foi encontrado.`);
+            if (connection === 'close') {
+                const shouldReconnect = (lastDisconnect.error)?.output?.statusCode !== DisconnectReason.loggedOut;
+                console.log('Conexão com WhatsApp foi fechada. Reconectar:', shouldReconnect);
+                if (shouldReconnect) {
+                    console.log("A API do WhatsApp solicitou um recomeço. Reconectando...");
+                    setTimeout(connectWhatsApp, 2000);
+                } else if (!enviou) {
+                    console.error("Conexão caiu antes do envio concluir e não deve reconectar.");
                     process.exit(1);
                 }
+            } else if (connection === 'open') {
+                console.log('>> 2. Conexão Socket aberta!');
 
-                console.log(`Enviando mensagem de texto para o funcionário: ${numeroDestino}...`);
-                await sock.sendMessage(result.jid, { text: mensagem_texto });
-                await delay(2000);
+                try {
+                    // Formatação correta para o padrão Baileys (JID)
+                    let numeroLimpo = String(numeroDestino).replace(/\D/g, '');
+                    if (numeroLimpo.length <= 11) {
+                        if (!numeroLimpo.startsWith('55')) {
+                            numeroLimpo = '55' + numeroLimpo;
+                        }
+                    }
+                    const jid = `${numeroLimpo}@s.whatsapp.net`;
 
-                console.log("✅ Chamado notificado ao funcionário com sucesso!");
-                enviou = true;
-                
-                console.log(">> 3. Fechando conexão em 3 segundos...");
-                setTimeout(() => {
-                    sock.ws.close();
-                    mongoose.disconnect();
-                    process.exit(0);
-                }, 3000);
+                    // Verifica se o número existe no Whatsapp
+                    console.log(`Verificando se o número ${jid} está registrado no WhatsApp...`);
+                    const [result] = await sock.onWhatsApp(jid);
+                    
+                    if (!result || !result.exists) {
+                        console.error(`Erro: O número ${numeroLimpo} não possui um WhatsApp válido ou não foi encontrado.`);
+                        process.exit(1);
+                    }
 
-            } catch (err) {
-                console.error("Erro geral durante o envio das mensagens:", err);
-                process.exit(1);
+                    console.log(`Enviando mensagem de texto para o funcionário: ${numeroDestino}...`);
+                    await sock.sendMessage(result.jid, { text: mensagem_texto });
+                    await delay(2000);
+
+                    console.log("✅ Chamado notificado ao funcionário com sucesso!");
+                    enviou = true;
+                    
+                    console.log(">> 3. Fechando conexão em 3 segundos...");
+                    setTimeout(() => {
+                        sock.ws.close();
+                        mongoose.disconnect();
+                        process.exit(0);
+                    }, 3000);
+
+                } catch (err) {
+                    console.error("Erro geral durante o envio das mensagens:", err);
+                    process.exit(1);
+                }
             }
-        }
-    });
+        });
+    }
+
+    connectWhatsApp();
 
 }).catch(err => {
     console.error("Erro ao conectar ao MongoDB:", err);

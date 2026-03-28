@@ -74,60 +74,61 @@ mongoose.connect(MONGODB_URI).then(async () => {
     console.log(`SESSION ID: ${session_id}`);
     console.log(`======================================================\n`);
 
-    // Inicia AuthAdapter customizado para MongoDB
-    const { state, saveCreds } = await useMongoDBAuthState(session_id);
-    const { version } = await fetchLatestBaileysVersion();
+    async function connectWhatsApp() {
+        // Inicia AuthAdapter customizado para MongoDB
+        const { state, saveCreds } = await useMongoDBAuthState(session_id);
+        const { version } = await fetchLatestBaileysVersion();
 
-    // Inicia o Socket do WhatsApp
-    const sock = makeWASocket({
-        version,
-        auth: state,
-        printQRInTerminal: false, // Printamos o QR manualmente na mesma UI velha por costume
-        logger: pino({ level: "silent" }), // Silencia os logs do Baileys para não poluir
-        browser: Browsers.macOS('Desktop')
-    });
+        // Inicia o Socket do WhatsApp
+        const sock = makeWASocket({
+            version,
+            auth: state,
+            printQRInTerminal: false,
+            logger: pino({ level: "silent" }),
+            browser: Browsers.macOS('Desktop')
+        });
 
-    sock.ev.on('creds.update', saveCreds);
+        sock.ev.on('creds.update', saveCreds);
 
-    sock.ev.on('connection.update', (update) => {
-        const { connection, lastDisconnect, qr } = update;
+        sock.ev.on('connection.update', (update) => {
+            const { connection, lastDisconnect, qr } = update;
 
-        if (qr) {
-            console.log('--- QR CODE RECEBIDO ---');
-            console.log('Escaneie o código abaixo com o seu WhatsApp:');
-            qrcode.generate(qr, { small: true });
+            if (qr) {
+                console.log('--- QR CODE RECEBIDO ---');
+                console.log('Escaneie o código abaixo com o seu WhatsApp:');
+                qrcode.generate(qr, { small: true });
 
-            console.log('\nOU use este link para ver o QR Code como imagem:');
-            console.log(`https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(qr)}`);
-        }
-
-        if (connection === 'close') {
-            const shouldReconnect = (lastDisconnect.error)?.output?.statusCode !== DisconnectReason.loggedOut;
-            console.log('Conexão fechada. Motivo: ', lastDisconnect.error, ', Reconectando:', shouldReconnect);
-            
-            if (shouldReconnect) {
-                // Num fluxo persistente tentaríamos reconectar (sock = makeWASocket()), 
-                // mas no Github Actions é melhor matar o processo com erro (process.exit(1))
-                // para que o workflow do Github saiba que falhou e reinicie.
-                console.error("Desconexão forçada inesperada.");
-                process.exit(1);
-            } else {
-                console.log("Você foi deslogado. Delete as credenciais no MongoDB manualmente se precisar re-autenticar.");
-                process.exit(1);
+                console.log('\nOU use este link para ver o QR Code como imagem:');
+                console.log(`https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(qr)}`);
             }
-        } else if (connection === 'open') {
-            console.log('--- SUCESSO! ---');
-            console.log('WhatsApp Autenticado e Conectado com Sucesso via Baileys API!');
-            console.log('Sessão registrada definitivamente no MongoDB.');
-            console.log('Você já pode fechar este terminal e rodar os envios no GitHub.');
-            
-            setTimeout(() => {
-                sock.ws.close();
-                mongoose.disconnect();
-                process.exit(0);
-            }, 5000);
-        }
-    });
+
+            if (connection === 'close') {
+                const shouldReconnect = (lastDisconnect.error)?.output?.statusCode !== DisconnectReason.loggedOut;
+                console.log('Conexão fechada. Motivo: ', lastDisconnect.error?.message, ', Reconectando:', shouldReconnect);
+                
+                if (shouldReconnect) {
+                    console.log("A API do WhatsApp solicitou um recomeço (Stream Errored). Reconectando silenciosamente...");
+                    setTimeout(connectWhatsApp, 2000);
+                } else {
+                    console.log("Você foi deslogado. Delete as credenciais no MongoDB manualmente se precisar re-autenticar.");
+                    process.exit(1);
+                }
+            } else if (connection === 'open') {
+                console.log('--- SUCESSO! ---');
+                console.log('WhatsApp Autenticado e Conectado com Sucesso via Baileys API!');
+                console.log('Sessão registrada definitivamente no MongoDB.');
+                console.log('Você já pode fechar este terminal e rodar os envios no GitHub.');
+                
+                setTimeout(() => {
+                    sock.ws.close();
+                    mongoose.disconnect();
+                    process.exit(0);
+                }, 5000);
+            }
+        });
+    }
+
+    connectWhatsApp();
 
 }).catch(err => {
     console.error("Erro ao conectar ao MongoDB:", err);

@@ -3,7 +3,7 @@
     "@supabase/supabase-js": "^2.99.1",
     "@whiskeysockets/baileys": "^7.0.0-rc.9",
     "dotenv": "^17.3.1",
-    "jimp": "^1.6.0",
+    "jimp": "^0.16.13",
     "pino": "^10.3.1",
     "qrcode-terminal": "^0.12.0"
   }

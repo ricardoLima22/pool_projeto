@@ -142,8 +142,8 @@ mongoose.connect(MONGODB_URI).then(async () => {
 
                             console.log("-> Mosaico gerado com sucesso! Enviando 1 único pacote de Mídia...");
                             await sock.sendMessage(result.jid, { 
-                                image: imageBuffer, 
-                                caption: "📸 *FOTOS DO SERVIÇO (Antes e Depois)*" 
+                                image: imageBuffer
+                                //caption: " *FOTOS DO SERVIÇO (Antes e Depois)*" 
                             });
                             await delay(2000);
 

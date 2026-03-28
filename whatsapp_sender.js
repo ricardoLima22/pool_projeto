@@ -99,27 +99,25 @@ mongoose.connect(MONGODB_URI).then(async () => {
                     await delay(2000);
 
                     if (foto_antes_url && foto_depois_url) {
-                        console.log("-> 2 FOTOS DETECTADAS. Evitando fusão. Enviando como Álbum Nativo...");
+                        console.log("-> 2 FOTOS DETECTADAS. Evitando fusão. Enviando pacote nativo em Lote para formar Álbum...");
                         try {
-                            // Envia as duas URLs ao mesmo tempo, sem delay entre elas. 
-                            // Isso força o Front-End do WhatsApp a agrupar visualmente as imagens num "Álbum/Grid".
-                            const promiseAntes = sock.sendMessage(result.jid, { 
-                                image: { url: foto_antes_url }, 
-                                caption: "📸 *Antes*" 
-                            });
-                            
+                            // Ao disparar duas envios sincronicamente sem "delay", o front-end do 
+                            // celular agrupá-las-á num único balão visual em Álbum!
                             const promiseDepois = sock.sendMessage(result.jid, { 
                                 image: { url: foto_depois_url }, 
                                 caption: "✨ *Depois*" 
                             });
 
-                            // Espera o envio síncrono dos dois pacotes
-                            await Promise.all([promiseAntes, promiseDepois]);
+                            const promiseAntes = sock.sendMessage(result.jid, { 
+                                image: { url: foto_antes_url }, 
+                                caption: "📸 *Antes*" 
+                            });
+
+                            await Promise.all([promiseDepois, promiseAntes]);
                             await delay(3000);
 
                         } catch (e) {
-                            console.error("Erro interno ao enviar as fotos. Revertendo para envio isolado:", e.message);
-                            // Fallback de segurança
+                            console.error("Erro ao enviar Álbum Síncrono. Retornando ao envio sequencial seguro:", e.message);
                             await sock.sendMessage(result.jid, { image: { url: foto_antes_url }, caption: "📸 *Antes*" });
                             await delay(2000);
                             await sock.sendMessage(result.jid, { image: { url: foto_depois_url }, caption: "✨ *Depois*" });
@@ -128,8 +126,8 @@ mongoose.connect(MONGODB_URI).then(async () => {
                     } else if (foto_antes_url || foto_depois_url) {
                         // Se mandou SOMENTE UMA FOTO
                         const u = foto_antes_url || foto_depois_url;
-                        const leg = foto_antes_url ? "📸 *Foto do Serviço (Antes)*" : "✨ *Foto do Serviço (Depois)*";
-                        console.log("-> Apenas 1 foto enviada. Ignorando mosaico.");
+                        const leg = foto_antes_url ? "📸 *Antes do Serviço*" : "✨ *Depois do Serviço*";
+                        console.log("-> Apenas 1 foto enviada. Ignorando lote.");
                         try {
                             await sock.sendMessage(result.jid, { image: { url: u }, caption: leg });
                             await delay(2000);

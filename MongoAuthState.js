@@ -1,57 +1,44 @@
-const mongoose = require('mongoose');
 const { BufferJSON, initAuthCreds } = require('@whiskeysockets/baileys');
 const { proto } = require('@whiskeysockets/baileys/WAProto');
 
-// Schema otimizado para não depender do disco
-const AuthDataSchema = new mongoose.Schema({
-    sessionId: { type: String, required: true },
-    key: { type: String, required: true },
-    data: { type: mongoose.Schema.Types.Mixed }
-});
-
-// Índice para garantir velocidade no "Get" por session_id + chave
-AuthDataSchema.index({ sessionId: 1, key: 1 }, { unique: true });
-
-// Previne overwrite de model se exportar várias vezes
-const AuthDataModel = mongoose.models.WhatsAppSession || mongoose.model('WhatsAppSession', AuthDataSchema, 'whatsapp_sessions');
-
 /**
- * Hook para injeção de estado no Baileys (Substitui o useMultiFileAuthState)
+ * Hook nativo para injeção de estado no Baileys (Substitui o useMultiFileAuthState)
+ * Compatível exatamente com o uso de `collection` root.
  */
-async function useMongoDBAuthState(sessionId) {
+async function useMongoDBAuthState(collection) {
 
-    const writeData = async (data, key) => {
+    const writeData = async (data, id) => {
         try {
             const jsonStr = JSON.stringify(data, BufferJSON.replacer);
             const jsonObj = JSON.parse(jsonStr);
-            await AuthDataModel.findOneAndUpdate(
-                { sessionId, key },
-                { $set: { data: jsonObj } },
+            await collection.replaceOne(
+                { _id: id },
+                { _id: id, data: jsonObj },
                 { upsert: true }
             );
         } catch (error) {
-            console.error(`Erro ao gravar auth para a chave ${key}:`, error);
+            console.error(`Erro ao gravar auth para a chave ${id}:`, error);
         }
     };
 
-    const readData = async (key) => {
+    const readData = async (id) => {
         try {
-            const doc = await AuthDataModel.findOne({ sessionId, key }).lean();
+            const doc = await collection.findOne({ _id: id });
             if (doc && doc.data) {
                 const jsonStr = JSON.stringify(doc.data);
                 return JSON.parse(jsonStr, BufferJSON.reviver);
             }
         } catch (error) {
-            console.error(`Erro ao ler auth para a chave ${key}:`, error);
+            console.error(`Erro ao ler auth para a chave ${id}:`, error);
         }
         return null;
     };
 
-    const removeData = async (key) => {
+    const removeData = async (id) => {
         try {
-            await AuthDataModel.deleteOne({ sessionId, key });
+            await collection.deleteOne({ _id: id });
         } catch (error) {
-            console.error(`Erro ao deletar auth da chave ${key}:`, error);
+            console.error(`Erro ao deletar auth da chave ${id}:`, error);
         }
     };
 
@@ -101,4 +88,4 @@ async function useMongoDBAuthState(sessionId) {
     };
 }
 
-module.exports = { useMongoDBAuthState, AuthDataModel };
+module.exports = { useMongoDBAuthState };

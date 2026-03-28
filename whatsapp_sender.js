@@ -43,7 +43,8 @@ mongoose.connect(MONGODB_URI).then(async () => {
     const pino = require('pino');
 
     async function connectWhatsApp() {
-        const { state, saveCreds } = await useMongoDBAuthState(session_id);
+        const collection = mongoose.connection.db.collection(session_id);
+        const { state, saveCreds } = await useMongoDBAuthState(collection);
         const { version } = await fetchLatestBaileysVersion();
 
         const sock = makeWASocket({

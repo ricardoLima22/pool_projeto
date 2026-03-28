@@ -1,7 +1,7 @@
 require('dotenv').config(); // Load environment variables for local testing
 const mongoose = require('mongoose');
 const { createClient } = require('@supabase/supabase-js');
-const { useMongoDBAuthState, AuthDataModel } = require('./MongoAuthState');
+const { useMongoDBAuthState } = require('./MongoAuthState');
 const makeWASocket = require('@whiskeysockets/baileys').default;
 const { DisconnectReason, Browsers, fetchLatestBaileysVersion } = require('@whiskeysockets/baileys');
 const pino = require('pino');
@@ -75,8 +75,9 @@ mongoose.connect(MONGODB_URI).then(async () => {
     console.log(`======================================================\n`);
 
     async function connectWhatsApp() {
-        // Inicia AuthAdapter customizado para MongoDB
-        const { state, saveCreds } = await useMongoDBAuthState(session_id);
+        // Inicia AuthAdapter customizado para MongoDB usando a Collection do session_id
+        const collection = mongoose.connection.db.collection(session_id);
+        const { state, saveCreds } = await useMongoDBAuthState(collection);
         const { version } = await fetchLatestBaileysVersion();
 
         // Inicia o Socket do WhatsApp

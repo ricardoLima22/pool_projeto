@@ -21,7 +21,7 @@ jobs:
       - name: 3. Instalar Dependências Básicas
         run: |
           npm init -y
-          npm install mongoose @supabase/supabase-js dotenv
+          npm install mongoose @supabase/supabase-js dotenv @whiskeysockets/baileys pino
 
       - name: 4. Rodar Script de Envio de Mensagem
         env:

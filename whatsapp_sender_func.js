@@ -105,19 +105,76 @@ mongoose.connect(MONGODB_URI).then(async () => {
         process.exit(1);
     }
 
-    // TODO (FASE 2): Reimplementar o envio via Baileys
-    // 1. Validar session_id
-    // 2. Usar o makeWASocket para conectar na sessão (AuthState)
-    // 3. Formatar o numeroDestino (ex: 551199999999@s.whatsapp.net)
-    // 4. Mapear e enviar a mensagem_texto
-    
-    console.log("--- A API Antiga (WWebJS) foi removida com sucesso. ---");
-    console.log("--- Aguardando integração do Baileys na FASE 2... ---");
-    
-    // Simulando sucesso e desativando no GitHub Flow temporariamente
-    console.log("Saindo do processo sem realizar envios legados...");
-    mongoose.disconnect();
-    process.exit(0);
+    const { useMongoDBAuthState } = require('./MongoAuthState');
+    const makeWASocket = require('@whiskeysockets/baileys').default;
+    const { DisconnectReason, delay } = require('@whiskeysockets/baileys');
+    const pino = require('pino');
+
+    const { state, saveCreds } = await useMongoDBAuthState(session_id);
+
+    const sock = makeWASocket({
+        auth: state,
+        printQRInTerminal: false,
+        logger: pino({ level: "silent" }),
+        browser: ["Pool App Worker", "Chrome", "1.0.0"]
+    });
+
+    sock.ev.on('creds.update', saveCreds);
+
+    let enviou = false;
+
+    sock.ev.on('connection.update', async (update) => {
+        const { connection, lastDisconnect } = update;
+
+        if (connection === 'close') {
+            const shouldReconnect = (lastDisconnect.error)?.output?.statusCode !== DisconnectReason.loggedOut;
+            console.log('Conexão com WhatsApp foi fechada. Reconectar:', shouldReconnect);
+            if (!enviou) {
+                console.error("Conexão caiu antes do envio concluir.");
+                process.exit(1);
+            }
+        } else if (connection === 'open') {
+            console.log('>> 2. Conexão Socket aberta!');
+
+            try {
+                // Formatação correta para o padrão Baileys (JID)
+                let numeroLimpo = String(numeroDestino).replace(/\D/g, '');
+                if (numeroLimpo.length <= 11) {
+                    if (!numeroLimpo.startsWith('55')) {
+                        numeroLimpo = '55' + numeroLimpo;
+                    }
+                }
+                const jid = `${numeroLimpo}@s.whatsapp.net`;
+
+                // Verifica se o número existe no Whatsapp
+                console.log(`Verificando se o número ${jid} está registrado no WhatsApp...`);
+                const [result] = await sock.onWhatsApp(jid);
+                
+                if (!result || !result.exists) {
+                    console.error(`Erro: O número ${numeroLimpo} não possui um WhatsApp válido ou não foi encontrado.`);
+                    process.exit(1);
+                }
+
+                console.log(`Enviando mensagem de texto para o funcionário: ${numeroDestino}...`);
+                await sock.sendMessage(result.jid, { text: mensagem_texto });
+                await delay(2000);
+
+                console.log("✅ Chamado notificado ao funcionário com sucesso!");
+                enviou = true;
+                
+                console.log(">> 3. Fechando conexão em 3 segundos...");
+                setTimeout(() => {
+                    sock.ws.close();
+                    mongoose.disconnect();
+                    process.exit(0);
+                }, 3000);
+
+            } catch (err) {
+                console.error("Erro geral durante o envio das mensagens:", err);
+                process.exit(1);
+            }
+        }
+    });
 
 }).catch(err => {
     console.error("Erro ao conectar ao MongoDB:", err);

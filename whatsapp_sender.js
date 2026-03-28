@@ -99,20 +99,50 @@ mongoose.connect(MONGODB_URI).then(async () => {
                     await delay(2000);
 
                     if (foto_antes_url && foto_depois_url) {
-                        console.log("-> 2 FOTOS DETECTADAS. Evitando fusão. Tentando Envio de Álbum em Única Mensagem...");
+                        console.log("-> 2 FOTOS DETECTADAS. Gerando Mosaico (Antes vs Depois) via Jimp para poupar rede...");
                         try {
-                            // Estrutura de Álbum/Carrossel para tentar agrupar num só balão verde 
-                            // as imagens baixadas sem colá-las fisicamente!
-                            await sock.sendMessage(result.jid, {
-                                albumMessage: [
-                                    { image: { url: foto_antes_url }, caption: "📸 *Antes*" },
-                                    { image: { url: foto_depois_url }, caption: "✨ *Depois*" }
-                                ]
+                            const Jimp = require('jimp');
+                            const imgA = await Jimp.read(foto_antes_url);
+                            const imgD = await Jimp.read(foto_depois_url);
+
+                            const targetHeight = 800; // Padronizar a altura
+                            imgA.resize(Jimp.AUTO, targetHeight);
+                            imgD.resize(Jimp.AUTO, targetHeight);
+
+                            const collageWidth = imgA.bitmap.width + imgD.bitmap.width;
+                            // Fundo da lona branco caso haja transparência
+                            const collage = new Jimp(collageWidth, targetHeight, 0xFFFFFFFF);
+                            
+                            collage.composite(imgA, 0, 0);
+                            collage.composite(imgD, imgA.bitmap.width, 0);
+
+                            // --- DESCOMENTADO O MODO 'LIMPO' ---
+                            const comTextoEscritoNaFoto = false; // <-- Alterado para False conforme pedido!
+
+                            if (comTextoEscritoNaFoto) {
+                                const font = await Jimp.loadFont(Jimp.FONT_SANS_64_WHITE);
+                                const fontShadow = await Jimp.loadFont(Jimp.FONT_SANS_64_BLACK);
+                                function printWithShadow(x, y, text, w) {
+                                    collage.print(fontShadow, x+3, y+3, { text, alignmentX: Jimp.HORIZONTAL_ALIGN_CENTER }, w, targetHeight);
+                                    collage.print(font, x, y, { text, alignmentX: Jimp.HORIZONTAL_ALIGN_CENTER }, w, targetHeight);
+                                }
+                                printWithShadow(0, 30, "ANTES", imgA.bitmap.width);
+                                printWithShadow(imgA.bitmap.width, 30, "DEPOIS", imgD.bitmap.width);
+                            }
+                            // --------------------------------------------------------------------------------------------
+
+                            const imageBuffer = await collage.getBufferAsync(Jimp.MIME_JPEG);
+
+                            console.log("-> Mosaico gerado com sucesso! Enviando 1 único pacote de Mídia...");
+                            await sock.sendMessage(result.jid, { 
+                                image: imageBuffer, 
+                                caption: "📸 *FOTOS DO SERVIÇO (Antes e Depois)*" 
                             });
-                            await delay(4000);
+                            await delay(2000);
 
                         } catch (e) {
-                            console.error("Modo de Álbum Nativo não suportado pelo protocolo atual (Falha). Revertendo para Isoladas:", e.message);
+                            console.error("Erro interno do Jimp ao gerar Mosaico. Revertendo para envio isolado:", e.message);
+                            // Fallback clássico
                             await sock.sendMessage(result.jid, { image: { url: foto_antes_url }, caption: "📸 *Antes*" });
                             await delay(2000);
                             await sock.sendMessage(result.jid, { image: { url: foto_depois_url }, caption: "✨ *Depois*" });
@@ -121,8 +151,8 @@ mongoose.connect(MONGODB_URI).then(async () => {
                     } else if (foto_antes_url || foto_depois_url) {
                         // Se mandou SOMENTE UMA FOTO
                         const u = foto_antes_url || foto_depois_url;
-                        const leg = foto_antes_url ? "📸 *Antes do Serviço*" : "✨ *Depois do Serviço*";
-                        console.log("-> Apenas 1 foto enviada. Ignorando Álbum.");
+                        const leg = foto_antes_url ? "📸 *Foto do Serviço (Antes)*" : "✨ *Foto do Serviço (Depois)*";
+                        console.log("-> Apenas 1 foto enviada. Ignorando mosaico.");
                         try {
                             await sock.sendMessage(result.jid, { image: { url: u }, caption: leg });
                             await delay(2000);

@@ -98,29 +98,69 @@ mongoose.connect(MONGODB_URI).then(async () => {
                     await sock.sendMessage(result.jid, { text: mensagem_texto });
                     await delay(2000);
 
-                    if (foto_antes_url) {
-                        console.log("Baixando e enviando FOTO ANTES...");
+                    if (foto_antes_url && foto_depois_url) {
+                        console.log("-> 2 FOTOS DETECTADAS. Gerando Mosaico (Antes vs Depois) via Jimp para poupar rede...");
                         try {
-                            await sock.sendMessage(result.jid, { 
-                                image: { url: foto_antes_url }, 
-                                caption: "📸 *Foto Antes do Serviço*" 
-                            });
-                            await delay(2000);
-                        } catch (e) {
-                            console.error("Erro ao enviar foto Antes:", e.message);
-                        }
-                    }
+                            const Jimp = require('jimp');
+                            const imgA = await Jimp.read(foto_antes_url);
+                            const imgD = await Jimp.read(foto_depois_url);
 
-                    if (foto_depois_url) {
-                        console.log("Baixando e enviando FOTO DEPOIS...");
-                        try {
+                            const targetHeight = 800; // Padronizar a altura
+                            imgA.resize(Jimp.AUTO, targetHeight);
+                            imgD.resize(Jimp.AUTO, targetHeight);
+
+                            const collageWidth = imgA.bitmap.width + imgD.bitmap.width;
+                            // Fundo da lona branco caso haja transparência
+                            const collage = new Jimp(collageWidth, targetHeight, 0xFFFFFFFF);
+                            
+                            collage.composite(imgA, 0, 0);
+                            collage.composite(imgD, imgA.bitmap.width, 0);
+
+                            // --- DESCOMENTE OU COMENTE ESTE BLOCO ABAIXO CASO QUEIRA TESTAR COM/SEM O TEXTO NAS FOTOS ---
+                            const comTextoEscritoNaFoto = true; // Flag pro seu Teste!
+
+                            if (comTextoEscritoNaFoto) {
+                                const font = await Jimp.loadFont(Jimp.FONT_SANS_64_WHITE);
+                                const fontShadow = await Jimp.loadFont(Jimp.FONT_SANS_64_BLACK);
+                                
+                                // Função simples para "sombra" pra melhorar a leitura (Borda preta nas letras brancas)
+                                function printWithShadow(x, y, text, w) {
+                                    collage.print(fontShadow, x+3, y+3, { text, alignmentX: Jimp.HORIZONTAL_ALIGN_CENTER }, w, targetHeight);
+                                    collage.print(font, x, y, { text, alignmentX: Jimp.HORIZONTAL_ALIGN_CENTER }, w, targetHeight);
+                                }
+                                
+                                printWithShadow(0, 30, "ANTES", imgA.bitmap.width);
+                                printWithShadow(imgA.bitmap.width, 30, "DEPOIS", imgD.bitmap.width);
+                            }
+                            // --------------------------------------------------------------------------------------------
+
+                            const imageBuffer = await collage.getBufferAsync(Jimp.MIME_JPEG);
+
+                            console.log("-> Mosaico gerado com sucesso! Enviando 1 único pacote de Mídia...");
                             await sock.sendMessage(result.jid, { 
-                                image: { url: foto_depois_url }, 
-                                caption: "✨ *Foto Depois do Serviço*" 
+                                image: imageBuffer, 
+                                caption: "📸 *FOTOS DO SERVIÇO (Antes e Depois)*" 
                             });
                             await delay(2000);
+
                         } catch (e) {
-                            console.error("Erro ao enviar foto Depois:", e.message);
+                            console.error("Erro interno do Jimp ao gerar Mosaico. Revertendo para envio isolado:", e.message);
+                            // Fallback clássico
+                            await sock.sendMessage(result.jid, { image: { url: foto_antes_url }, caption: "📸 *Antes*" });
+                            await delay(2000);
+                            await sock.sendMessage(result.jid, { image: { url: foto_depois_url }, caption: "✨ *Depois*" });
+                            await delay(2000);
+                        }
+                    } else if (foto_antes_url || foto_depois_url) {
+                        // Se mandou SOMENTE UMA FOTO
+                        const u = foto_antes_url || foto_depois_url;
+                        const leg = foto_antes_url ? "📸 *Foto do Serviço (Antes)*" : "✨ *Foto do Serviço (Depois)*";
+                        console.log("-> Apenas 1 foto enviada. Ignorando mosaico.");
+                        try {
+                            await sock.sendMessage(result.jid, { image: { url: u }, caption: leg });
+                            await delay(2000);
+                        } catch (e) {
+                            console.error("Erro ao enviar foto avulsa:", e.message);
                         }
                     }
 

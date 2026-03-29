@@ -505,7 +505,7 @@ function NovaVisita() {
                                 if (val.length > 1 && /^0[^.]/.test(val)) val = Number(val).toString();
                                 if (val.length <= 4 && Number(val) >= 0 && Number(val) <= 14) setPhAntes(val);
                             }}
-                            className="h-12 w-full text-center border-2 border-slate-200 rounded-xl bg-white text-sm font-medium text-slate-700 placeholder:text-slate-400 placeholder:font-normal focus:outline-none focus:border-[#008080] focus:ring-0 transition-colors shadow-sm"
+                            className="h-12 w-full text-center border-2 border-slate-200 rounded-xl bg-white text-base font-medium text-slate-700 placeholder:text-slate-400 placeholder:font-normal focus:outline-none focus:border-[#008080] focus:ring-0 transition-colors shadow-sm"
                             onKeyDown={(e) => {
                                 if (['-', '+', 'e', 'E'].includes(e.key)) e.preventDefault();
                             }}
@@ -523,7 +523,7 @@ function NovaVisita() {
                                 if (val.length > 1 && /^0[^.]/.test(val)) val = Number(val).toString();
                                 if (val.length <= 4 && Number(val) >= 0 && Number(val) <= 14) setPhDepois(val);
                             }}
-                            className={`h-12 w-full text-center border-2 border-slate-200 rounded-xl bg-white text-sm font-medium text-slate-700 placeholder:text-slate-400 placeholder:font-normal focus:outline-none focus:border-[#008080] focus:ring-0 transition-colors shadow-sm ${!fotoAntes ? 'opacity-50' : ''}`}
+                            className={`h-12 w-full text-center border-2 border-slate-200 rounded-xl bg-white text-base font-medium text-slate-700 placeholder:text-slate-400 placeholder:font-normal focus:outline-none focus:border-[#008080] focus:ring-0 transition-colors shadow-sm ${!fotoAntes ? 'opacity-50' : ''}`}
                             disabled={!fotoAntes}
                             onKeyDown={(e) => {
                                 if (['-', '+', 'e', 'E'].includes(e.key)) e.preventDefault();
@@ -538,7 +538,7 @@ function NovaVisita() {
                             value={observacao}
                             maxLength={500}
                             onChange={(e) => setObservacao(e.target.value)}
-                            className="w-full bg-white border-2 border-slate-200 rounded-xl min-h-[100px] p-4 pb-8 resize-none focus:outline-none focus:border-[#008080] focus:ring-0 transition-colors shadow-sm text-sm"
+                            className="w-full bg-white border-2 border-slate-200 rounded-xl min-h-[100px] p-4 pb-8 resize-none focus:outline-none focus:border-[#008080] focus:ring-0 transition-colors shadow-sm text-base"
                         ></textarea>
                         <span className="absolute bottom-3 right-4 text-[10px] text-slate-400 font-medium">
                             {observacao.length}/500

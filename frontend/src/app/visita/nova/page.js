@@ -187,6 +187,12 @@ function NovaVisita() {
             return;
         }
 
+        const valorDecimal = parseFloat(valorServico);
+        if (isNaN(valorDecimal) || valorDecimal < 0) {
+            alert("Operação bloqueada! O valor cobrado não pode ser um número negativo.");
+            return;
+        }
+
         if (phAntes !== '') {
             const phA = parseFloat(phAntes);
             if (isNaN(phA) || phA < 0 || phA > 14) {

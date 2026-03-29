@@ -396,7 +396,7 @@ function NovaVisita() {
         <div className="min-h-screen bg-slate-50 pb-6">
             {/* Header */}
             <div
-                className="px-4 py-5 flex items-center gap-3 shadow-sm mb-6 sticky top-0 z-20"
+                className="fixed top-0 left-0 right-0 px-4 py-5 flex items-center gap-3 shadow-md z-50"
                 style={{ background: "linear-gradient(135deg, hsl(193 80% 22%), hsl(193 60% 35%))" }}
             >
                 <button 
@@ -408,13 +408,13 @@ function NovaVisita() {
                 >
                     <ArrowLeft className="h-5 w-5" />
                 </button>
-                <div className="text-white">
-                    <h1 className="font-bold text-lg leading-tight truncate max-w-[250px]">{cliente?.name}</h1>
-                    <p className="text-sm opacity-80 truncate max-w-[250px]">{cliente?.pool_volume_m3 || 0}m³ • {cliente?.address || 'Sem endereço'}</p>
+                <div className="text-white overflow-hidden">
+                    <h1 className="font-bold text-lg leading-tight truncate">{cliente?.name}</h1>
+                    <p className="text-sm opacity-80 truncate">{cliente?.pool_volume_m3 || 0}m³ • {cliente?.address || 'Sem endereço'}</p>
                 </div>
             </div>
 
-            <div className="px-4 space-y-6 max-w-2xl mx-auto">
+            <div className="px-4 space-y-6 pt-28">
                 {/* Produtos Utilizados */}
                 <div>
                     <h2 className="text-xs font-bold tracking-widest text-[#008080] mb-3">

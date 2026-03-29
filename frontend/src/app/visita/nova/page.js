@@ -505,7 +505,7 @@ function NovaVisita() {
                                 if (val.length > 1 && /^0[^.]/.test(val)) val = Number(val).toString();
                                 if (val.length <= 4 && Number(val) >= 0 && Number(val) <= 14) setPhAntes(val);
                             }}
-                            className="h-12 w-full text-center border-2 border-slate-200 rounded-xl bg-white font-semibold text-slate-800 focus:outline-none focus:border-[#008080] focus:ring-0 transition-colors shadow-sm"
+                            className="h-12 w-full text-center border-2 border-slate-200 rounded-xl bg-white text-sm font-medium text-slate-700 placeholder:text-slate-400 placeholder:font-normal focus:outline-none focus:border-[#008080] focus:ring-0 transition-colors shadow-sm"
                         />
                         <input
                             type="number"
@@ -520,7 +520,7 @@ function NovaVisita() {
                                 if (val.length > 1 && /^0[^.]/.test(val)) val = Number(val).toString();
                                 if (val.length <= 4 && Number(val) >= 0 && Number(val) <= 14) setPhDepois(val);
                             }}
-                            className={`h-12 w-full text-center border-2 border-slate-200 rounded-xl bg-white font-semibold text-slate-800 focus:outline-none focus:border-[#008080] focus:ring-0 transition-colors shadow-sm ${!fotoAntes ? 'opacity-50' : ''}`}
+                            className={`h-12 w-full text-center border-2 border-slate-200 rounded-xl bg-white text-sm font-medium text-slate-700 placeholder:text-slate-400 placeholder:font-normal focus:outline-none focus:border-[#008080] focus:ring-0 transition-colors shadow-sm ${!fotoAntes ? 'opacity-50' : ''}`}
                             disabled={!fotoAntes}
                         />
                     </div>

@@ -34,6 +34,17 @@ export default function NovoCliente() {
 
     const handleSalvar = async (e) => {
         e.preventDefault();
+        
+        // Validação Mínima e Máxima do WhatsApp (Permitir BR e Gringo)
+        // Remove tudo que não for número
+        const somenteNumeros = whatsapp.replace(/\D/g, '');
+        
+        // ITU-T E.164 (Padrão Internacional) diz que um número tem entre 10 e 15 dígitos.
+        if (somenteNumeros.length < 10 || somenteNumeros.length > 15) {
+            alert('Por favor, informe um número de WhatsApp válido contendo DDD (Mínimo de 10 e Máximo de 15 números).');
+            return;
+        }
+
         setLoading(true);
 
         // Pega o ID do usuário logado
@@ -45,7 +56,7 @@ export default function NovoCliente() {
             .insert([
                 {
                     name: nome,
-                    whatsapp: whatsapp,
+                    whatsapp: somenteNumeros, // Salva formato limpo no banco
                     email: email || null,
                     address: endereco,
                     pool_volume_m3: parseFloat(volume),

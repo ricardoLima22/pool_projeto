@@ -527,12 +527,18 @@ function NovaVisita() {
                     </div>
 
                     {/* Observação */}
-                    <textarea
-                        placeholder="Adicionar observação sobre a visita... (Opcional)"
-                        value={observacao}
-                        onChange={(e) => setObservacao(e.target.value)}
-                        className="w-full p-4 rounded-xl bg-white border border-slate-200 min-h-[100px] resize-none placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#008080]/20 focus:border-[#008080] transition-all text-sm font-medium text-slate-800 shadow-sm"
-                    ></textarea>
+                    <div className="relative">
+                        <textarea
+                            placeholder="Adicionar observação sobre a visita... (Opcional)"
+                            value={observacao}
+                            maxLength={500}
+                            onChange={(e) => setObservacao(e.target.value)}
+                            className="w-full p-4 pb-8 rounded-xl bg-white border border-slate-200 min-h-[100px] resize-none placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#008080]/20 focus:border-[#008080] transition-all text-sm font-medium text-slate-800 shadow-sm"
+                        ></textarea>
+                        <span className="absolute bottom-3 right-4 text-[10px] text-slate-400 font-medium">
+                            {observacao.length}/500
+                        </span>
+                    </div>
                 </section>
             </div>
 

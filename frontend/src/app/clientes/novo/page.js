@@ -120,9 +120,15 @@ export default function NovoCliente() {
                         required
                         type="number"
                         step="0.1"
+                        min="0"
                         placeholder="Ex: 45.5"
                         className="w-full border-b-2 border-slate-200 bg-transparent py-3 text-slate-800 placeholder:text-slate-400 focus:border-[#008080] focus:outline-none transition-colors text-sm rounded-none appearance-none"
-                        onChange={(e) => setVolume(e.target.value)}
+                        onChange={(e) => {
+                            const val = e.target.value;
+                            if (val === '' || Number(val) >= 0) {
+                                setVolume(val);
+                            }
+                        }}
                     />
                 </div>
 

@@ -34,13 +34,19 @@ export default function NovoProduto() {
         e.preventDefault();
         if (!companyId) return alert("Empresa não encontrada no seu perfil.");
 
+        const nomeLimpo = nome.trim();
+        if (nomeLimpo.length < 3) {
+            alert('Por favor, informe um nome de produto válido com pelo menos 3 letras.');
+            return;
+        }
+
         setLoading(true);
 
         const { error } = await supabase
             .from('products')
             .insert([
                 {
-                    name: nome,
+                    name: nomeLimpo,
                     unit: unidade,
                     price_per_unit: parseFloat(preco),
                     stock_quantity: parseFloat(quantidade) || 0,

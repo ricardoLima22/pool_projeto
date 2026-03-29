@@ -45,12 +45,19 @@ export default function DetalhesProduto() {
 
     const handleSalvar = async (e) => {
         e.preventDefault();
+
+        const nomeLimpo = nome.trim();
+        if (nomeLimpo.length < 3) {
+            alert('Por favor, informe um nome de produto válido com pelo menos 3 letras.');
+            return;
+        }
+
         setSalvando(true);
 
         const { error } = await supabase
             .from('products')
             .update({
-                name: nome,
+                name: nomeLimpo,
                 unit: unidade,
                 price_per_unit: parseFloat(preco),
                 stock_quantity: parseFloat(quantidade)
@@ -64,11 +71,12 @@ export default function DetalhesProduto() {
         } else {
             setProduto({
                 ...produto,
-                name: nome,
+                name: nomeLimpo,
                 unit: unidade,
                 price_per_unit: parseFloat(preco),
                 stock_quantity: parseFloat(quantidade)
             });
+            setNome(nomeLimpo);
             setEditando(false);
         }
     };

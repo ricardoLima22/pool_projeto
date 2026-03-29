@@ -506,6 +506,9 @@ function NovaVisita() {
                                 if (val.length <= 4 && Number(val) >= 0 && Number(val) <= 14) setPhAntes(val);
                             }}
                             className="h-12 w-full text-center border-2 border-slate-200 rounded-xl bg-white text-sm font-medium text-slate-700 placeholder:text-slate-400 placeholder:font-normal focus:outline-none focus:border-[#008080] focus:ring-0 transition-colors shadow-sm"
+                            onKeyDown={(e) => {
+                                if (['-', '+', 'e', 'E'].includes(e.key)) e.preventDefault();
+                            }}
                         />
                         <input
                             type="number"
@@ -522,6 +525,9 @@ function NovaVisita() {
                             }}
                             className={`h-12 w-full text-center border-2 border-slate-200 rounded-xl bg-white text-sm font-medium text-slate-700 placeholder:text-slate-400 placeholder:font-normal focus:outline-none focus:border-[#008080] focus:ring-0 transition-colors shadow-sm ${!fotoAntes ? 'opacity-50' : ''}`}
                             disabled={!fotoAntes}
+                            onKeyDown={(e) => {
+                                if (['-', '+', 'e', 'E'].includes(e.key)) e.preventDefault();
+                            }}
                         />
                     </div>
 

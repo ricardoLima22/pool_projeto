@@ -104,6 +104,17 @@ export default function NovoChamado() {
             return;
         }
 
+        const dataAgendada = new Date(form.scheduled_date);
+        const agora = new Date();
+        
+        // Permite uma tolerância de 15 minutos (na hora atual) pra não barrar quem preencheu o form devagar
+        const toleranciaMs = 15 * 60 * 1000;
+        if (dataAgendada.getTime() < agora.getTime() - toleranciaMs) {
+            alert('Ops! A data e hora agendada não pode estar no passado.');
+            setSubmitting(false);
+            return;
+        }
+
         const finalDescription = form.description || '';
 
         const payload = {
@@ -280,6 +291,8 @@ export default function NovoChamado() {
                         name="scheduled_date"
                         value={form.scheduled_date}
                         onChange={handleChange}
+                        min={new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 16)}
+                        suppressHydrationWarning
                         className="w-full border-b-2 border-slate-200 bg-transparent py-3 text-slate-800 placeholder:text-slate-400 focus:border-[#008080] focus:outline-none transition-colors text-sm rounded-none appearance-none"
                         required
                     />

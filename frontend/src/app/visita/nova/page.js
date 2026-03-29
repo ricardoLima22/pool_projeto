@@ -5,6 +5,7 @@ import { useState, useEffect, Suspense } from 'react';
 import { supabase } from '../../../lib/supabase';
 import { useSearchParams, useRouter } from 'next/navigation';
 import SplashScreen from '../../../components/SplashScreen';
+import { ArrowLeft, Camera, Sparkles, Minus, Plus, Send } from 'lucide-react';
 
 export default function NovaVisitaPage() {
     return (
@@ -392,99 +393,108 @@ function NovaVisita() {
     }
 
     return (
-        <main className="min-h-screen bg-[#fcfbf8] pb-48">
-            <header className="sticky top-0 z-10 bg-white border-b border-slate-200 px-4 py-4 pt-6 flex items-center gap-3 mb-6">
-                <button onClick={() => {
-                    if (!clienteId) setCliente(null);
-                    else router.back();
-                }} className="text-slate-800 transition-colors p-1 -ml-1">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+        <div className="min-h-screen bg-slate-50 pb-6">
+            {/* Header */}
+            <div
+                className="px-4 py-5 flex items-center gap-3 shadow-sm mb-6 sticky top-0 z-20"
+                style={{ background: "linear-gradient(135deg, hsl(193 80% 22%), hsl(193 60% 35%))" }}
+            >
+                <button 
+                    onClick={() => {
+                        if (!clienteId) setCliente(null);
+                        else router.back();
+                    }} 
+                    className="text-white hover:opacity-80 transition-opacity"
+                >
+                    <ArrowLeft className="h-5 w-5" />
                 </button>
-                <div>
-                    <h1 className="text-lg font-bold text-slate-800 leading-tight truncate max-w-[250px]">{cliente?.name}</h1>
-                    <p className="text-sm text-slate-500 truncate max-w-[250px]">
-                        {cliente?.pool_volume_m3 || 0}m³ • {cliente?.address || 'Sem endereço'}
-                    </p>
+                <div className="text-white">
+                    <h1 className="font-bold text-lg leading-tight truncate max-w-[250px]">{cliente?.name}</h1>
+                    <p className="text-sm opacity-80 truncate max-w-[250px]">{cliente?.pool_volume_m3 || 0}m³ • {cliente?.address || 'Sem endereço'}</p>
                 </div>
-            </header>
+            </div>
 
             <div className="px-4 space-y-6 max-w-2xl mx-auto">
-                {/* Registro de Uso de Produtos (Opcional para a Cobrança) */}
-                <section>
-                    <div className="flex items-baseline gap-2 mb-2">
-                        <h2 className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block">Produtos Utilizados</h2>
-                        <span className="text-[10px] text-slate-400 tracking-normal">(Estoque)</span>
-                    </div>
+                {/* Produtos Utilizados */}
+                <div>
+                    <h2 className="text-xs font-bold tracking-widest text-[#008080] mb-3">
+                        PRODUTOS UTILIZADOS
+                    </h2>
                     {produtos.length === 0 ? (
-                        <div className="rounded-xl border border-slate-200 bg-white py-4 text-center">
-                            <p className="text-sm text-slate-500">Sem produtos.</p>
+                        <div className="rounded-xl border border-slate-200 bg-white py-6 text-center shadow-sm">
+                            <p className="text-sm font-medium text-slate-400">Nenhum produto em estoque.</p>
                         </div>
                     ) : (
-                        <div className="space-y-2">
+                        <div className="space-y-3">
                             {produtos.map(p => (
-                                <div key={p.id} className="bg-white p-3 rounded-xl flex justify-between items-center shadow-sm border border-slate-200">
-                                    <div className="flex-1">
-                                        <p className="text-sm font-bold text-slate-700 leading-tight">{p.name}</p>
-                                        <p className="text-[10px] text-slate-400 font-medium mt-0.5">
-                                            Disponível: {p.stock_quantity} {p.unit}
-                                        </p>
+                                <div key={p.id} className="flex items-center justify-between bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
+                                    <div>
+                                        <p className="font-semibold text-sm text-slate-800">{p.name}</p>
+                                        <p className="text-xs text-[#008080] font-medium mt-0.5">Disponível: {p.stock_quantity} {p.unit}</p>
                                     </div>
-                                    <div className="flex items-center gap-2">
-                                        <button onClick={() => alterarQtd(p.id, -1, p.stock_quantity)} className="w-8 h-8 flex items-center justify-center bg-slate-50 rounded-lg font-bold text-lg text-slate-400 border border-slate-100 active:bg-slate-200 transition">-</button>
-                                        <span className="font-black text-sm min-w-[20px] text-center text-slate-800">{quantidades[p.id] || 0}</span>
+                                    <div className="flex items-center gap-3">
+                                        <button 
+                                            onClick={() => alterarQtd(p.id, -1, p.stock_quantity)} 
+                                            className="w-8 h-8 rounded-full border border-slate-200 flex items-center justify-center text-slate-500 hover:bg-slate-50 transition-colors active:scale-95"
+                                        >
+                                            <Minus className="h-4 w-4" />
+                                        </button>
+                                        <span className="w-6 text-center font-bold text-slate-800 text-sm">
+                                            {quantidades[p.id] || 0}
+                                        </span>
                                         <button
                                             onClick={() => alterarQtd(p.id, 1, p.stock_quantity)}
                                             disabled={(quantidades[p.id] || 0) >= p.stock_quantity}
-                                            className="w-8 h-8 flex items-center justify-center bg-slate-50 rounded-lg font-bold text-lg text-slate-400 border border-slate-100 active:bg-slate-200 transition disabled:opacity-30"
+                                            className="w-8 h-8 rounded-full border border-[#008080]/30 bg-[#008080]/5 flex items-center justify-center text-[#008080] hover:bg-[#008080]/10 transition-colors active:scale-95 disabled:opacity-30 disabled:border-slate-200 disabled:bg-slate-50 disabled:text-slate-400"
                                         >
-                                            +
+                                            <Plus className="h-4 w-4" />
                                         </button>
                                     </div>
                                 </div>
                             ))}
                         </div>
                     )}
-                </section>
+                </div>
 
-                {/* Registro Fotográfico e pH */}
-                <section>
-                    <h2 className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block mb-3">Registro e Medições</h2>
-                    
+                {/* Registro e Medições */}
+                <div>
+                    <h2 className="text-xs font-bold tracking-widest text-[#008080] mb-3">
+                        REGISTRO E MEDIÇÕES
+                    </h2>
+
                     {/* Fotos */}
-                    <div className="grid grid-cols-5 gap-3 mb-3">
-                        {/* Foto Antes - maior */}
-                        <label className={`col-span-3 aspect-[4/3] rounded-xl border-2 border-dashed ${fotoAntes ? 'border-[#008080]/30 bg-white' : 'border-slate-300 bg-white'} flex flex-col items-center justify-center gap-2 hover:border-[#008080]/40 transition-colors active:scale-[0.98] cursor-pointer overflow-hidden relative`}>
+                    <div className="grid grid-cols-2 gap-3 mb-4">
+                        <label className={`flex flex-col items-center justify-center gap-2 h-40 rounded-xl border-2 border-dashed ${fotoAntes ? 'border-[#008080]/40 bg-white shadow-sm' : 'border-[#008080]/30 bg-[#008080]/5'} hover:bg-[#008080]/10 transition-colors cursor-pointer overflow-hidden relative`}>
                             {fotoAntes ? (
                                 <img src={URL.createObjectURL(fotoAntes)} alt="Antes" className="w-full h-full object-cover" />
                             ) : (
                                 <>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-slate-400 opacity-60"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>
-                                    <span className="text-xs text-slate-500 font-medium text-center px-4">Foto Antes (Câmera ou Galeria)</span>
+                                    <Camera className="h-6 w-6 text-[#008080]/50" />
+                                    <span className="text-xs text-[#008080]/70 font-medium text-center px-4">Foto Antes (Câmera ou Galeria)</span>
                                 </>
                             )}
                             <input type="file" accept="image/*" className="hidden" onChange={(e) => setFotoAntes(e.target.files[0])} />
                         </label>
 
-                        {/* Foto Depois - menor */}
                         <label 
                             onClick={(e) => { if(!fotoAntes) { e.preventDefault(); alert("⚠️ Por favor, registre a 'Foto Antes' primeiro."); } }}
-                            className={`col-span-2 aspect-[4/3] rounded-xl border-2 border-dashed ${fotoDepois ? 'border-[#008080]/30 bg-white' : !fotoAntes ? 'border-slate-200 bg-slate-50 opacity-40 cursor-not-allowed' : 'border-slate-300 bg-white'} flex flex-col items-center justify-center gap-2 hover:border-[#008080]/40 transition-colors active:scale-[0.98] cursor-pointer overflow-hidden relative`}
+                            className={`flex flex-col items-center justify-center gap-2 h-40 rounded-xl border-2 border-dashed ${fotoDepois ? 'border-[#2ECC71]/40 bg-white shadow-sm' : !fotoAntes ? 'border-slate-200 bg-slate-50 opacity-60 cursor-not-allowed' : 'border-[#2ECC71]/40 bg-[#2ECC71]/5'} hover:bg-[#2ECC71]/10 transition-colors cursor-pointer overflow-hidden relative`}
                         >
-                            {!fotoAntes && <span className="absolute top-2 right-2 text-[10px]">🔒</span>}
                             {fotoDepois ? (
                                 <img src={URL.createObjectURL(fotoDepois)} alt="Depois" className="w-full h-full object-cover" />
                             ) : (
                                 <>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-slate-400 opacity-40"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/><path d="M5 3v4"/><path d="M19 17v4"/><path d="M3 5h4"/><path d="M17 19h4"/></svg>
-                                    <span className="text-[11px] text-slate-500 font-medium">Foto Depois</span>
+                                    <Sparkles className={`h-6 w-6 ${!fotoAntes ? 'text-slate-400' : 'text-[#2ECC71]/50'}`} />
+                                    <span className={`text-xs font-medium ${!fotoAntes ? 'text-slate-500' : 'text-[#2ECC71]/70'}`}>Foto Depois</span>
+                                    {fotoAntes && <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-[#2ECC71]" />}
                                 </>
                             )}
                             <input type="file" accept="image/*" disabled={!fotoAntes} className="hidden" onChange={(e) => setFotoDepois(e.target.files[0])} />
                         </label>
                     </div>
 
-                    {/* pH Inputs */}
-                    <div className="grid grid-cols-2 gap-3 mb-3">
+                    {/* pH */}
+                    <div className="grid grid-cols-2 gap-3 mb-4">
                         <input
                             type="number"
                             step="0.1"
@@ -494,18 +504,11 @@ function NovaVisita() {
                             value={phAntes}
                             onChange={(e) => {
                                 let val = e.target.value;
-                                if (val === '') {
-                                    setPhAntes(val);
-                                    return;
-                                }
-                                if (val.length > 1 && /^0[^.]/.test(val)) {
-                                    val = Number(val).toString();
-                                }
-                                if (val.length <= 4 && Number(val) >= 0 && Number(val) <= 14) {
-                                    setPhAntes(val);
-                                }
+                                if (val === '') { setPhAntes(val); return; }
+                                if (val.length > 1 && /^0[^.]/.test(val)) val = Number(val).toString();
+                                if (val.length <= 4 && Number(val) >= 0 && Number(val) <= 14) setPhAntes(val);
                             }}
-                            className="h-12 w-full rounded-xl text-center font-bold text-slate-800 bg-white border border-slate-200 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#008080]/20 focus:border-[#008080] transition-all shadow-sm"
+                            className="h-12 w-full text-center border-2 border-slate-200 rounded-xl bg-white font-semibold text-slate-800 focus:outline-none focus:border-[#008080] focus:ring-0 transition-colors shadow-sm"
                         />
                         <input
                             type="number"
@@ -516,18 +519,11 @@ function NovaVisita() {
                             value={phDepois}
                             onChange={(e) => {
                                 let val = e.target.value;
-                                if (val === '') {
-                                    setPhDepois(val);
-                                    return;
-                                }
-                                if (val.length > 1 && /^0[^.]/.test(val)) {
-                                    val = Number(val).toString();
-                                }
-                                if (val.length <= 4 && Number(val) >= 0 && Number(val) <= 14) {
-                                    setPhDepois(val);
-                                }
+                                if (val === '') { setPhDepois(val); return; }
+                                if (val.length > 1 && /^0[^.]/.test(val)) val = Number(val).toString();
+                                if (val.length <= 4 && Number(val) >= 0 && Number(val) <= 14) setPhDepois(val);
                             }}
-                            className={`h-12 w-full rounded-xl text-center font-bold text-slate-800 bg-white border border-slate-200 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#008080]/20 focus:border-[#008080] transition-all shadow-sm ${!fotoAntes ? 'opacity-50' : ''}`}
+                            className={`h-12 w-full text-center border-2 border-slate-200 rounded-xl bg-white font-semibold text-slate-800 focus:outline-none focus:border-[#008080] focus:ring-0 transition-colors shadow-sm ${!fotoAntes ? 'opacity-50' : ''}`}
                             disabled={!fotoAntes}
                         />
                     </div>
@@ -539,50 +535,47 @@ function NovaVisita() {
                             value={observacao}
                             maxLength={500}
                             onChange={(e) => setObservacao(e.target.value)}
-                            className="w-full p-4 pb-8 rounded-xl bg-white border border-slate-200 min-h-[100px] resize-none placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#008080]/20 focus:border-[#008080] transition-all text-sm font-medium text-slate-800 shadow-sm"
+                            className="w-full bg-white border-2 border-slate-200 rounded-xl min-h-[100px] p-4 pb-8 resize-none focus:outline-none focus:border-[#008080] focus:ring-0 transition-colors shadow-sm text-sm"
                         ></textarea>
                         <span className="absolute bottom-3 right-4 text-[10px] text-slate-400 font-medium">
                             {observacao.length}/500
                         </span>
                     </div>
-                </section>
-            </div>
-
-            {/* Rodapé Fixo Compacto */}
-            <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 p-4 space-y-3 z-20">
-                <div className="max-w-2xl mx-auto space-y-3">
-                    <div>
-                        <label className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block mb-1">
-                            Valor Cobrado
-                        </label>
-                        <div className="flex items-center gap-2 mt-1">
-                            <span className="text-sm font-medium text-slate-500">R$</span>
-                            <input
-                                type="number"
-                                step="0.01"
-                                min="0"
-                                placeholder="0.00"
-                                value={valorServico}
-                                onChange={(e) => setValorServico(e.target.value)}
-                                className="h-10 w-full border-0 border-b border-slate-200 rounded-none bg-transparent text-2xl font-light text-slate-800 placeholder:text-slate-300 focus:outline-none focus:ring-0 focus:border-b-2 focus:border-[#008080] transition-all px-0 py-0"
-                            />
-                        </div>
-                    </div>
-
-                    <button
-                        onClick={finalizarVisita}
-                        disabled={enviando || !valorServico}
-                        className="w-full flex items-center justify-center gap-3 bg-[#2ECC71] hover:bg-[#27ae60] text-white h-14 rounded-2xl font-bold tracking-wide active:scale-[0.98] transition-all disabled:opacity-50 disabled:active:scale-100 uppercase"
-                    >
-                        {enviando ? "SALVANDO..." : (
-                            <>
-                                FINALIZAR E ENVIAR
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
-                            </>
-                        )}
-                    </button>
                 </div>
+
+                {/* Valor Cobrado */}
+                <div>
+                    <h2 className="text-xs font-bold tracking-widest text-[#008080] mb-3">
+                        VALOR COBRADO
+                    </h2>
+                    <div className="flex items-center gap-2">
+                        <span className="text-sm font-bold text-slate-400">R$</span>
+                        <input
+                            type="number"
+                            step="0.01"
+                            min="0"
+                            placeholder="0,00"
+                            value={valorServico}
+                            onChange={(e) => setValorServico(e.target.value)}
+                            className="border-0 border-b-2 border-[#008080]/30 rounded-none bg-transparent text-lg font-bold text-slate-800 focus:outline-none focus:border-[#008080] focus:ring-0 transition-colors w-full px-0 py-1"
+                        />
+                    </div>
+                </div>
+
+                {/* Botão Finalizar */}
+                <button
+                    onClick={finalizarVisita}
+                    disabled={enviando || !valorServico}
+                    className="w-full flex items-center justify-center bg-[#2ECC71] hover:bg-[#27ae60] text-white h-14 rounded-xl font-bold tracking-wide active:scale-[0.98] transition-all shadow-md disabled:opacity-50 disabled:active:scale-100 mt-8 mb-4"
+                >
+                    {enviando ? "SALVANDO..." : (
+                        <>
+                            FINALIZAR E ENVIAR
+                            <Send className="h-5 w-5 ml-2" />
+                        </>
+                    )}
+                </button>
             </div>
-        </main>
+        </div>
     );
 }

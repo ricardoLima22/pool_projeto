@@ -51,6 +51,17 @@ export default function NovoProduto() {
             return;
         }
 
+        if (preco === '' || isNaN(preco)) {
+            alert('Por favor, informe o custo por unidade válido.');
+            return;
+        }
+
+        const precoParsed = parseFloat(preco);
+        if (precoParsed < 0) {
+            alert('O preço de custo não pode ser negativo.');
+            return;
+        }
+
         setLoading(true);
 
         const { error } = await supabase
@@ -59,7 +70,7 @@ export default function NovoProduto() {
                 {
                     name: nomeLimpo,
                     unit: unidade,
-                    price_per_unit: parseFloat(preco),
+                    price_per_unit: precoParsed,
                     stock_quantity: qtdParsed,
                     company_id: companyId
                 }

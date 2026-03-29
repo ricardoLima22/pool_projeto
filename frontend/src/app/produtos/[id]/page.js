@@ -63,6 +63,17 @@ export default function DetalhesProduto() {
             return;
         }
 
+        if (preco === '' || isNaN(preco)) {
+            alert('Por favor, informe o custo por unidade válido.');
+            return;
+        }
+
+        const precoParsed = parseFloat(preco);
+        if (precoParsed < 0) {
+            alert('O preço de custo não pode ser negativo.');
+            return;
+        }
+
         setSalvando(true);
 
         const { error } = await supabase
@@ -70,7 +81,7 @@ export default function DetalhesProduto() {
             .update({
                 name: nomeLimpo,
                 unit: unidade,
-                price_per_unit: parseFloat(preco),
+                price_per_unit: precoParsed,
                 stock_quantity: qtdParsed
             })
             .eq('id', produtoId);
@@ -84,7 +95,7 @@ export default function DetalhesProduto() {
                 ...produto,
                 name: nomeLimpo,
                 unit: unidade,
-                price_per_unit: parseFloat(preco),
+                price_per_unit: precoParsed,
                 stock_quantity: qtdParsed
             });
             setNome(nomeLimpo);

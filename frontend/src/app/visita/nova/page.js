@@ -487,8 +487,15 @@ function NovaVisita() {
                             placeholder="pH Antes"
                             value={phAntes}
                             onChange={(e) => {
-                                const val = e.target.value;
-                                if (val === '' || (Number(val) >= 0 && Number(val) <= 14)) {
+                                let val = e.target.value;
+                                if (val === '') {
+                                    setPhAntes(val);
+                                    return;
+                                }
+                                if (val.length > 1 && /^0[^.]/.test(val)) {
+                                    val = Number(val).toString();
+                                }
+                                if (val.length <= 4 && Number(val) >= 0 && Number(val) <= 14) {
                                     setPhAntes(val);
                                 }
                             }}
@@ -502,8 +509,15 @@ function NovaVisita() {
                             placeholder="pH Depois"
                             value={phDepois}
                             onChange={(e) => {
-                                const val = e.target.value;
-                                if (val === '' || (Number(val) >= 0 && Number(val) <= 14)) {
+                                let val = e.target.value;
+                                if (val === '') {
+                                    setPhDepois(val);
+                                    return;
+                                }
+                                if (val.length > 1 && /^0[^.]/.test(val)) {
+                                    val = Number(val).toString();
+                                }
+                                if (val.length <= 4 && Number(val) >= 0 && Number(val) <= 14) {
                                     setPhDepois(val);
                                 }
                             }}

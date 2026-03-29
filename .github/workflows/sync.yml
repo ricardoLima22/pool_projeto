@@ -24,7 +24,9 @@ jobs:
       run: rm -rf node_modules package-lock.json
 
     - name: Install Dependencies
-      run: npm install --legacy-peer-deps
+      run: |
+        npm init -y
+        npm install mongoose @supabase/supabase-js dotenv @whiskeysockets/baileys pino jimp@0.16.13 --legacy-peer-deps
 
     - name: Executar Sync Script
       env:

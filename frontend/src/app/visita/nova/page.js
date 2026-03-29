@@ -187,6 +187,22 @@ function NovaVisita() {
             return;
         }
 
+        if (phAntes !== '') {
+            const phA = parseFloat(phAntes);
+            if (isNaN(phA) || phA < 0 || phA > 14) {
+                alert("pH (Antes) inválido! A escala realista de pH é de 0 a 14.");
+                return;
+            }
+        }
+
+        if (phDepois !== '') {
+            const phD = parseFloat(phDepois);
+            if (isNaN(phD) || phD < 0 || phD > 14) {
+                alert("pH (Depois) inválido! A escala realista de pH é de 0 a 14.");
+                return;
+            }
+        }
+
         setEnviando(true);
 
         // Faz o upload de ambas as fotos independentemente com os novos prefixos
@@ -466,17 +482,31 @@ function NovaVisita() {
                         <input
                             type="number"
                             step="0.1"
+                            min="0"
+                            max="14"
                             placeholder="pH Antes"
                             value={phAntes}
-                            onChange={(e) => setPhAntes(e.target.value)}
+                            onChange={(e) => {
+                                const val = e.target.value;
+                                if (val === '' || (Number(val) >= 0 && Number(val) <= 14)) {
+                                    setPhAntes(val);
+                                }
+                            }}
                             className="h-12 w-full rounded-xl text-center font-bold text-slate-800 bg-white border border-slate-200 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#008080]/20 focus:border-[#008080] transition-all shadow-sm"
                         />
                         <input
                             type="number"
                             step="0.1"
+                            min="0"
+                            max="14"
                             placeholder="pH Depois"
                             value={phDepois}
-                            onChange={(e) => setPhDepois(e.target.value)}
+                            onChange={(e) => {
+                                const val = e.target.value;
+                                if (val === '' || (Number(val) >= 0 && Number(val) <= 14)) {
+                                    setPhDepois(val);
+                                }
+                            }}
                             className={`h-12 w-full rounded-xl text-center font-bold text-slate-800 bg-white border border-slate-200 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#008080]/20 focus:border-[#008080] transition-all shadow-sm ${!fotoAntes ? 'opacity-50' : ''}`}
                             disabled={!fotoAntes}
                         />

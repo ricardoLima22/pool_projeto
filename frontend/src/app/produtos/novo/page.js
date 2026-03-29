@@ -40,6 +40,17 @@ export default function NovoProduto() {
             return;
         }
 
+        if (quantidade === '' || isNaN(quantidade)) {
+            alert('Por favor, informe a quantidade inicial em estoque.');
+            return;
+        }
+
+        const qtdParsed = parseFloat(quantidade);
+        if (qtdParsed < 0) {
+            alert('A quantidade em estoque não pode ser negativa.');
+            return;
+        }
+
         setLoading(true);
 
         const { error } = await supabase
@@ -49,7 +60,7 @@ export default function NovoProduto() {
                     name: nomeLimpo,
                     unit: unidade,
                     price_per_unit: parseFloat(preco),
-                    stock_quantity: parseFloat(quantidade) || 0,
+                    stock_quantity: qtdParsed,
                     company_id: companyId
                 }
             ]);

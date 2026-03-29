@@ -52,6 +52,17 @@ export default function DetalhesProduto() {
             return;
         }
 
+        if (quantidade === '' || isNaN(quantidade)) {
+            alert('Por favor, informe a quantidade de estoque atual.');
+            return;
+        }
+
+        const qtdParsed = parseFloat(quantidade);
+        if (qtdParsed < 0) {
+            alert('A quantidade em estoque não pode ser negativa.');
+            return;
+        }
+
         setSalvando(true);
 
         const { error } = await supabase
@@ -60,7 +71,7 @@ export default function DetalhesProduto() {
                 name: nomeLimpo,
                 unit: unidade,
                 price_per_unit: parseFloat(preco),
-                stock_quantity: parseFloat(quantidade)
+                stock_quantity: qtdParsed
             })
             .eq('id', produtoId);
 
@@ -74,7 +85,7 @@ export default function DetalhesProduto() {
                 name: nomeLimpo,
                 unit: unidade,
                 price_per_unit: parseFloat(preco),
-                stock_quantity: parseFloat(quantidade)
+                stock_quantity: qtdParsed
             });
             setNome(nomeLimpo);
             setEditando(false);

@@ -62,12 +62,19 @@ export default function DetalhesCliente() {
 
     const handleUpdate = async (e) => {
         e.preventDefault();
+        
+        const somenteNumeros = whatsapp.replace(/\D/g, '');
+        if (somenteNumeros.length < 10 || somenteNumeros.length > 15) {
+            alert('Por favor, informe um número de WhatsApp válido contendo DDD (Mínimo de 10 e Máximo de 15 números).');
+            return;
+        }
+
         setSalvando(true);
         const { error } = await supabase
             .from('customers')
             .update({
                 name: nome,
-                whatsapp,
+                whatsapp: somenteNumeros,
                 email,
                 address: endereco,
                 pool_volume_m3: parseFloat(volume)
@@ -75,7 +82,7 @@ export default function DetalhesCliente() {
             .eq('id', id);
 
         if (!error) {
-            setCliente({ ...cliente, name: nome, whatsapp, email, address: endereco, pool_volume_m3: parseFloat(volume) });
+            setCliente({ ...cliente, name: nome, whatsapp: somenteNumeros, email, address: endereco, pool_volume_m3: parseFloat(volume) });
             setEditando(false);
         } else {
             alert("Erro ao atualizar: " + error.message);
@@ -184,7 +191,13 @@ export default function DetalhesCliente() {
                         <div className="pt-4">
                             <label className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block mb-1">Volume (m³)</label>
                             <input
-                                required type="number" step="0.1" value={volume} onChange={(e) => setVolume(e.target.value)}
+                                required type="number" step="0.1" min="0" value={volume} 
+                                onChange={(e) => {
+                                    const val = e.target.value;
+                                    if (val === '' || Number(val) >= 0) {
+                                        setVolume(val);
+                                    }
+                                }}
                                 className="w-full border-b-2 border-slate-200 bg-transparent py-3 text-slate-800 placeholder:text-slate-400 focus:border-[#008080] focus:outline-none transition-colors text-sm"
                             />
                         </div>

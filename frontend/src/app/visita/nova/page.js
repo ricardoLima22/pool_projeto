@@ -393,28 +393,25 @@ function NovaVisita() {
     }
 
     return (
-        <div className="min-h-screen bg-slate-50 pb-6">
+        <div className="min-h-screen bg-[#fcfbf8] pb-6">
             {/* Header */}
-            <div
-                className="fixed top-0 left-0 right-0 px-4 py-5 flex items-center gap-3 shadow-md z-50"
-                style={{ background: "linear-gradient(135deg, hsl(193 80% 22%), hsl(193 60% 35%))" }}
-            >
+            <div className="fixed top-0 left-0 right-0 px-4 py-4 flex items-center gap-3 bg-white border-b border-slate-200 z-50">
                 <button 
                     onClick={() => {
                         if (!clienteId) setCliente(null);
                         else router.back();
                     }} 
-                    className="text-white hover:opacity-80 transition-opacity"
+                    className="text-slate-800 transition-colors p-1 -ml-1"
                 >
                     <ArrowLeft className="h-5 w-5" />
                 </button>
-                <div className="text-white overflow-hidden">
+                <div className="text-slate-800 overflow-hidden">
                     <h1 className="font-bold text-lg leading-tight truncate">{cliente?.name}</h1>
-                    <p className="text-sm opacity-80 truncate">{cliente?.pool_volume_m3 || 0}m³ • {cliente?.address || 'Sem endereço'}</p>
+                    <p className="text-sm text-slate-500 truncate">{cliente?.pool_volume_m3 || 0}m³ • {cliente?.address || 'Sem endereço'}</p>
                 </div>
             </div>
 
-            <div className="px-4 space-y-6 pt-28">
+            <div className="px-4 space-y-6 pt-24">
                 {/* Produtos Utilizados */}
                 <div>
                     <h2 className="text-xs font-bold tracking-widest text-[#008080] mb-3">

@@ -88,7 +88,7 @@ export default function Dashboard() {
                 .eq('id', user.id)
                 .single();
 
-            if (userProfile) {
+            if (userProfile && userProfile.company_id) {
                 const roleName = Array.isArray(userProfile.roles) 
                     ? userProfile.roles[0]?.name 
                     : userProfile.roles?.name;
@@ -108,7 +108,9 @@ export default function Dashboard() {
                 // Busca dados em background
                 fetchMetrics(userProfile.company_id);
             } else {
-                setLoading(false);
+                // Sessão fantasma ou não vinculada a empresa
+                await supabase.auth.signOut();
+                router.push('/login?erro=sem_empresa');
             }
         }
 

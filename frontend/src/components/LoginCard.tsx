@@ -31,7 +31,9 @@ const LoginCard = () => {
       const params = new URLSearchParams(window.location.search);
       if (params.get("erro") === "funcionario") {
         setErro("Acesso de funcionário em desenvolvimento 🚧");
-        // Remove da URL para não ficar preso
+        window.history.replaceState({}, document.title, window.location.pathname);
+      } else if (params.get("erro") === "sem_empresa") {
+        setErro("Acesso Negado: Sua sessão não pertence a nenhuma empresa ativa.");
         window.history.replaceState({}, document.title, window.location.pathname);
       }
     }
@@ -67,8 +69,21 @@ const LoginCard = () => {
         const user = authData?.user;
 
         if (user) {
-          // A verificação de banco (se é funcionário ou dono) vai acontecer 100% na Home agora
-          // para cortar o tempo de espera no botão pela metade.
+          // Bloqueio de Segurança: Verifica Ativamente se ele tem uma empresa Válida.
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('company_id')
+            .eq('id', user.id)
+            .single();
+
+          if (!profile || !profile.company_id) {
+            // Conta fantasma ou sem empresa! Chute-o para fora.
+            await supabase.auth.signOut();
+            setErro("Acesso Negado: Sua conta não está vinculada a nenhuma empresa.");
+            setIsLoading(false);
+            return;
+          }
+
           router.push("/home");
         }
       }

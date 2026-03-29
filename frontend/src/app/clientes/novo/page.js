@@ -35,6 +35,13 @@ export default function NovoCliente() {
     const handleSalvar = async (e) => {
         e.preventDefault();
         
+        // Tira todos os espaços vazios do início e do final
+        const nomeLimpo = nome.trim();
+        if (nomeLimpo.length < 3) {
+            alert('Por favor, informe um nome de cliente válido com pelo menos 3 letras.');
+            return;
+        }
+
         // Validação Mínima e Máxima do WhatsApp (Permitir BR e Gringo)
         // Remove tudo que não for número
         const somenteNumeros = whatsapp.replace(/\D/g, '');
@@ -55,7 +62,7 @@ export default function NovoCliente() {
             .from('customers')
             .insert([
                 {
-                    name: nome,
+                    name: nomeLimpo,
                     whatsapp: somenteNumeros, // Salva formato limpo no banco
                     email: email || null,
                     address: endereco,

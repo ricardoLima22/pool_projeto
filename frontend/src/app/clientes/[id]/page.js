@@ -63,6 +63,13 @@ export default function DetalhesCliente() {
     const handleUpdate = async (e) => {
         e.preventDefault();
         
+        // Tira todos os espaços vazios do início e do final
+        const nomeLimpo = nome.trim();
+        if (nomeLimpo.length < 3) {
+            alert('Por favor, informe um nome de cliente válido com pelo menos 3 letras.');
+            return;
+        }
+
         const somenteNumeros = whatsapp.replace(/\D/g, '');
         if (somenteNumeros.length < 10 || somenteNumeros.length > 15) {
             alert('Por favor, informe um número de WhatsApp válido contendo DDD (Mínimo de 10 e Máximo de 15 números).');
@@ -73,7 +80,7 @@ export default function DetalhesCliente() {
         const { error } = await supabase
             .from('customers')
             .update({
-                name: nome,
+                name: nomeLimpo,
                 whatsapp: somenteNumeros,
                 email,
                 address: endereco,
@@ -82,7 +89,8 @@ export default function DetalhesCliente() {
             .eq('id', id);
 
         if (!error) {
-            setCliente({ ...cliente, name: nome, whatsapp: somenteNumeros, email, address: endereco, pool_volume_m3: parseFloat(volume) });
+            setCliente({ ...cliente, name: nomeLimpo, whatsapp: somenteNumeros, email, address: endereco, pool_volume_m3: parseFloat(volume) });
+            setNome(nomeLimpo); // Reseta o input também para a versão limpa
             setEditando(false);
         } else {
             alert("Erro ao atualizar: " + error.message);

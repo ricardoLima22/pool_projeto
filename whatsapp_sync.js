@@ -59,6 +59,7 @@ async function getAllActiveCompanies() {
 async function syncSession(company) {
     return new Promise(async (resolve, reject) => {
         let sessionConnected = false;
+        let intentionalClose = false;
         console.log(`\n======================================================`);
         console.log(`[PULSO DE SAÚDE] Sincronizando: ${company.name}`);
         console.log(`SESSION ID: ${company.whatsapp_session}`);
@@ -83,6 +84,12 @@ async function syncSession(company) {
                 const { connection, lastDisconnect } = update;
 
                 if (connection === 'close') {
+                    if (intentionalClose) {
+                        console.log(`Conexão encerrada intencionalmente (Sincronização OK). Avançando...`);
+                        resolve();
+                        return;
+                    }
+
                     const shouldReconnect = (lastDisconnect.error)?.output?.statusCode !== DisconnectReason.loggedOut;
                     console.log(`Conexão fechada (${company.name}). Motivo: `, lastDisconnect.error?.message, ', Reconectando:', shouldReconnect);
                     
@@ -103,6 +110,7 @@ async function syncSession(company) {
                     
                     setTimeout(() => {
                         console.log(`[OK] Pulso Concluído para ${company.name}. Fechando WebSocket graciosamente...`);
+                        intentionalClose = true;
                         sock.ws.close();
                     }, 15000);
                 }

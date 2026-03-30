@@ -41,8 +41,8 @@ const VisitCard = ({ id, name, address, time, status, onClick }) => (
                 {time}
             </div>
             <span className={`text-[11px] font-bold ${["concluido", "concluído", "confirmada", "em_execucao"].includes(status?.toLowerCase())
-                    ? "text-emerald-500"
-                    : "text-amber-500"
+                ? "text-emerald-500"
+                : "text-amber-500"
                 }`}>
                 {status?.toLowerCase() === 'em_execucao' ? 'Em Execução' : status?.charAt(0).toUpperCase() + status?.slice(1).toLowerCase() || 'Pendente'}
             </span>
@@ -167,10 +167,10 @@ export default function Dashboard() {
 
     return (
         <div className="min-h-screen font-sans flex flex-col">
-            {/* Header Expandido (Alinhado à Esquerda) */}
-            <header className="gradient-hero px-6 pt-[calc(2rem+env(safe-area-inset-top))] pb-24 text-white shadow-md">
+            {/* Header */}
+            <header className="gradient-hero px-6 pt-[calc(1.5rem+env(safe-area-inset-top))] pb-10 text-white shadow-md">
                 <div className="max-w-4xl mx-auto">
-                    <div className="flex items-center justify-between mb-8">
+                    <div className="flex items-center justify-between mb-6">
                         <div className="flex items-center gap-2">
                             <Droplets className="h-6 w-6 text-cyan-200" />
                             <span className="font-bold tracking-tight text-lg">Pool Light</span>
@@ -181,7 +181,6 @@ export default function Dashboard() {
                         </button>
                     </div>
                     <div>
-                        {/* Se quiser apagar o "Boa noite, Ricardo!", basta remover a linha do h1 abaixo */}
                         <h1 className="text-2xl font-bold animate-fade-in">{greeting}, {profile?.full_name?.split(' ')[0] || 'Usuário'}!</h1>
                         <p className="text-sm opacity-75 mt-1">O que vamos fazer hoje?</p>
                     </div>

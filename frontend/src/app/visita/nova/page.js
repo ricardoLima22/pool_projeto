@@ -37,6 +37,7 @@ function NovaVisita() {
     const [phDepois, setPhDepois] = useState('');
     const [observacao, setObservacao] = useState('');
     const [enviando, setEnviando] = useState(false);
+    const [erros, setErros] = useState({});
 
     const router = useRouter();
 
@@ -185,32 +186,33 @@ function NovaVisita() {
     };
 
     const finalizarVisita = async () => {
-        if (!valorServico) {
-            toast.error('Por favor, informe o valor cobrado pelo serviço.');
-            return;
+        // Valida campos obrigatórios via borda vermelha, sem toast
+        const novosErros = {};
+
+        if (!valorServico || isNaN(parseFloat(valorServico)) || parseFloat(valorServico) < 0) {
+            novosErros.valorServico = true;
         }
 
-        const valorDecimal = parseFloat(valorServico);
-        if (isNaN(valorDecimal) || valorDecimal < 0) {
-            toast.error('Operação bloqueada! O valor cobrado não pode ser negativo.');
-            return;
-        }
-
-        if (phAntes !== '') {
+        if (phAntes === '') {
+            novosErros.phAntes = true;
+        } else {
             const phA = parseFloat(phAntes);
-            if (isNaN(phA) || phA < 0 || phA > 14) {
-                toast.error('pH (Antes) inválido! A escala de pH é de 0 a 14.');
-                return;
-            }
+            if (isNaN(phA) || phA < 0 || phA > 14) novosErros.phAntes = true;
         }
 
-        if (phDepois !== '') {
+        if (phDepois === '') {
+            novosErros.phDepois = true;
+        } else {
             const phD = parseFloat(phDepois);
-            if (isNaN(phD) || phD < 0 || phD > 14) {
-                toast.error('pH (Depois) inválido! A escala de pH é de 0 a 14.');
-                return;
-            }
+            if (isNaN(phD) || phD < 0 || phD > 14) novosErros.phDepois = true;
         }
+
+        if (Object.keys(novosErros).length > 0) {
+            setErros(novosErros);
+            return;
+        }
+
+        setErros({});
 
         setEnviando(true);
 
@@ -524,11 +526,12 @@ function NovaVisita() {
                             value={phAntes}
                             onChange={(e) => {
                                 let val = e.target.value;
+                                setErros(prev => ({ ...prev, phAntes: false }));
                                 if (val === '') { setPhAntes(val); return; }
                                 if (val.length > 1 && /^0[^.]/.test(val)) val = Number(val).toString();
                                 if (val.length <= 4 && Number(val) >= 0 && Number(val) <= 14) setPhAntes(val);
                             }}
-                            className="h-12 w-full text-center border-2 border-slate-200 rounded-xl bg-white text-[16px] font-medium text-slate-700 placeholder:text-slate-400 placeholder:font-normal focus:outline-none focus:border-[#008080] focus:ring-0 transition-colors shadow-sm"
+                            className={`h-12 w-full text-center border-2 rounded-xl bg-white text-[16px] font-medium text-slate-700 placeholder:text-slate-400 placeholder:font-normal focus:outline-none focus:ring-0 transition-colors shadow-sm ${erros.phAntes ? 'border-red-500 bg-red-50' : 'border-slate-200 focus:border-[#008080]'}`}
                             onKeyDown={(e) => {
                                 if (['-', '+', 'e', 'E'].includes(e.key)) e.preventDefault();
                             }}
@@ -542,11 +545,12 @@ function NovaVisita() {
                             value={phDepois}
                             onChange={(e) => {
                                 let val = e.target.value;
+                                setErros(prev => ({ ...prev, phDepois: false }));
                                 if (val === '') { setPhDepois(val); return; }
                                 if (val.length > 1 && /^0[^.]/.test(val)) val = Number(val).toString();
                                 if (val.length <= 4 && Number(val) >= 0 && Number(val) <= 14) setPhDepois(val);
                             }}
-                            className={`h-12 w-full text-center border-2 border-slate-200 rounded-xl bg-white text-[16px] font-medium text-slate-700 placeholder:text-slate-400 placeholder:font-normal focus:outline-none focus:border-[#008080] focus:ring-0 transition-colors shadow-sm ${!fotoAntes ? 'opacity-50' : ''}`}
+                            className={`h-12 w-full text-center border-2 rounded-xl bg-white text-[16px] font-medium text-slate-700 placeholder:text-slate-400 placeholder:font-normal focus:outline-none focus:ring-0 transition-colors shadow-sm ${!fotoAntes ? 'opacity-50' : ''} ${erros.phDepois ? 'border-red-500 bg-red-50' : 'border-slate-200 focus:border-[#008080]'}`}
                             disabled={!fotoAntes}
                             onKeyDown={(e) => {
                                 if (['-', '+', 'e', 'E'].includes(e.key)) e.preventDefault();
@@ -582,8 +586,8 @@ function NovaVisita() {
                             min="0"
                             placeholder="0,00"
                             value={valorServico}
-                            onChange={(e) => setValorServico(e.target.value)}
-                            className="border-0 border-b-2 border-[#008080]/30 rounded-none bg-transparent text-[18px] font-bold text-slate-800 focus:outline-none focus:border-[#008080] focus:ring-0 transition-colors w-full px-0 py-1"
+                            onChange={(e) => { setValorServico(e.target.value); setErros(prev => ({ ...prev, valorServico: false })); }}
+                            className={`border-0 border-b-2 rounded-none bg-transparent text-[18px] font-bold focus:outline-none focus:ring-0 transition-colors w-full px-0 py-1 ${erros.valorServico ? 'border-red-500 text-red-600' : 'border-[#008080]/30 text-slate-800 focus:border-[#008080]'}`}
                         />
                     </div>
                 </div>

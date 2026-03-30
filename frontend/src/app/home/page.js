@@ -167,12 +167,10 @@ export default function Dashboard() {
 
     return (
         <div className="min-h-screen font-sans flex flex-col">
-            {/* Header Expandido com Espaço no Meio para usos futuros */}
-            <header className="gradient-hero px-6 pt-[calc(1.5rem+env(safe-area-inset-top))] pb-12 text-white shadow-md min-h-[180px] flex flex-col">
-                <div className="max-w-4xl mx-auto w-full h-full flex-1 flex flex-col">
-                    
-                    {/* Cantos Superiores */}
-                    <div className="flex items-center justify-between mb-2">
+            {/* Header */}
+            <header className="gradient-hero px-6 pt-[calc(1.5rem+env(safe-area-inset-top))] pb-10 text-white shadow-md">
+                <div className="max-w-4xl mx-auto">
+                    <div className="flex items-center justify-between mb-6">
                         <div className="flex items-center gap-2">
                             <Droplets className="h-6 w-6 text-cyan-200" />
                             <span className="font-bold tracking-tight text-lg">Pool Light</span>
@@ -182,10 +180,9 @@ export default function Dashboard() {
                             Sair
                         </button>
                     </div>
-                    
-                    {/* Canto Inferior Esquerdo (empurrado pelo mt-auto) */}
-                    <div className="mt-auto">
-                        <h1 className="text-2xl font-bold animate-fade-in">O que vamos fazer hoje?</h1>
+                    <div>
+                        <h1 className="text-2xl font-bold animate-fade-in">{greeting}, {profile?.full_name?.split(' ')[0] || 'Usuário'}!</h1>
+                        <p className="text-sm opacity-75 mt-1">O que vamos fazer hoje?</p>
                     </div>
                 </div>
             </header>

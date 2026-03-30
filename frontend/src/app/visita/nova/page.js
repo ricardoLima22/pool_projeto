@@ -435,7 +435,7 @@ function NovaVisita() {
                 {/* Produtos Utilizados */}
                 <div>
                     <h2 className="text-xs font-bold tracking-widest text-[#008080] mb-3">
-                        PRODUTOS UTILIZADOS
+                        PRODUTOS ENTREGUES
                     </h2>
                     {produtos.length === 0 ? (
                         <div className="rounded-xl border border-slate-200 bg-white py-6 text-center shadow-sm">

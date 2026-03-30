@@ -378,6 +378,7 @@ function NovaVisita() {
                         />
                     </div>
 
+                    <p className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block">Selecione o Cliente</p>
                     <div className="space-y-3">
                         {clientesFiltrados.map(c => (
                             <button

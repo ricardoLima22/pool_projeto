@@ -365,20 +365,19 @@ function NovaVisita() {
                     <h1 className="text-lg font-bold text-slate-800 tracking-tight">Nova Visita</h1>
                 </header>
 
-                <div className="px-4 pt-4">
-                    {/* Campo de busca */}
-                    <div className="relative mb-4">
+                <div className="px-4 py-6 space-y-4">
+                    {/* Search - idêntico ao /clientes */}
+                    <div className="relative">
                         <svg className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
                         <input
                             type="text"
-                            placeholder="Buscar cliente por nome..."
+                            placeholder="Buscar cliente..."
                             value={busca}
                             onChange={(e) => setBusca(e.target.value)}
-                            className="w-full pl-9 pr-4 py-3 rounded-xl bg-white border border-slate-200 text-[16px] text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-[#008080]/40 transition-colors shadow-sm"
+                            className="w-full pl-9 pr-4 py-3 rounded-xl bg-white border border-slate-200 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-[#008080]/40 transition-colors shadow-sm"
                         />
                     </div>
 
-                    <p className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block mb-3">Selecione o Cliente</p>
                     <div className="space-y-3">
                         {clientesFiltrados.map(c => (
                             <button
@@ -386,29 +385,23 @@ function NovaVisita() {
                                 onClick={() => setCliente(c)}
                                 className="w-full bg-white rounded-xl border border-slate-100 p-4 flex items-center justify-between hover:border-[#008080]/30 transition-colors text-left shadow-sm active:scale-[0.99]"
                             >
-                                <div className="space-y-1 overflow-hidden pr-2">
-                                    <p className="font-bold text-slate-800 text-sm truncate">{c.name}</p>
-                                    <p className="text-xs text-slate-500 flex items-center gap-1 mt-1 truncate">
-                                        <svg className="h-3 w-3 text-red-500 shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
-                                        <span className="truncate">{c.address || 'Endereço não informado'}</span>
+                                <div className="space-y-1">
+                                    <p className="font-bold text-slate-800 text-sm">{c.name}</p>
+                                    <p className="text-xs text-slate-500 flex items-center gap-1 mt-1">
+                                        <svg className="h-3 w-3 text-red-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                                        {c.address || 'Endereço não informado'}
                                     </p>
                                     <span className="inline-block mt-1 text-[10px] font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded uppercase">
                                         {c.pool_volume_m3 || 0} M³
                                     </span>
                                 </div>
-                                <svg className="h-5 w-5 text-[#008080] shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+                                <svg className="h-5 w-5 text-[#008080]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
                             </button>
                         ))}
+
                         {clientesFiltrados.length === 0 && (
-                            <div className="text-center p-8 bg-white rounded-xl border border-slate-100">
-                                <p className="text-sm font-medium text-slate-500 mb-2">
-                                    {busca ? `Nenhum cliente encontrado para "${busca}".` : 'Nenhum cliente encontrado.'}
-                                </p>
-                                {!busca && (
-                                    <button onClick={() => router.push('/clientes/novo')} className="text-[#008080] font-bold text-sm hover:underline">
-                                        + Cadastrar Cliente
-                                    </button>
-                                )}
+                            <div className="text-center py-10">
+                                <p className="text-slate-400 text-sm">Nenhum cliente encontrado.</p>
                             </div>
                         )}
                     </div>
@@ -416,6 +409,7 @@ function NovaVisita() {
             </main>
         );
     }
+
 
     return (
         <div className="min-h-screen bg-[#fcfbf8] pb-6">

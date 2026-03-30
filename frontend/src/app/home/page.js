@@ -168,23 +168,21 @@ export default function Dashboard() {
 
     return (
         <div className="min-h-screen font-sans flex flex-col">
-            {/* Header */}
-            <header className="gradient-hero px-6 pt-[calc(1.5rem+env(safe-area-inset-top))] pb-10 text-white shadow-md">
-                <div className="max-w-4xl mx-auto">
-                    <div className="flex items-center justify-between mb-6">
-                        <div className="flex items-center gap-2">
-                            <Droplets className="h-6 w-6 text-cyan-200" />
-                            <span className="font-bold tracking-tight text-lg">Pool Light</span>
-                        </div>
-                        <button onClick={handleLogout} className="flex items-center gap-2 text-sm opacity-80 hover:opacity-100 transition-opacity">
-                            <LogOut className="h-4 w-4" />
-                            Sair
-                        </button>
-                    </div>
-                    <div>
-                        <h1 className="text-2xl font-bold animate-fade-in">{greeting}, {profile?.full_name?.split(' ')[0] || 'Usuário'}!</h1>
-                        <p className="text-sm opacity-75 mt-1">O que vamos fazer hoje?</p>
-                    </div>
+            {/* Header Extendido & Centralizado */}
+            <header className="gradient-hero px-6 pt-[calc(2rem+env(safe-area-inset-top))] pb-16 text-white shadow-md relative min-h-[180px] flex flex-col items-center justify-center">
+                {/* Botão Sair no canto (discreto para não perder a função) */}
+                <button 
+                    onClick={handleLogout} 
+                    className="absolute top-[calc(1rem+env(safe-area-inset-top))] right-4 p-2 opacity-70 hover:opacity-100 transition-opacity"
+                    title="Sair da conta"
+                >
+                    <LogOut className="h-5 w-5" />
+                </button>
+
+                <div className="text-center animate-fade-in mt-2 flex flex-col items-center gap-3">
+                    {/* Pode até colocar o icone da gotinha aqui se quiser depois */}
+                    <Droplets className="h-8 w-8 text-cyan-200 opacity-80" />
+                    <h1 className="text-2xl font-bold tracking-tight">O que vamos fazer hoje?</h1>
                 </div>
             </header>
 

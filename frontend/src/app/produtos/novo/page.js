@@ -4,6 +4,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../../../lib/supabase';
 import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
 
 export default function NovoProduto() {
     const [nome, setNome] = useState('');
@@ -32,33 +33,33 @@ export default function NovoProduto() {
 
     const handleSalvar = async (e) => {
         e.preventDefault();
-        if (!companyId) return alert("Empresa não encontrada no seu perfil.");
+        if (!companyId) { toast.error('Empresa não encontrada no seu perfil.'); return; }
 
         const nomeLimpo = nome.trim();
         if (nomeLimpo.length < 3) {
-            alert('Por favor, informe um nome de produto válido com pelo menos 3 letras.');
+            toast.error('Por favor, informe um nome de produto válido com pelo menos 3 letras.');
             return;
         }
 
         if (quantidade === '' || isNaN(quantidade)) {
-            alert('Por favor, informe a quantidade inicial em estoque.');
+            toast.error('Por favor, informe a quantidade inicial em estoque.');
             return;
         }
 
         const qtdParsed = parseFloat(quantidade);
         if (qtdParsed < 0) {
-            alert('A quantidade em estoque não pode ser negativa.');
+            toast.error('A quantidade em estoque não pode ser negativa.');
             return;
         }
 
         if (preco === '' || isNaN(preco)) {
-            alert('Por favor, informe o custo por unidade válido.');
+            toast.error('Por favor, informe o custo por unidade válido.');
             return;
         }
 
         const precoParsed = parseFloat(preco);
         if (precoParsed < 0) {
-            alert('O preço de custo não pode ser negativo.');
+            toast.error('O preço de custo não pode ser negativo.');
             return;
         }
 
@@ -79,8 +80,9 @@ export default function NovoProduto() {
         setLoading(false);
 
         if (error) {
-            alert("Erro ao salvar produto: " + error.message);
+            toast.error('Erro ao salvar produto: ' + error.message);
         } else {
+            toast.success('Produto cadastrado com sucesso!');
             router.push('/produtos');
         }
     };

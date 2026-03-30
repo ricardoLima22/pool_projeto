@@ -6,6 +6,7 @@ import { supabase } from '../../../lib/supabase';
 import { useSearchParams, useRouter } from 'next/navigation';
 import SplashScreen from '../../../components/SplashScreen';
 import { ArrowLeft, Camera, Sparkles, Minus, Plus, Send } from 'lucide-react';
+import { toast } from 'sonner';
 
 export default function NovaVisitaPage() {
     return (
@@ -167,7 +168,7 @@ function NovaVisita() {
 
             if (uploadError) {
                 console.error("Erro Supabase Upload:", uploadError);
-                alert(`Erro ao subir arquivo ${prefix}: ${uploadError.message}`);
+                toast.error(`Erro ao subir arquivo ${prefix}: ${uploadError.message}`);
                 return null;
             }
 
@@ -184,20 +185,20 @@ function NovaVisita() {
 
     const finalizarVisita = async () => {
         if (!valorServico) {
-            alert("Por favor, informe o valor cobrado pelo serviço.");
+            toast.error('Por favor, informe o valor cobrado pelo serviço.');
             return;
         }
 
         const valorDecimal = parseFloat(valorServico);
         if (isNaN(valorDecimal) || valorDecimal < 0) {
-            alert("Operação bloqueada! O valor cobrado não pode ser um número negativo.");
+            toast.error('Operação bloqueada! O valor cobrado não pode ser negativo.');
             return;
         }
 
         if (phAntes !== '') {
             const phA = parseFloat(phAntes);
             if (isNaN(phA) || phA < 0 || phA > 14) {
-                alert("pH (Antes) inválido! A escala realista de pH é de 0 a 14.");
+                toast.error('pH (Antes) inválido! A escala de pH é de 0 a 14.');
                 return;
             }
         }
@@ -205,7 +206,7 @@ function NovaVisita() {
         if (phDepois !== '') {
             const phD = parseFloat(phDepois);
             if (isNaN(phD) || phD < 0 || phD > 14) {
-                alert("pH (Depois) inválido! A escala realista de pH é de 0 a 14.");
+                toast.error('pH (Depois) inválido! A escala de pH é de 0 a 14.');
                 return;
             }
         }
@@ -249,7 +250,7 @@ function NovaVisita() {
 
         if (visitError) {
             console.error("Erro ao salvar visita:", visitError);
-            alert("Erro ao salvar a visita no sistema: " + visitError.message);
+            toast.error('Erro ao salvar a visita: ' + visitError.message);
             setEnviando(false);
             return;
         }
@@ -279,7 +280,7 @@ function NovaVisita() {
 
             if (updateErr) {
                 console.error("ERRO SUPABASE UPDATE CHAMADO:", updateErr);
-                alert("A visita foi salva, mas ocorreu um erro ao tentar fechar o chamado: " + updateErr.message);
+                toast.warning('A visita foi salva, mas houve um erro ao fechar o chamado: ' + updateErr.message);
             } else if (!updData || updData.length === 0) {
                 // Silencioso ou aviso leve, pois o chamado pode já estar concluído
                 console.warn("Aviso: O chamado não pôde ser atualizado para Concluído.");
@@ -326,17 +327,17 @@ function NovaVisita() {
             });
 
             if (botResponse.ok) {
-                alert("✅ Visita salva! O robô enviará a mensagem pelo WhatsApp da empresa em instantes.");
+                toast.success('Visita salva! O robô enviará a mensagem pelo WhatsApp em instantes.');
                 router.push('/home');
             } else {
                 const erroData = await botResponse.json();
                 console.error("Falha ao acionar bot:", erroData);
-                alert("⚠️ A visita foi salva no sistema, mas houve um erro ao acionar o robô de WhatsApp. Código: " + botResponse.status);
+                toast.warning('A visita foi salva, mas houve um erro ao acionar o robô de WhatsApp.');
                 router.push('/home');
             }
         } catch (error) {
             console.error("Erro fatal ao acionar bot:", error);
-            alert("⚠️ Visita salva, mas o robô de envio automático está inacessível no momento.");
+            toast.warning('Visita salva, mas o robô de envio está inacessível no momento.');
             router.push('/home');
         }
     };
@@ -474,7 +475,7 @@ function NovaVisita() {
                         </label>
 
                         <label 
-                            onClick={(e) => { if(!fotoAntes) { e.preventDefault(); alert("⚠️ Por favor, registre a 'Foto Antes' primeiro."); } }}
+                            onClick={(e) => { if(!fotoAntes) { e.preventDefault(); toast.error('Por favor, registre a Foto Antes primeiro.'); } }}
                             className={`flex flex-col items-center justify-center gap-2 h-40 rounded-xl border-2 border-dashed ${fotoDepois ? 'border-[#2ECC71]/40 bg-white shadow-sm' : !fotoAntes ? 'border-slate-200 bg-slate-50 opacity-60 cursor-not-allowed' : 'border-[#2ECC71]/40 bg-[#2ECC71]/5'} hover:bg-[#2ECC71]/10 transition-colors cursor-pointer overflow-hidden relative`}
                         >
                             {fotoDepois ? (

@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import { supabase } from '../../../lib/supabase';
 import { useParams, useRouter } from 'next/navigation';
 import SplashScreen from '../../../components/SplashScreen';
+import { toast } from 'sonner';
 
 export default function DetalhesProduto() {
     const [produto, setProduto] = useState(null);
@@ -48,29 +49,29 @@ export default function DetalhesProduto() {
 
         const nomeLimpo = nome.trim();
         if (nomeLimpo.length < 3) {
-            alert('Por favor, informe um nome de produto válido com pelo menos 3 letras.');
+            toast.error('Por favor, informe um nome de produto válido com pelo menos 3 letras.');
             return;
         }
 
         if (quantidade === '' || isNaN(quantidade)) {
-            alert('Por favor, informe a quantidade de estoque atual.');
+            toast.error('Por favor, informe a quantidade de estoque atual.');
             return;
         }
 
         const qtdParsed = parseFloat(quantidade);
         if (qtdParsed < 0) {
-            alert('A quantidade em estoque não pode ser negativa.');
+            toast.error('A quantidade em estoque não pode ser negativa.');
             return;
         }
 
         if (preco === '' || isNaN(preco)) {
-            alert('Por favor, informe o custo por unidade válido.');
+            toast.error('Por favor, informe o custo por unidade válido.');
             return;
         }
 
         const precoParsed = parseFloat(preco);
         if (precoParsed < 0) {
-            alert('O preço de custo não pode ser negativo.');
+            toast.error('O preço de custo não pode ser negativo.');
             return;
         }
 
@@ -89,7 +90,7 @@ export default function DetalhesProduto() {
         setSalvando(false);
 
         if (error) {
-            alert("Erro ao atualizar: " + error.message);
+            toast.error('Erro ao atualizar: ' + error.message);
         } else {
             setProduto({
                 ...produto,
@@ -100,6 +101,7 @@ export default function DetalhesProduto() {
             });
             setNome(nomeLimpo);
             setEditando(false);
+            toast.success('Produto atualizado com sucesso!');
         }
     };
 
@@ -114,7 +116,7 @@ export default function DetalhesProduto() {
             if (!error) {
                 router.push('/produtos');
             } else {
-                alert("Erro ao remover: " + error.message);
+                toast.error('Erro ao remover: ' + error.message);
                 setDeletando(false);
             }
         }

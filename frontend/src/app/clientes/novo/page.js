@@ -4,6 +4,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../../../lib/supabase'; // Caminho relativo corrigido
 import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
 
 export default function NovoCliente() {
     const [nome, setNome] = useState('');
@@ -38,7 +39,7 @@ export default function NovoCliente() {
         // Tira todos os espaços vazios do início e do final
         const nomeLimpo = nome.trim();
         if (nomeLimpo.length < 3) {
-            alert('Por favor, informe um nome de cliente válido com pelo menos 3 letras.');
+            toast.error('Por favor, informe um nome de cliente válido com pelo menos 3 letras.');
             return;
         }
 
@@ -48,7 +49,7 @@ export default function NovoCliente() {
         
         // ITU-T E.164 (Padrão Internacional) diz que um número tem entre 10 e 15 dígitos.
         if (somenteNumeros.length < 10 || somenteNumeros.length > 15) {
-            alert('Por favor, informe um número de WhatsApp válido contendo DDD (Mínimo de 10 e Máximo de 15 números).');
+            toast.error('Por favor, informe um número de WhatsApp válido contendo DDD (Mínimo de 10 e Máximo de 15 números).');
             return;
         }
 
@@ -73,9 +74,10 @@ export default function NovoCliente() {
             ]);
 
         if (error) {
-            alert("Erro ao salvar cliente: " + error.message);
+            toast.error('Erro ao salvar cliente: ' + error.message);
         } else {
-            router.push('/clientes'); // Volta para a listagem
+            toast.success('Cliente cadastrado com sucesso!');
+            router.push('/clientes');
         }
         setLoading(false);
     };

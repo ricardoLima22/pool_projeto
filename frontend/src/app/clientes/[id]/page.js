@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import { supabase } from '../../../lib/supabase';
 import { useParams, useRouter } from 'next/navigation';
 import SplashScreen from '../../../components/SplashScreen';
+import { toast } from 'sonner';
 
 export default function DetalhesCliente() {
     const [cliente, setCliente] = useState(null);
@@ -54,7 +55,7 @@ export default function DetalhesCliente() {
             if (!error) {
                 router.push('/clientes');
             } else {
-                alert("Erro ao excluir: " + error.message);
+                toast.error('Erro ao excluir: ' + error.message);
                 setLoading(false);
             }
         }
@@ -66,13 +67,13 @@ export default function DetalhesCliente() {
         // Tira todos os espaços vazios do início e do final
         const nomeLimpo = nome.trim();
         if (nomeLimpo.length < 3) {
-            alert('Por favor, informe um nome de cliente válido com pelo menos 3 letras.');
+            toast.error('Por favor, informe um nome de cliente válido com pelo menos 3 letras.');
             return;
         }
 
         const somenteNumeros = whatsapp.replace(/\D/g, '');
         if (somenteNumeros.length < 10 || somenteNumeros.length > 15) {
-            alert('Por favor, informe um número de WhatsApp válido contendo DDD (Mínimo de 10 e Máximo de 15 números).');
+            toast.error('Por favor, informe um número de WhatsApp válido contendo DDD (Mínimo de 10 e Máximo de 15 números).');
             return;
         }
 
@@ -90,10 +91,11 @@ export default function DetalhesCliente() {
 
         if (!error) {
             setCliente({ ...cliente, name: nomeLimpo, whatsapp: somenteNumeros, email, address: endereco, pool_volume_m3: parseFloat(volume) });
-            setNome(nomeLimpo); // Reseta o input também para a versão limpa
+            setNome(nomeLimpo);
             setEditando(false);
+            toast.success('Cliente atualizado com sucesso!');
         } else {
-            alert("Erro ao atualizar: " + error.message);
+            toast.error('Erro ao atualizar: ' + error.message);
         }
         setSalvando(false);
     };

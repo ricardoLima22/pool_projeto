@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import { supabase } from '../../../lib/supabase';
 import { useRouter } from 'next/navigation';
 import SplashScreen from '../../../components/SplashScreen';
+import { toast } from 'sonner';
 
 export default function NovoChamado() {
     const router = useRouter();
@@ -99,7 +100,7 @@ export default function NovoChamado() {
 
         // Verificações simples
         if (!form.customer_id || !form.service_type_id || !form.piscineiro_id || !form.scheduled_date) {
-            alert('Por favor, preencha todos os campos obrigatórios.');
+            toast.error('Por favor, preencha todos os campos obrigatórios.');
             setSubmitting(false);
             return;
         }
@@ -110,7 +111,7 @@ export default function NovoChamado() {
         // Permite uma tolerância de 15 minutos (na hora atual) pra não barrar quem preencheu o form devagar
         const toleranciaMs = 15 * 60 * 1000;
         if (dataAgendada.getTime() < agora.getTime() - toleranciaMs) {
-            alert('Ops! A data e hora agendada não pode estar no passado.');
+            toast.error('Ops! A data e hora agendada não pode estar no passado.');
             setSubmitting(false);
             return;
         }
@@ -139,7 +140,7 @@ export default function NovoChamado() {
 
         if (error) {
             console.error("Erro ao inserir chamado:", error);
-            alert(`Erro do banco: ${error.message || JSON.stringify(error)}`);
+            toast.error(`Erro do banco: ${error.message || JSON.stringify(error)}`);
             setSubmitting(false);
         } else {
             if (companySession) {
@@ -163,17 +164,17 @@ export default function NovoChamado() {
                     });
 
                     if (botResponse.ok) {
-                        alert('✅ Chamado salvo e notificação enviada para o funcionário pelo WhatsApp!');
+                        toast.success('Chamado salvo e notificação enviada para o funcionário pelo WhatsApp!');
                     } else {
                         console.error("Falha ao acionar bot do chamado:", await botResponse.text());
-                        alert("⚠️ O chamado foi salvo, mas houve um erro ao notificar o funcionário no WhatsApp.");
+                        toast.warning('O chamado foi salvo, mas houve um erro ao notificar o funcionário no WhatsApp.');
                     }
                 } catch (err) {
                     console.error("Erro fatal ao acionar bot:", err);
-                    alert("⚠️ Chamado salvo, mas o sistema de notificação está inacessível no momento.");
+                    toast.warning('Chamado salvo, mas o sistema de notificação está inacessível no momento.');
                 }
             } else {
-                alert("⚠️ Chamado salvo, mas não foi enviada notificação porque a sessão de WhatsApp da empresa não está configurada.");
+                toast.warning('Chamado salvo, mas a sessão de WhatsApp da empresa não está configurada.');
             }
 
             router.push('/chamados');

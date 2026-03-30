@@ -6,6 +6,7 @@ import { supabase } from '../../../lib/supabase';
 import { useParams, useRouter } from 'next/navigation';
 import { ArrowLeft } from 'lucide-react';
 import SplashScreen from '../../../components/SplashScreen';
+import { toast } from 'sonner';
 
 export default function DetalhesChamado() {
     const [chamado, setChamado] = useState(null);
@@ -53,7 +54,7 @@ export default function DetalhesChamado() {
             if (!error) {
                 router.push('/chamados');
             } else {
-                alert("Erro ao excluir: " + error.message);
+                toast.error('Erro ao excluir: ' + error.message);
                 setLoading(false);
             }
         }
@@ -74,8 +75,9 @@ export default function DetalhesChamado() {
         if (!error) {
             setChamado({ ...chamado, status, description, scheduled_date: scheduledDate });
             setEditando(false);
+            toast.success('Chamado atualizado com sucesso!');
         } else {
-            alert("Erro ao atualizar: " + error.message);
+            toast.error('Erro ao atualizar: ' + error.message);
         }
         setSalvando(false);
     };

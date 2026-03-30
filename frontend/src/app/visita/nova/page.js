@@ -23,6 +23,7 @@ function NovaVisita() {
     const chamadoId = searchParams.get('chamadoId');
     const [cliente, setCliente] = useState(null);
     const [clientesList, setClientesList] = useState([]);
+    const [busca, setBusca] = useState('');
     const [produtos, setProdutos] = useState([]);
     const [quantidades, setQuantidades] = useState({});
     const [loading, setLoading] = useState(true);
@@ -327,7 +328,7 @@ function NovaVisita() {
             });
 
             if (botResponse.ok) {
-                toast.success('Visita salva! O robô enviará a mensagem pelo WhatsApp em instantes.');
+                toast.success('Visita salva! Sua mensagem será enviada pelo WhatsApp da empresa em instantes.');
                 router.push('/home');
             } else {
                 const erroData = await botResponse.json();
@@ -341,6 +342,11 @@ function NovaVisita() {
             router.push('/home');
         }
     };
+
+    // Filtro de busca em tempo real
+    const clientesFiltrados = clientesList.filter(c =>
+        c.name.toLowerCase().includes(busca.toLowerCase())
+    );
 
     if (loading) {
         return <SplashScreen message="Iniciando visita..." />;
@@ -357,10 +363,22 @@ function NovaVisita() {
                     <h1 className="text-lg font-bold text-slate-800 tracking-tight">Nova Visita</h1>
                 </header>
 
-                <div className="px-4 pt-6">
-                    <p className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block mb-4">Selecione o Cliente</p>
+                <div className="px-4 pt-4">
+                    {/* Campo de busca */}
+                    <div className="relative mb-4">
+                        <svg className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                        <input
+                            type="text"
+                            placeholder="Buscar cliente por nome..."
+                            value={busca}
+                            onChange={(e) => setBusca(e.target.value)}
+                            className="w-full pl-9 pr-4 py-3 rounded-xl bg-white border border-slate-200 text-[16px] text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-[#008080]/40 transition-colors shadow-sm"
+                        />
+                    </div>
+
+                    <p className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block mb-3">Selecione o Cliente</p>
                     <div className="space-y-3">
-                        {clientesList.map(c => (
+                        {clientesFiltrados.map(c => (
                             <button
                                 key={c.id}
                                 onClick={() => setCliente(c)}
@@ -379,12 +397,16 @@ function NovaVisita() {
                                 <svg className="h-5 w-5 text-[#008080] shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6"/></svg>
                             </button>
                         ))}
-                        {clientesList.length === 0 && (
+                        {clientesFiltrados.length === 0 && (
                             <div className="text-center p-8 bg-white rounded-xl border border-slate-100">
-                                <p className="text-sm font-medium text-slate-500 mb-2">Nenhum cliente encontrado.</p>
-                                <button onClick={() => router.push('/clientes/novo')} className="text-[#008080] font-bold text-sm hover:underline">
-                                    + Cadastrar Cliente
-                                </button>
+                                <p className="text-sm font-medium text-slate-500 mb-2">
+                                    {busca ? `Nenhum cliente encontrado para "${busca}".` : 'Nenhum cliente encontrado.'}
+                                </p>
+                                {!busca && (
+                                    <button onClick={() => router.push('/clientes/novo')} className="text-[#008080] font-bold text-sm hover:underline">
+                                        + Cadastrar Cliente
+                                    </button>
+                                )}
                             </div>
                         )}
                     </div>

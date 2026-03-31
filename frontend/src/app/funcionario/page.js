@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { supabase } from '../../lib/supabase';
 import { useRouter } from 'next/navigation';
 import { useWeather } from '../../hooks/useWeather';
-import { Droplets, LogOut, Users, AlertCircle, Thermometer } from "lucide-react";
+import { Droplets, LogOut, Users, AlertCircle, Thermometer, Camera } from "lucide-react";
 import SplashScreen from '../../components/SplashScreen';
 import { ChamadoCard } from '../../components/ChamadoCard';
 import { ClientCard } from '../../components/ClientCard';
@@ -181,6 +181,22 @@ export default function EmployeeDashboard() {
                         <p className="text-xl font-bold text-card-foreground">{dataLoading ? '...' : stats.pendingTickets}</p>
                         <p className="text-xs text-muted-foreground">Chamados abertos</p>
                     </div>
+                </div>
+
+                {/* Register Visit CTA */}
+                <div className="animate-slide-up mb-8" style={{ animationDelay: "0.15s" }}>
+                    <button onClick={() => router.push('/visita/nova')} className="w-full gradient-success text-white rounded-xl p-5 text-left shadow-md hover:shadow-xl transition-shadow group relative overflow-hidden">
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-2xl -mr-10 -mt-10 group-active:scale-110 transition-transform"></div>
+                        <div className="flex items-center justify-between relative z-10">
+                            <div>
+                                <p className="text-lg font-bold tracking-tight mb-0.5">Registrar Visita</p>
+                                <p className="text-emerald-50 text-sm opacity-90">Fotos, medições e cobrança</p>
+                            </div>
+                            <div className="bg-emerald-700/30 rounded-full p-3 group-hover:scale-110 transition-transform">
+                                <Camera className="h-6 w-6 text-white" />
+                            </div>
+                        </div>
+                    </button>
                 </div>
 
                 {/* Chamados Section */}

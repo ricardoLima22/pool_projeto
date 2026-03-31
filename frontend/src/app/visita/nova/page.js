@@ -293,10 +293,22 @@ function NovaVisita() {
         // Limpa o número do WhatsApp (mantém apenas dígitos)
         let whatsappLimpo = cliente.whatsapp.replace(/\D/g, '');
 
-        // Garante que o número tenha o DDI 55 (Brasil) se não tiver
-        if (whatsappLimpo.length <= 11) {
+        let isBrazilian = false;
+        if (whatsappLimpo.length === 11) {
+            const regexCelularBR = /^[1-9][1-9]9\d{8}$/;
+            if (regexCelularBR.test(whatsappLimpo)) isBrazilian = true;
+        } else if (whatsappLimpo.length === 10) {
+            const regexFixoBR = /^[1-9][1-9][2-8]\d{7}$/;
+            if (regexFixoBR.test(whatsappLimpo)) isBrazilian = true;
+        } else if (whatsappLimpo.length < 10) {
+            isBrazilian = true;
+        }
+
+        // Garante que o número tenha o DDI 55 (Brasil) se for local
+        if (isBrazilian && !whatsappLimpo.startsWith('55')) {
             whatsappLimpo = `55${whatsappLimpo}`;
         }
+
 
         // Monta a mensagem do WhatsApp adaptada para o novo formato
         let msg = `Olá ${cliente.name}! ✅ A manutenção da sua piscina foi finalizada.\n\n` +

@@ -78,11 +78,22 @@ mongoose.connect(MONGODB_URI).then(async () => {
                 try {
                     // Formatação correta para o padrão Baileys (JID)
                     let numeroLimpo = String(numero_whatsapp).replace(/\D/g, '');
-                    if (numeroLimpo.length <= 11) {
-                        if (!numeroLimpo.startsWith('55')) {
-                            numeroLimpo = '55' + numeroLimpo;
-                        }
+                    
+                    let isBrazilian = false;
+                    if (numeroLimpo.length === 11) {
+                        const regexCelularBR = /^[1-9][1-9]9\d{8}$/;
+                        if (regexCelularBR.test(numeroLimpo)) isBrazilian = true;
+                    } else if (numeroLimpo.length === 10) {
+                        const regexFixoBR = /^[1-9][1-9][2-8]\d{7}$/;
+                        if (regexFixoBR.test(numeroLimpo)) isBrazilian = true;
+                    } else if (numeroLimpo.length < 10) {
+                        isBrazilian = true;
                     }
+
+                    if (isBrazilian && !numeroLimpo.startsWith('55')) {
+                        numeroLimpo = '55' + numeroLimpo;
+                    }
+                    
                     const jid = `${numeroLimpo}@s.whatsapp.net`;
 
                     // Verifica se o número existe no Whatsapp

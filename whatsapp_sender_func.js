@@ -66,9 +66,22 @@ mongoose.connect(MONGODB_URI).then(async () => {
             let isInternational = data.phone.trim().startsWith('+');
             let wpLimpo = data.phone.replace(/\D/g, '');
             
-            // Se for número nacional ou não tiver o '+', adicionamos o 55 como padrão
-            if (!isInternational && wpLimpo.length <= 11) {
-                wpLimpo = `55${wpLimpo}`;
+            // Se não tiver o '+', avalia se tem cara de BR antes de adicionar 55
+            if (!isInternational) {
+                let isBrazilian = false;
+                if (wpLimpo.length === 11) {
+                    const regexCelularBR = /^[1-9][1-9]9\d{8}$/;
+                    if (regexCelularBR.test(wpLimpo)) isBrazilian = true;
+                } else if (wpLimpo.length === 10) {
+                    const regexFixoBR = /^[1-9][1-9][2-8]\d{7}$/;
+                    if (regexFixoBR.test(wpLimpo)) isBrazilian = true;
+                } else if (wpLimpo.length < 10) {
+                    isBrazilian = true;
+                }
+
+                if (isBrazilian && !wpLimpo.startsWith('55')) {
+                    wpLimpo = `55${wpLimpo}`;
+                }
             }
             numeroDestino = wpLimpo;
             console.log(`Número do funcionário encontrado com sucesso: ${numeroDestino}`);
@@ -146,10 +159,20 @@ mongoose.connect(MONGODB_URI).then(async () => {
                 try {
                     // Formatação correta para o padrão Baileys (JID)
                     let numeroLimpo = String(numeroDestino).replace(/\D/g, '');
-                    if (numeroLimpo.length <= 11) {
-                        if (!numeroLimpo.startsWith('55')) {
-                            numeroLimpo = '55' + numeroLimpo;
-                        }
+                    
+                    let isBrazilian = false;
+                    if (numeroLimpo.length === 11) {
+                        const regexCelularBR = /^[1-9][1-9]9\d{8}$/;
+                        if (regexCelularBR.test(numeroLimpo)) isBrazilian = true;
+                    } else if (numeroLimpo.length === 10) {
+                        const regexFixoBR = /^[1-9][1-9][2-8]\d{7}$/;
+                        if (regexFixoBR.test(numeroLimpo)) isBrazilian = true;
+                    } else if (numeroLimpo.length < 10) {
+                        isBrazilian = true;
+                    }
+
+                    if (isBrazilian && !numeroLimpo.startsWith('55')) {
+                        numeroLimpo = '55' + numeroLimpo;
                     }
                     const jid = `${numeroLimpo}@s.whatsapp.net`;
 

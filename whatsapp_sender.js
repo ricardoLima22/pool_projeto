@@ -182,12 +182,12 @@ mongoose.connect(MONGODB_URI).then(async () => {
                     console.log("✅ Todas as mensagens do Serviço enviadas com sucesso!");
                     enviou = true;
                     
-                    console.log(">> 3. Fechando conexão em 3 segundos...");
+                    console.log(">> 3. Aguardando 10 segundos para troca de chaves criptográficas (PreKeys)... Fechando conexão em breve.");
                     setTimeout(() => {
                         sock.ws.close();
                         mongoose.disconnect();
                         process.exit(0);
-                    }, 3000);
+                    }, 10000);
 
                 } catch (err) {
                     console.error("Erro geral durante o envio das mensagens:", err);

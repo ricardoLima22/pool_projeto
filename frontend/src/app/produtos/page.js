@@ -123,9 +123,9 @@ export default function Produtos() {
                                 <p className="text-xs text-slate-500 flex items-center gap-1 mt-1">
                                     <Package className="w-3 h-3 text-slate-400" /> {p.description || "Sem marca"}
                                 </p>
-                                <span className={`inline-block mt-1 text-[10px] font-bold px-2 py-0.5 rounded uppercase ${p.status === 'crítico' ? 'bg-red-50 text-red-500' : p.status === 'baixo' ? 'bg-amber-50 text-amber-500' : 'bg-slate-100 text-slate-500'}`}>
+                                <p className="text-xs text-slate-500 mt-0.5">
                                     {p.stock_quantity} {p.unit}
-                                </span>
+                                </p>
                             </div>
                             <ArrowRight className="h-5 w-5 text-[#008080]" />
                         </button>

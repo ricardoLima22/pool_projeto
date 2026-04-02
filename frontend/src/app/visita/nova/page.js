@@ -28,6 +28,7 @@ function NovaVisita() {
     const [quantidades, setQuantidades] = useState({});
     const [loading, setLoading] = useState(true);
     const [companySession, setCompanySession] = useState('');
+    const [userProfile, setUserProfile] = useState(null);
 
     // Novos campos do planejamento
     const [fotoAntes, setFotoAntes] = useState(null);
@@ -45,7 +46,8 @@ function NovaVisita() {
         async function carregarDados() {
             const { data: { user } } = await supabase.auth.getUser();
             if (user) {
-                const { data: profile } = await supabase.from('profiles').select('company_id').eq('id', user.id).single();
+                const { data: profile } = await supabase.from('profiles').select('company_id, full_name').eq('id', user.id).single();
+                setUserProfile(profile);
 
                 // Busca a sessão configurada para essa empresa logada:
                 const { data: companyInfo } = await supabase.from('companies').select('whatsapp_session').eq('id', profile.company_id).single();
@@ -317,6 +319,10 @@ function NovaVisita() {
             (phDepois ? `- pH Final (Depois): ${phDepois}\n` : '') +
             `\n*Serviço executado:*\n` +
             `Valor: R$ ${parseFloat(valorServico).toFixed(2)}\n\n`;
+
+        if (userProfile && userProfile.full_name) {
+            msg += `Responsável pela Limpeza: ${userProfile.full_name}\n\n`;
+        }
 
         if (observacao) {
             msg += `*Observações:*\n${observacao}\n\n`;

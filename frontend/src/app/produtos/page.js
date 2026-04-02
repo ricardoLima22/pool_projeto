@@ -123,7 +123,7 @@ export default function Produtos() {
                                 <p className="text-xs text-slate-500 flex items-center gap-1 mt-1">
                                     <Package className="w-3 h-3 text-slate-400" /> {p.description || "Sem marca"}
                                 </p>
-                                <p className={`text-xs mt-0.5 ${p.status === 'crítico' ? 'text-red-500 font-bold' : 'text-slate-500'}`}>
+                                <p className={`text-xs mt-0.5 ${p.status === 'crítico' ? 'text-red-500' : 'text-slate-500'}`}>
                                     {p.stock_quantity} {p.unit}
                                 </p>
                             </div>

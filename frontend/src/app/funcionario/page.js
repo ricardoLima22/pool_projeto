@@ -165,7 +165,7 @@ export default function EmployeeDashboard() {
                                         <span className="text-3xl font-black text-slate-800 tracking-tighter">{weather.temperature}°C</span>
                                         <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest bg-slate-200/50 px-2 py-0.5 rounded-md">{weather.city}</span>
                                     </div>
-                                    <p className="text-[11px] font-bold text-slate-400 mt-1">{weather.description} • Tempo agora na sua região</p>
+                                    <p className="text-[11px] font-bold text-slate-400 mt-1">{weather.description}</p>
                                 </div>
                             </div>
                         </div>

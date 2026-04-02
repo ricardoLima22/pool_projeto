@@ -150,20 +150,23 @@ export default function EmployeeDashboard() {
             {/* Main Content */}
             <main className="max-w-4xl mx-auto px-6 -mt-6">
                 {/* Weather Card */}
-                <div className="mb-4 animate-slide-up bg-primary/20 backdrop-blur-sm rounded-xl p-4 border border-primary/30">
+                <div className="mb-4 animate-slide-up bg-white/60 backdrop-blur-sm rounded-xl p-4 border border-cyan-100 shadow-sm">
                     {weatherLoading ? (
-                        <div className="flex items-center gap-3 text-primary-foreground">
-                            <span className="text-sm animate-pulse">Carregando clima...</span>
+                        <div className="flex items-center gap-3 text-slate-600 justify-center py-2">
+                            <Thermometer className="h-5 w-5 animate-pulse text-cyan-600" />
+                            <span className="text-sm font-bold uppercase tracking-widest">Buscando clima...</span>
                         </div>
                     ) : weather ? (
-                        <div className="flex items-center gap-3">
-                            <span className="text-3xl">{weather.icon}</span>
-                            <div>
-                                <div className="flex items-baseline gap-1.5">
-                                    <span className="text-2xl font-bold text-card-foreground">{weather.temperature}°C</span>
-                                    <span className="text-sm font-medium text-muted-foreground uppercase tracking-wide">{weather.city}</span>
+                        <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-4">
+                                <span className="text-5xl drop-shadow-md">{weather.icon}</span>
+                                <div>
+                                    <div className="flex items-baseline gap-2">
+                                        <span className="text-3xl font-black text-slate-800 tracking-tighter">{weather.temperature}°C</span>
+                                        <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest bg-slate-200/50 px-2 py-0.5 rounded-md">{weather.city}</span>
+                                    </div>
+                                    <p className="text-[11px] font-bold text-slate-400 mt-1">{weather.description} • Tempo agora na sua região</p>
                                 </div>
-                                <p className="text-xs text-muted-foreground">{weather.description}</p>
                             </div>
                         </div>
                     ) : null}

@@ -5,7 +5,7 @@ import { supabase } from '../../lib/supabase';
 import { useRouter } from 'next/navigation';
 import SplashScreen from '../../components/SplashScreen';
 import { ArrowLeft, Search, Plus, Package, ArrowRight } from "lucide-react";
-import { Input } from "../../components/ui/input";
+
 
 export default function Produtos() {
     const [produtos, setProdutos] = useState([]);
@@ -56,89 +56,88 @@ export default function Produtos() {
     }
 
     return (
-        <div className="min-h-screen bg-background flex flex-col">
+        <main className="min-h-screen bg-[#fcfbf8]">
             {/* Header */}
-            <div className="px-4 py-4 border-b border-border bg-card">
-                <div className="max-w-7xl mx-auto flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                        <button
-                            onClick={() => router.push('/home')}
-                            className="w-8 h-8 rounded-full bg-muted flex items-center justify-center hover:bg-muted/80 transition-colors"
-                        >
-                            <ArrowLeft className="w-4 h-4 text-foreground" />
-                        </button>
-                        <h1 className="text-lg font-bold text-foreground">Meus Produtos</h1>
-                    </div>
-                    <button 
+            <header className="px-4 py-4 pt-6 flex items-center justify-between bg-white border-b border-slate-200 sticky top-0 z-20">
+                <div className="flex items-center gap-3">
+                    <button onClick={() => router.push('/home')} className="text-slate-800 transition-colors">
+                        <ArrowLeft className="h-5 w-5" />
+                    </button>
+                    <h1 className="text-xl font-bold text-slate-800">Meus Produtos</h1>
+                </div>
+                <div className="flex items-center gap-2">
+                    <button
                         onClick={() => router.push('/produtos/novo')}
-                        className="bg-primary text-primary-foreground font-semibold px-4 py-2 rounded-full text-sm hover:bg-primary/90 transition-colors flex items-center gap-2"
+                        className="flex items-center gap-1 px-4 py-2 rounded-full text-sm font-semibold text-white shadow-sm"
+                        style={{ background: "#3b82f6" }}
                     >
-                        <Plus className="w-4 h-4" />
-                        Novo
+                        Novo 
+                        <Plus className="w-3.5 h-3.5" />
                     </button>
                 </div>
-            </div>
+            </header>
 
-            <main className="px-4 py-4 max-w-7xl mx-auto w-full flex-1 space-y-4">
+            <div className="px-4 py-6 space-y-4">
                 {/* Summary */}
                 <div className="grid grid-cols-3 gap-3">
-                    <div className="bg-card rounded-xl border border-border p-3 text-center">
-                        <span className="text-lg font-bold text-foreground">{produtos.length}</span>
-                        <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Produtos</p>
+                    <div className="bg-white rounded-xl border border-slate-100 shadow-sm p-3 text-center flex flex-col justify-center">
+                        <span className="text-lg font-black text-slate-800">{produtos.length}</span>
+                        <p className="text-[9px] font-bold text-slate-500 uppercase tracking-widest mt-0.5">Produtos</p>
                     </div>
-                    <div className="bg-card rounded-xl border border-border p-3 text-center">
-                        <span className="text-lg font-bold text-yellow-500">
+                    <div className="bg-white rounded-xl border border-slate-100 shadow-sm p-3 text-center flex flex-col justify-center">
+                        <span className="text-lg font-black text-amber-500">
                             {produtos.filter((p) => p.status === "baixo").length}
                         </span>
-                        <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Estoque baixo</p>
+                        <p className="text-[9px] font-bold text-slate-500 uppercase tracking-widest mt-0.5">Baixo</p>
                     </div>
-                    <div className="bg-card rounded-xl border border-border p-3 text-center">
-                        <span className="text-lg font-bold text-destructive">
+                    <div className="bg-white rounded-xl border border-slate-100 shadow-sm p-3 text-center flex flex-col justify-center">
+                        <span className="text-lg font-black text-red-500">
                             {produtos.filter((p) => p.status === "crítico").length}
                         </span>
-                        <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Crítico</p>
+                        <p className="text-[9px] font-bold text-slate-500 uppercase tracking-widest mt-0.5">Crítico</p>
                     </div>
                 </div>
 
                 {/* Search */}
                 <div className="relative">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                    <Input
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                    <input
+                        type="text"
                         placeholder="Buscar produto ou marca..."
                         value={busca}
                         onChange={(e) => setBusca(e.target.value)}
-                        className="pl-9 bg-card border-border rounded-xl h-11"
+                        className="w-full pl-9 pr-4 py-3 rounded-xl bg-white border border-slate-200 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-[#008080]/40 transition-colors shadow-sm"
                     />
                 </div>
 
                 {/* Product List */}
-                <div className="space-y-2">
+                <div className="space-y-3">
                     {filtrados.map((p) => (
-                        <div
+                        <button
                             key={p.id}
                             onClick={() => router.push(`/produtos/${p.id}`)}
-                            className="bg-card rounded-xl border border-border p-4 flex items-center justify-between hover:shadow-md transition-shadow cursor-pointer active:scale-[0.99]"
+                            className="w-full bg-white rounded-xl border border-slate-100 p-4 flex items-center justify-between hover:border-[#008080]/30 transition-colors text-left shadow-sm active:scale-[0.99]"
                         >
-                            <div>
-                                <p className="font-bold text-sm text-foreground">{p.name}</p>
-                                <p className="text-xs text-muted-foreground flex items-center gap-1">
-                                    <Package className="w-3 h-3" /> {p.description || "Sem marca"}
+                            <div className="space-y-1">
+                                <p className="font-bold text-slate-800 text-sm">{p.name}</p>
+                                <p className="text-xs text-slate-500 flex items-center gap-1 mt-1">
+                                    <Package className="w-3 h-3 text-slate-400" /> {p.description || "Sem marca"}
                                 </p>
-                                <p className="text-xs text-muted-foreground mt-0.5">
+                                <span className={`inline-block mt-1 text-[10px] font-bold px-2 py-0.5 rounded uppercase ${p.status === 'crítico' ? 'bg-red-50 text-red-500' : p.status === 'baixo' ? 'bg-amber-50 text-amber-500' : 'bg-slate-100 text-slate-500'}`}>
                                     {p.stock_quantity} {p.unit}
-                                </p>
+                                </span>
                             </div>
-                            <ArrowRight className="w-4 h-4 text-primary" />
-                        </div>
+                            <ArrowRight className="h-5 w-5 text-[#008080]" />
+                        </button>
                     ))}
 
                     {filtrados.length === 0 && (
-                        <div className="text-center py-12 text-muted-foreground text-sm">
-                            Nenhum produto encontrado.
+                        <div className="text-center py-10">
+                            <p className="text-slate-400 text-sm">Nenhum produto encontrado.</p>
                         </div>
                     )}
                 </div>
-            </main>
-        </div>
+            </div>
+        </main>
     );
 }

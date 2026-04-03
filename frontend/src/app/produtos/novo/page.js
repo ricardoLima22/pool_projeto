@@ -131,7 +131,17 @@ export default function NovoProduto() {
 
                 {/* Marca (Brand) */}
                 <div className="pt-4">
-                    <label className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block mb-1">Marca</label>
+                    <div className="flex items-center justify-between mb-1">
+                        <label className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block">Marca</label>
+                        <button
+                            type="button"
+                            onClick={() => router.push('/marcas/nova')}
+                            className="text-[#008080] hover:text-[#006666] text-xs font-bold uppercase tracking-wide flex items-center gap-1 transition-colors"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+                            Adicionar
+                        </button>
+                    </div>
                     <select
                         value={marcaSelecionada}
                         onChange={(e) => setMarcaSelecionada(e.target.value)}

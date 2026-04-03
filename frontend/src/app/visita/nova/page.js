@@ -319,14 +319,14 @@ function NovaVisita() {
             (phDepois ? `- pH Final (Depois): ${phDepois}\n` : '');
 
         // FUNCIONALIDADE PRONTA PARA O FUTURO (Apenas descomente abaixo quando quiser ativar em produção)
-        // if (userProfile && userProfile.full_name) {
-        //     msg += `Responsável pela Limpeza: ${userProfile.full_name}\n\n`;
-        // }
+        if (userProfile && userProfile.full_name) {
+             msg += `Responsável pela Limpeza: ${userProfile.full_name}\n\n`;
+        }
 
         if (itensTexto.length > 0) {
-            msg += `*Produtos utilizados na visita:*\n- ${itensTexto.join('\n- ')}\n\n`+
-            `\n*Serviço executado:*\n` +
-            `Valor: R$ ${parseFloat(valorServico).toFixed(2)}\n\n`;
+            msg += `*Produtos Entregues:*\n- ${itensTexto.join('\n- ')}\n\n`+
+            `\n*Valor do Serviço:*\n` +
+            `R$ ${parseFloat(valorServico).toFixed(2)}\n\n`;
         }
 
         if (observacao) {

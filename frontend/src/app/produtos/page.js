@@ -25,7 +25,7 @@ export default function Produtos() {
             try {
                 const { data, error } = await supabase
                     .from('products')
-                    .select('*')
+                    .select('*, brands(name)')
                     .eq('company_id', companyId);
 
                 if (error) throw error;
@@ -48,7 +48,7 @@ export default function Produtos() {
 
     const filtrados = produtos.filter((p) =>
         (p.name?.toLowerCase() || '').includes(busca.toLowerCase()) ||
-        (p.description?.toLowerCase() || '').includes(busca.toLowerCase())
+        (p.brands?.name?.toLowerCase() || p.description?.toLowerCase() || '').includes(busca.toLowerCase())
     );
 
     if (loading) {
@@ -121,7 +121,7 @@ export default function Produtos() {
                             <div className="space-y-1">
                                 <p className="font-bold text-slate-800 text-sm">{p.name}</p>
                                 <p className="text-xs text-slate-500 flex items-center gap-1 mt-1">
-                                    <Package className="w-3 h-3 text-slate-400" /> {p.description || "Sem marca"}
+                                    <Package className="w-3 h-3 text-slate-400" /> {p.brands?.name || p.description || "Sem marca"}
                                 </p>
                                 <p className={`text-xs mt-0.5 ${p.status === 'crítico' ? 'text-red-500' : 'text-slate-500'}`}>
                                     {p.stock_quantity} {p.unit}

@@ -312,26 +312,27 @@ function NovaVisita() {
         }
 
         
-        // Monta a mensagem do WhatsApp adaptada para o novo formato
-        let msg = `Olá ${cliente.name}! ✅ A manutenção da sua piscina foi finalizada.\n\n` +
-            `*Status da Água:*\n` +
-            (phAntes ? `- pH Inicial (Antes): ${phAntes}\n` : '') +
-            (phDepois ? `- pH Final (Depois): ${phDepois}\n` : '');
+        // Monta a mensagem do WhatsApp seguindo a padronização solicitada
+        let msg = `Olá ${cliente.name}! ✅ A manutenção da sua piscina foi finalizada.\n\n`;
 
-        // FUNCIONALIDADE PRONTA PARA O FUTURO (Apenas descomente abaixo quando quiser ativar em produção)
-        if (userProfile && userProfile.full_name) {
-             msg += `Responsável pela Limpeza: ${userProfile.full_name}\n\n`;
-        }
+        msg += `*Status da Água:*\n`;
+        if (phAntes) msg += `- pH Inicial (Antes): ${phAntes}\n`;
+        if (phDepois) msg += `- pH Final (Depois): ${phDepois}\n`;
 
         if (itensTexto.length > 0) {
-            msg += `*Produtos Entregues:*\n- ${itensTexto.join('\n- ')}\n\n`+
-            `\n*Valor do Serviço:*\n` +
-            `R$ ${parseFloat(valorServico).toFixed(2)}\n\n`;
+            msg += `\n*Produtos utilizados na visita:*\n- ${itensTexto.join('\n- ')}\n`;
         }
 
+        msg += `\n*Serviço executado:*\nValor: R$ ${(parseFloat(valorServico) || 0).toFixed(2)}\n`;
+
         if (observacao) {
-            msg += `*Observações:*\n${observacao}\n\n`;
+            msg += `\n*Observações:*\n${observacao}\n`;
         }
+
+        // FUNCIONALIDADE PRONTA PARA O FUTURO (Apenas descomente abaixo quando quiser ativar em produção)
+        // if (userProfile && userProfile.full_name) {
+        //      msg += `\nResponsável pela Limpeza: ${userProfile.full_name}\n`;
+        // }
 
         // Chamada direta para a API Interna que aciona o GitHub Actions
         try {

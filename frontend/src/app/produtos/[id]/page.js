@@ -6,12 +6,14 @@ import { supabase } from '../../../lib/supabase';
 import { useParams, useRouter } from 'next/navigation';
 import SplashScreen from '../../../components/SplashScreen';
 import { toast } from 'sonner';
+import ConfirmDeleteDialog from '../../../components/ConfirmDeleteDialog';
 
 export default function DetalhesProduto() {
     const [produto, setProduto] = useState(null);
     const [loading, setLoading] = useState(true);
     const [editando, setEditando] = useState(false);
     const [salvando, setSalvando] = useState(false);
+    const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
     const [userRole, setUserRole] = useState('');
     const [companyId, setCompanyId] = useState(null);
     const [marcas, setMarcas] = useState([]);
@@ -141,21 +143,23 @@ export default function DetalhesProduto() {
         }
     };
 
-    const handleDeletar = async () => {
-        if (confirm(`Tem certeza que deseja APAGAR o produto "${produto.name}"? (Esta ação não pode ser desfeita)`)) {
-            setLoading(true);
-            const { error } = await supabase
-                .from('products')
-                .delete()
-                .eq('id', produtoId);
+    const performDelete = async () => {
+        setLoading(true);
+        const { error } = await supabase
+            .from('products')
+            .delete()
+            .eq('id', produtoId);
 
-            if (!error) {
-                router.push('/produtos');
-            } else {
-                toast.error('Erro ao remover: ' + error.message);
-                setLoading(false);
-            }
+        if (!error) {
+            router.push('/produtos');
+        } else {
+            toast.error('Erro ao remover: ' + error.message);
+            setLoading(false);
         }
+    };
+
+    const handleDeletar = () => {
+        setDeleteDialogOpen(true);
     };
 
     if (loading) return <SplashScreen message="Carregando detalhes..." />;
@@ -169,6 +173,12 @@ export default function DetalhesProduto() {
 
     return (
         <main className="min-h-screen bg-[#fcfbf8] pb-24">
+            <ConfirmDeleteDialog 
+                isOpen={deleteDialogOpen}
+                onOpenChange={setDeleteDialogOpen}
+                onConfirm={performDelete}
+                description={`Tem certeza que deseja APAGAR o produto "${produto?.name}"? (Esta ação não pode ser desfeita)`}
+            />
             {/* Header */}
             <div className="flex items-center gap-3 px-4 py-4 pt-6 bg-white border-b border-slate-200 sticky top-0 z-10">
                 <button type="button" onClick={() => router.push('/produtos')} className="text-slate-800 transition-colors">

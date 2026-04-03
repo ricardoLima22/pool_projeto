@@ -6,13 +6,15 @@ import { supabase } from '../../lib/supabase';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft, Search, Plus, Droplets, User, CalendarDays, Trash2, Wrench, ChevronRight } from 'lucide-react';
 import SplashScreen from '../../components/SplashScreen';
+import ConfirmDeleteDialog from '../../components/ConfirmDeleteDialog';
 
 export default function ListagemChamados() {
     const [chamados, setChamados] = useState([]);
     const [busca, setBusca] = useState('');
     const [filtroStatus, setFiltroStatus] = useState("TODOS");
     const [loading, setLoading] = useState(true);
-    const [userRole, setUserRole] = useState('');
+    const [userRole, setUserRole] = useState(null);
+    const [chamadoParaApagar, setChamadoParaApagar] = useState(null);
     const router = useRouter();
 
     useEffect(() => {
@@ -70,12 +72,16 @@ export default function ListagemChamados() {
         setLoading(false);
     }
 
-    const handleDelete = async (id, e) => {
-        e.stopPropagation();
-        if (!window.confirm("Tem certeza que deseja excluir este chamado?")) return;
-        
-        await supabase.from('service_requests').delete().eq('id', id);
+    const performDelete = async () => {
+        if (!chamadoParaApagar) return;
+        await supabase.from('service_requests').delete().eq('id', chamadoParaApagar);
+        setChamadoParaApagar(null);
         fetchChamados();
+    }
+
+    const handleDelete = (id, e) => {
+        e.stopPropagation();
+        setChamadoParaApagar(id);
     };
 
     const chamadosFiltrados = chamados.filter(c => {
@@ -106,6 +112,12 @@ export default function ListagemChamados() {
 
     return (
         <div className="min-h-screen flex flex-col">
+            <ConfirmDeleteDialog 
+                isOpen={!!chamadoParaApagar}
+                onOpenChange={(open) => !open && setChamadoParaApagar(null)}
+                onConfirm={performDelete}
+                description="Tem certeza que deseja APAGAR este chamado? (Esta ação não pode ser desfeita)"
+            />
             {/* Header */}
             <header
                 className="px-5 pt-[calc(1.5rem+env(safe-area-inset-top))] pb-8 rounded-b-3xl"

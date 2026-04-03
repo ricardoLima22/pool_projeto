@@ -7,6 +7,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { ArrowLeft } from 'lucide-react';
 import SplashScreen from '../../../components/SplashScreen';
 import { toast } from 'sonner';
+import ConfirmDeleteDialog from '../../../components/ConfirmDeleteDialog';
 
 export default function DetalhesChamado() {
     const [chamado, setChamado] = useState(null);
@@ -19,6 +20,7 @@ export default function DetalhesChamado() {
     const [scheduledDate, setScheduledDate] = useState('');
     const [salvando, setSalvando] = useState(false);
     const [userRole, setUserRole] = useState('');
+    const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
     const params = useParams();
     const router = useRouter();
@@ -47,17 +49,19 @@ export default function DetalhesChamado() {
         fetchChamado();
     }, [id]);
 
-    const handleDelete = async () => {
-        if (confirm("Tem certeza que deseja excluir esse chamado? (Esta ação não pode ser desfeita)")) {
-            setLoading(true);
-            const { error } = await supabase.from('service_requests').delete().eq('id', id);
-            if (!error) {
-                router.push('/chamados');
-            } else {
-                toast.error('Erro ao excluir: ' + error.message);
-                setLoading(false);
-            }
+    const performDelete = async () => {
+        setLoading(true);
+        const { error } = await supabase.from('service_requests').delete().eq('id', id);
+        if (!error) {
+            router.push('/chamados');
+        } else {
+            toast.error('Erro ao excluir: ' + error.message);
+            setLoading(false);
         }
+    };
+
+    const handleDelete = () => {
+        setDeleteDialogOpen(true);
     };
 
     const handleUpdate = async (e) => {
@@ -115,6 +119,12 @@ export default function DetalhesChamado() {
 
     return (
         <main className="min-h-screen bg-[#fcfbf8] pb-24">
+            <ConfirmDeleteDialog 
+                isOpen={deleteDialogOpen}
+                onOpenChange={setDeleteDialogOpen}
+                onConfirm={performDelete}
+                description="Tem certeza que deseja APAGAR este chamado? (Esta ação não pode ser desfeita)"
+            />
             {/* Header */}
             <div className="flex items-center gap-3 px-4 py-4 bg-white border-b border-slate-200 sticky top-0 z-10">
                 <button onClick={() => router.push('/chamados')} className="text-slate-800 transition-colors">

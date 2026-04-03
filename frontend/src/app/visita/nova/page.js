@@ -328,10 +328,9 @@ function NovaVisita() {
         if (observacao) {
             msg += `\n*Observações:*\n${observacao}\n`;
         }
-
         // FUNCIONALIDADE PRONTA PARA O FUTURO (Apenas descomente abaixo quando quiser ativar em produção)
         if (userProfile && userProfile.full_name) {
-              msg += `\nResponsável pela Limpeza: ${userProfile.full_name}\n`;
+              msg += `*Responsável pela Limpeza:* ${userProfile.full_name}\n`;
         }
 
         // Chamada direta para a API Interna que aciona o GitHub Actions

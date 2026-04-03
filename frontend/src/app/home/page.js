@@ -204,7 +204,7 @@ export default function Dashboard() {
                                     <div>
                                         <div className="flex items-baseline gap-2">
                                             <span className="text-3xl font-bold text-slate-800">{weather.temperature}°C</span>
-                                            <span className="text-xs font-bold text-slate-500 uppercase bg-slate-200/50 px-2 py-0.5 rounded-md">{weather.city}</span>
+                                            <span className="text-xs text-slate-500 uppercase">{weather.city}</span>
                                         </div>
                                         <p className="text-xs text-slate-500 mt-0.5">{weather.description}</p>
                                     </div>

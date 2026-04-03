@@ -12,37 +12,69 @@ export default function DetalhesProduto() {
     const [loading, setLoading] = useState(true);
     const [editando, setEditando] = useState(false);
     const [salvando, setSalvando] = useState(false);
-    const [deletando, setDeletando] = useState(false);
+    const [userRole, setUserRole] = useState('');
+    const [companyId, setCompanyId] = useState(null);
+    const [marcas, setMarcas] = useState([]);
 
     // Estados do Formulário de Edição
     const [nome, setNome] = useState('');
     const [unidade, setUnidade] = useState('');
     const [preco, setPreco] = useState('');
     const [quantidade, setQuantidade] = useState('');
+    const [marcaSelecionada, setMarcaSelecionada] = useState('');
 
     const params = useParams();
     const router = useRouter();
     const produtoId = params.id;
 
     useEffect(() => {
-        async function fetchProduto() {
+        const role = localStorage.getItem('user_role');
+        if (role) setUserRole(role.toLowerCase());
+
+        async function init() {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (user) {
+                const { data: profile } = await supabase
+                    .from('profiles')
+                    .select('company_id')
+                    .eq('id', user.id)
+                    .single();
+                if (profile) setCompanyId(profile.company_id);
+            }
+
+            if (!produtoId) return;
             const { data, error } = await supabase
                 .from('products')
-                .select('*')
+                .select('*, brands(name)')
                 .eq('id', produtoId)
                 .single();
 
-            if (!error && data) {
+            if (data) {
                 setProduto(data);
                 setNome(data.name);
                 setUnidade(data.unit);
-                setPreco(data.price_per_unit);
+                setPreco(data.price_per_unit || '');
                 setQuantidade(data.stock_quantity);
+                setMarcaSelecionada(data.brand_id || '');
             }
             setLoading(false);
         }
-        fetchProduto();
+        init();
     }, [produtoId]);
+
+    useEffect(() => {
+        if (companyId) {
+            async function getMarcas() {
+                const { data } = await supabase
+                    .from('brands')
+                    .select('*')
+                    .eq('company_id', companyId)
+                    .order('name');
+                setMarcas(data || []);
+            }
+            getMarcas();
+        }
+    }, [companyId]);
 
     const handleSalvar = async (e) => {
         e.preventDefault();
@@ -77,14 +109,17 @@ export default function DetalhesProduto() {
 
         setSalvando(true);
 
+        const payload = {
+            name: nomeLimpo,
+            unit: unidade,
+            price_per_unit: precoParsed,
+            stock_quantity: qtdParsed,
+            brand_id: marcaSelecionada || null
+        };
+
         const { error } = await supabase
             .from('products')
-            .update({
-                name: nomeLimpo,
-                unit: unidade,
-                price_per_unit: precoParsed,
-                stock_quantity: qtdParsed
-            })
+            .update(payload)
             .eq('id', produtoId);
 
         setSalvando(false);
@@ -92,12 +127,13 @@ export default function DetalhesProduto() {
         if (error) {
             toast.error('Erro ao atualizar: ' + error.message);
         } else {
+            // Find brand name to update local state without fetching
+            const brandObj = marcas.find(m => m.id === marcaSelecionada);
+            
             setProduto({
                 ...produto,
-                name: nomeLimpo,
-                unit: unidade,
-                price_per_unit: precoParsed,
-                stock_quantity: qtdParsed
+                ...payload,
+                brands: brandObj ? { name: brandObj.name } : null
             });
             setNome(nomeLimpo);
             setEditando(false);
@@ -106,8 +142,8 @@ export default function DetalhesProduto() {
     };
 
     const handleDeletar = async () => {
-        if (confirm(`Tem certeza que deseja APAGAR o produto ${produto.name}?`)) {
-            setDeletando(true);
+        if (confirm(`Tem certeza que deseja APAGAR o produto "${produto.name}"? (Esta ação não pode ser desfeita)`)) {
+            setLoading(true);
             const { error } = await supabase
                 .from('products')
                 .delete()
@@ -117,140 +153,182 @@ export default function DetalhesProduto() {
                 router.push('/produtos');
             } else {
                 toast.error('Erro ao remover: ' + error.message);
-                setDeletando(false);
+                setLoading(false);
             }
         }
     };
 
-    if (loading) return <SplashScreen message="Carregando produto..." />;
-    if (!produto) return <p className="p-10 text-center text-red-500 font-bold">Produto não encontrado.</p>;
+    if (loading) return <SplashScreen message="Carregando detalhes..." />;
+
+    if (!produto) return (
+        <main className="min-h-screen bg-[#fcfbf8] p-6 flex flex-col justify-center items-center">
+            <p className="text-slate-500 mb-4 text-sm font-medium">Produto não encontrado.</p>
+            <button onClick={() => router.push('/produtos')} className="text-white font-bold px-4 py-2 bg-[#008080] rounded-xl text-sm">Voltar à lista</button>
+        </main>
+    );
 
     return (
-        <main className="min-h-screen bg-slate-50 p-6 pb-32">
-            <div className="flex items-center justify-between mb-8">
-                <div className="flex items-center gap-4">
-                    <button onClick={() => router.back()} className="text-slate-500 text-2xl">←</button>
-                    <h1 className="text-2xl font-black text-slate-800">Estoque</h1>
-                </div>
-                {!editando && (
-                    <button
-                        onClick={() => setEditando(true)}
-                        className="text-blue-600 font-bold bg-blue-50 px-4 py-2 rounded-xl"
-                    >
-                        Editar
-                    </button>
-                )}
+        <main className="min-h-screen bg-[#fcfbf8] pb-24">
+            {/* Header */}
+            <div className="flex items-center gap-3 px-4 py-4 pt-6 bg-white border-b border-slate-200 sticky top-0 z-10">
+                <button type="button" onClick={() => router.push('/produtos')} className="text-slate-800 transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+                </button>
+                <h1 className="text-lg font-bold text-slate-800">
+                    {editando ? "Editar Produto" : "Detalhes do Produto"}
+                </h1>
             </div>
 
-            {!editando ? (
-                // VISUALIZAÇÃO DOS DETALHES
-                <div className="space-y-6">
-                    <div className="bg-white p-6 rounded-[30px] shadow-sm border border-slate-100 flex flex-col items-center">
-                        <div className="w-20 h-20 bg-indigo-50 rounded-2xl flex items-center justify-center text-indigo-500 text-4xl mb-4">
-                            🧪
+            <div className="px-4 pt-2 pb-6 space-y-1">
+                {!editando ? (
+                    <div className="space-y-1">
+                        <div className="pt-4">
+                            <h2 className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block mb-1">Nome do Produto</h2>
+                            <p className="w-full border-b-2 border-slate-200 bg-transparent py-3 text-slate-800 text-sm font-medium">{produto.name}</p>
                         </div>
-                        <h2 className="text-2xl font-black text-slate-800 text-center">{produto.name}</h2>
-                        <p className="text-slate-400 font-bold text-sm bg-slate-50 px-3 py-1 rounded-lg mt-2 uppercase tracking-wide">
-                            Vendendo a {produto.unit}
-                        </p>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-4">
-                        <div className="bg-white p-6 rounded-[24px] shadow-sm border border-slate-100 flex flex-col justify-center items-center">
-                            <span className="text-slate-400 font-bold text-xs uppercase mb-1">Custo por {produto.unit}</span>
-                            <span className="text-3xl font-black text-slate-800">
-                                R$ {parseFloat(produto.price_per_unit).toFixed(2)}
-                            </span>
+                        <div className="pt-4">
+                            <h2 className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block mb-1">Marca</h2>
+                            <p className="w-full border-b-2 border-slate-200 bg-transparent py-3 text-slate-800 text-sm font-medium">{produto.brands?.name || 'Sem marca'}</p>
+                        </div>
+                        <div className="pt-4 grid grid-cols-2 gap-6">
+                            <div>
+                                <h2 className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block mb-1">Unidade</h2>
+                                <p className="w-full border-b-2 border-slate-200 bg-transparent py-3 text-slate-800 text-sm font-medium">{produto.unit}</p>
+                            </div>
+                            <div>
+                                <h2 className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block mb-1">Quantidade</h2>
+                                <p className="w-full border-b-2 border-slate-200 bg-transparent py-3 text-slate-800 text-sm font-medium">{produto.stock_quantity}</p>
+                            </div>
+                        </div>
+                        <div className="pt-4">
+                            <h2 className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block mb-1">Custo por Unidade (R$)</h2>
+                            <p className="w-full border-b-2 border-slate-200 bg-transparent py-3 text-slate-800 text-sm font-medium">R$ {parseFloat(produto.price_per_unit || 0).toFixed(2).replace('.', ',')}</p>
                         </div>
 
-                        <div className={`p-6 rounded-[24px] shadow-sm border flex flex-col justify-center items-center ${produto.stock_quantity > 0 ? 'bg-emerald-50 border-emerald-100' : 'bg-red-50 border-red-100'}`}>
-                            <span className={`font-bold text-xs uppercase mb-1 ${produto.stock_quantity > 0 ? 'text-emerald-600' : 'text-red-500'}`}>Em Estoque</span>
-                            <span className={`text-4xl font-black ${produto.stock_quantity > 0 ? 'text-emerald-500' : 'text-red-500'}`}>
-                                {produto.stock_quantity}
-                            </span>
+                        {userRole !== 'funcionario' && (
+                            <div className="pt-8 flex gap-4">
+                                <button
+                                    onClick={() => setEditando(true)}
+                                    className="flex-1 bg-[#2ECC71] hover:bg-[#27ae60] text-white py-3.5 rounded-xl font-bold text-sm tracking-wide shadow-sm active:scale-95 transition-all text-center uppercase"
+                                >
+                                    Editar Produto
+                                </button>
+                                <button
+                                    onClick={handleDeletar}
+                                    className="flex-1 bg-white border border-red-500 text-red-500 hover:bg-red-50 py-3.5 rounded-xl font-bold active:scale-95 transition-all text-sm uppercase text-center"
+                                >
+                                    Excluir Produto
+                                </button>
+                            </div>
+                        )}
+                    </div>
+                ) : (
+                    <form onSubmit={handleSalvar} className="space-y-1 flex flex-col">
+                        <div className="pt-4">
+                            <label className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block mb-1">Nome do Produto</label>
+                            <input
+                                type="text"
+                                required
+                                value={nome}
+                                onChange={(e) => setNome(e.target.value)}
+                                className="w-full border-b-2 border-slate-200 bg-transparent py-3 text-slate-800 placeholder:text-slate-400 focus:border-[#008080] focus:outline-none transition-colors text-sm"
+                            />
                         </div>
-                    </div>
 
-                    <button
-                        onClick={handleDeletar}
-                        disabled={deletando}
-                        className="w-full mt-8 p-4 text-red-500 font-bold bg-white border border-red-100 rounded-2xl active:bg-red-50 transition-colors"
-                    >
-                        {deletando ? 'Apagando...' : 'Excluir Produto'}
-                    </button>
-                </div>
-            ) : (
-                // MODO EDIÇÃO
-                <form onSubmit={handleSalvar} className="space-y-5 bg-white p-6 rounded-[30px] shadow-sm border border-slate-100">
-                    <div className="flex justify-between items-center mb-2">
-                        <h3 className="font-black text-slate-800 text-lg">Editar Produto</h3>
-                        <button
-                            type="button"
-                            onClick={() => {
-                                setEditando(false);
-                                setNome(produto.name);
-                                setUnidade(produto.unit);
-                                setPreco(produto.price_per_unit);
-                                setQuantidade(produto.stock_quantity);
-                            }}
-                            className="text-slate-400 font-bold text-sm"
-                        >
-                            Cancelar
-                        </button>
-                    </div>
-
-                    <div>
-                        <label className="block text-slate-500 font-bold mb-2 text-xs uppercase">Nome</label>
-                        <input
-                            type="text" required value={nome} onChange={(e) => setNome(e.target.value)}
-                            className="w-full p-4 rounded-2xl bg-slate-50 border-none focus:ring-2 ring-blue-500 font-medium"
-                        />
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-3">
-                        <div>
-                            <label className="block text-slate-500 font-bold mb-2 text-xs uppercase">Unidade</label>
+                        <div className="pt-4">
+                            <div className="flex items-center justify-between mb-1">
+                                <label className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block">Marca</label>
+                                <button
+                                    type="button"
+                                    onClick={() => router.push('/marcas/nova')}
+                                    className="text-[#008080] hover:text-[#006666] text-xs font-bold uppercase tracking-wide flex items-center gap-1 transition-colors"
+                                >
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+                                    Adicionar
+                                </button>
+                            </div>
                             <select
-                                value={unidade} onChange={(e) => setUnidade(e.target.value)}
-                                className="w-full p-4 rounded-2xl bg-slate-50 border-none focus:ring-2 ring-blue-500 font-medium appearance-none"
+                                value={marcaSelecionada}
+                                onChange={(e) => setMarcaSelecionada(e.target.value)}
+                                className="w-full border-b-2 border-slate-200 bg-transparent py-3 text-slate-800 focus:border-[#008080] focus:outline-none transition-colors text-sm appearance-none"
+                                style={{ backgroundImage: `url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%2394a3b8%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.4-12.8z%22%2F%3E%3C%2Fsvg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 0.5rem center', backgroundSize: '0.65em auto' }}
                             >
-                                <option value="Unidade">Unidade</option>
-                                <option value="Litro">Litro (L)</option>
-                                <option value="Kg">Quilo (Kg)</option>
-                                <option value="Grama">Grama (g)</option>
-                                <option value="ml">Mililitro (ml)</option>
-                                <option value="Pastilha">Pastilha</option>
+                                <option value="">Selecione uma marca...</option>
+                                {marcas.map(m => (
+                                    <option key={m.id} value={m.id}>{m.name}</option>
+                                ))}
                             </select>
                         </div>
 
-                        <div>
-                            <label className="block text-slate-500 font-bold mb-2 text-xs uppercase">Total Estoque</label>
+                        <div className="pt-4 grid grid-cols-2 gap-6">
+                            <div>
+                                <label className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block mb-1">Unidade</label>
+                                <select
+                                    value={unidade}
+                                    onChange={(e) => setUnidade(e.target.value)}
+                                    className="w-full border-b-2 border-slate-200 bg-transparent py-3 text-slate-800 focus:border-[#008080] focus:outline-none transition-colors text-sm appearance-none"
+                                    style={{ backgroundImage: `url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%2394a3b8%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.4-12.8z%22%2F%3E%3C%2Fsvg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 0.5rem center', backgroundSize: '0.65em auto' }}
+                                >
+                                    <option value="Unidade">Unidade (un)</option>
+                                    <option value="Litro">Litro (L)</option>
+                                    <option value="Kg">Quilo (kg)</option>
+                                    <option value="Grama">Grama (g)</option>
+                                    <option value="ml">Mililitro (ml)</option>
+                                    <option value="Pastilha">Pastilha</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block mb-1">Quantidade</label>
+                                <input
+                                    type="number"
+                                    step="1"
+                                    min="0"
+                                    required
+                                    value={quantidade}
+                                    onChange={(e) => setQuantidade(e.target.value)}
+                                    className="w-full border-b-2 border-slate-200 bg-transparent py-3 text-slate-800 placeholder:text-slate-400 focus:border-[#008080] focus:outline-none transition-colors text-sm"
+                                />
+                            </div>
+                        </div>
+
+                        <div className="pt-4">
+                            <label className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block mb-1">Custo por Unidade (R$)</label>
                             <input
-                                type="number" step="1" required value={quantidade} onChange={(e) => setQuantidade(e.target.value)}
-                                className="w-full p-4 rounded-2xl bg-slate-50 border-none focus:ring-2 ring-blue-500 font-medium"
+                                type="number"
+                                step="any"
+                                min="0"
+                                required
+                                value={preco}
+                                onChange={(e) => setPreco(e.target.value)}
+                                className="w-full border-b-2 border-slate-200 bg-transparent py-3 text-slate-800 placeholder:text-slate-400 focus:border-[#008080] focus:outline-none transition-colors text-sm"
                             />
                         </div>
-                    </div>
 
-                    <div>
-                        <label className="block text-slate-500 font-bold mb-2 text-xs uppercase">Custo {unidade}</label>
-                        <div className="relative">
-                            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold">R$</span>
-                            <input
-                                type="number" step="0.01" min="0" required value={preco} onChange={(e) => setPreco(e.target.value)}
-                                className="w-full pl-12 pr-4 p-4 rounded-2xl bg-slate-50 border-none focus:ring-2 ring-blue-500 font-medium"
-                            />
+                        <div className="pt-8 flex gap-4">
+                            <button
+                                type="button" onClick={() => {
+                                    setEditando(false);
+                                    setNome(produto.name);
+                                    setUnidade(produto.unit);
+                                    setPreco(produto.price_per_unit || '');
+                                    setQuantidade(produto.stock_quantity);
+                                    setMarcaSelecionada(produto.brand_id || '');
+                                }} disabled={salvando}
+                                className="flex-1 bg-white border border-slate-300 text-slate-600 hover:bg-slate-50 py-3.5 rounded-xl font-bold active:scale-95 transition-all text-sm uppercase text-center"
+                            >
+                                Cancelar
+                            </button>
+                            <button
+                                type="submit" disabled={salvando}
+                                className="flex-1 bg-[#2ECC71] hover:bg-[#27ae60] text-white py-3.5 rounded-xl font-bold tracking-wide shadow-sm active:scale-95 transition-all text-sm uppercase text-center"
+                            >
+                                {salvando ? 'Salvando...' : 'Salvar Alterações'}
+                            </button>
                         </div>
-                    </div>
-
-                    <button
-                        type="submit" disabled={salvando}
-                        className="w-full mt-4 bg-blue-600 text-white font-black py-4 rounded-2xl shadow-lg shadow-blue-200 active:scale-95 transition-all"
-                    >
-                        {salvando ? 'SALVANDO...' : 'SALVAR ALTERAÇÕES'}
-                    </button>
-                </form>
-            )}
+                    </form>
+                )}
+            </div>
         </main>
     );
 }

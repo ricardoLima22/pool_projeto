@@ -162,10 +162,10 @@ export default function EmployeeDashboard() {
                                 <span className="text-5xl drop-shadow-md">{weather.icon}</span>
                                 <div>
                                     <div className="flex items-baseline gap-2">
-                                        <span className="text-3xl font-black text-slate-800 tracking-tighter">{weather.temperature}°C</span>
-                                        <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest bg-slate-200/50 px-2 py-0.5 rounded-md">{weather.city}</span>
+                                        <span className="text-3xl font-bold text-slate-800">{weather.temperature}°C</span>
+                                        <span className="text-xs font-bold text-slate-500 uppercase bg-slate-200/50 px-2 py-0.5 rounded-md">{weather.city}</span>
                                     </div>
-                                    <p className="text-[11px] font-bold text-slate-400 mt-1">{weather.description}</p>
+                                    <p className="text-xs text-slate-500 mt-0.5">{weather.description}</p>
                                 </div>
                             </div>
                         </div>

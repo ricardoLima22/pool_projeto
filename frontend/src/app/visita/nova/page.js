@@ -311,26 +311,26 @@ function NovaVisita() {
             whatsappLimpo = `55${whatsappLimpo}`;
         }
 
-
+        
         // Monta a mensagem do WhatsApp adaptada para o novo formato
         let msg = `Olá ${cliente.name}! ✅ A manutenção da sua piscina foi finalizada.\n\n` +
             `*Status da Água:*\n` +
             (phAntes ? `- pH Inicial (Antes): ${phAntes}\n` : '') +
-            (phDepois ? `- pH Final (Depois): ${phDepois}\n` : '') +
-            `\n*Serviço executado:*\n` +
-            `Valor: R$ ${parseFloat(valorServico).toFixed(2)}\n\n`;
+            (phDepois ? `- pH Final (Depois): ${phDepois}\n` : '');
 
         // FUNCIONALIDADE PRONTA PARA O FUTURO (Apenas descomente abaixo quando quiser ativar em produção)
         // if (userProfile && userProfile.full_name) {
         //     msg += `Responsável pela Limpeza: ${userProfile.full_name}\n\n`;
         // }
 
-        if (observacao) {
-            msg += `*Observações:*\n${observacao}\n\n`;
+        if (itensTexto.length > 0) {
+            msg += `*Produtos utilizados na visita:*\n- ${itensTexto.join('\n- ')}\n\n`+
+            `\n*Serviço executado:*\n` +
+            `Valor: R$ ${parseFloat(valorServico).toFixed(2)}\n\n`;
         }
 
-        if (itensTexto.length > 0) {
-            msg += `*Produtos utilizados na visita:*\n- ${itensTexto.join('\n- ')}\n\n`;
+        if (observacao) {
+            msg += `*Observações:*\n${observacao}\n\n`;
         }
 
         // Chamada direta para a API Interna que aciona o GitHub Actions

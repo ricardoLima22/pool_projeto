@@ -191,7 +191,7 @@ function NovaVisita() {
         // Valida campos obrigatórios via borda vermelha, sem toast
         const novosErros = {};
 
-        if (!valorServico || isNaN(parseFloat(valorServico)) || parseFloat(valorServico) < 0) {
+        if (valorServico && (isNaN(parseFloat(valorServico)) || parseFloat(valorServico) < 0)) {
             novosErros.valorServico = true;
         }
 
@@ -246,7 +246,7 @@ function NovaVisita() {
             ph_antes: phAntes ? parseFloat(phAntes) : null,
             ph_depois: phDepois ? parseFloat(phDepois) : null,
             products_used: quantidades,
-            total_price: parseFloat(valorServico),
+            total_price: valorServico ? parseFloat(valorServico) : null,
             photo_antes: nomeArquivoAntes || null,
             photo_depois: nomeArquivoDepois || null,
             observacao: observacao || null,
@@ -323,7 +323,9 @@ function NovaVisita() {
             msg += `\n*Produtos utilizados na visita:*\n- ${itensTexto.join('\n- ')}\n`;
         }
 
-        msg += `\n*Serviço executado:*\nValor: R$ ${(parseFloat(valorServico) || 0).toFixed(2)}\n`;
+        if (valorServico && parseFloat(valorServico) > 0) {
+            msg += `\n*Serviço executado:*\nValor: R$ ${parseFloat(valorServico).toFixed(2)}\n`;
+        }
 
         if (observacao) {
             msg += `\n*Observações:*\n${observacao}\n`;

@@ -213,7 +213,6 @@ function NovaVisita() {
         }
 
         if (Object.keys(novosErros).length > 0) {
-            toast.error('Preencha os campos obrigatórios (marcados em vermelho).');
             setErros(novosErros);
             return;
         }

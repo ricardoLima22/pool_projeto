@@ -595,7 +595,7 @@ function NovaVisita() {
                 {/* Valor Cobrado */}
                 <div>
                     <h2 className="text-xs font-bold tracking-widest text-[#008080] mb-3">
-                        VALOR COBRADO
+                        VALOR COBRADO  (Opcional)
                     </h2>
                     <div className="flex items-center gap-2">
                         <span className="text-sm font-bold text-slate-400">R$</span>
@@ -608,7 +608,7 @@ function NovaVisita() {
                             onChange={(e) => { setValorServico(e.target.value); setErros(prev => ({ ...prev, valorServico: false })); }}
                             className={`border-0 border-b-2 rounded-none bg-transparent text-[18px] font-bold focus:outline-none focus:ring-0 transition-colors w-full px-0 py-1 ${erros.valorServico ? 'border-red-500 text-red-600' : 'border-[#008080]/30 text-slate-800 focus:border-[#008080]'}`}
                         />
-                        <span className="text-sm font-bold text-slate-400">Opcional</span>
+                        
                     </div>
                 </div>
 

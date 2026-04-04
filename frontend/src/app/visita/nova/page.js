@@ -608,10 +608,9 @@ function NovaVisita() {
                     </div>
                 </div>
 
-                {/* Botão Finalizar */}
                 <button
                     onClick={finalizarVisita}
-                    disabled={enviando || !valorServico}
+                    disabled={enviando}
                     className="w-full flex items-center justify-center bg-[#2ECC71] hover:bg-[#27ae60] text-white h-14 rounded-xl font-bold tracking-wide active:scale-[0.98] transition-all shadow-md disabled:opacity-50 disabled:active:scale-100 mt-8 mb-4"
                 >
                     {enviando ? "SALVANDO..." : (

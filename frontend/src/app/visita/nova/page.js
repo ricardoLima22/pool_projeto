@@ -188,8 +188,11 @@ function NovaVisita() {
     };
 
     const finalizarVisita = async () => {
-        // Valida campos obrigatórios via borda vermelha, sem toast
+        // Valida campos obrigatórios via borda vermelha
         const novosErros = {};
+
+        if (!fotoAntes) novosErros.fotoAntes = true;
+        if (!fotoDepois) novosErros.fotoDepois = true;
 
         if (valorServico && (isNaN(parseFloat(valorServico)) || parseFloat(valorServico) < 0)) {
             novosErros.valorServico = true;
@@ -210,6 +213,7 @@ function NovaVisita() {
         }
 
         if (Object.keys(novosErros).length > 0) {
+            toast.error('Preencha os campos obrigatórios (marcados em vermelho).');
             setErros(novosErros);
             return;
         }
@@ -502,7 +506,7 @@ function NovaVisita() {
 
                     {/* Fotos */}
                     <div className="grid grid-cols-2 gap-3 mb-4">
-                        <label className={`flex flex-col items-center justify-center gap-2 h-40 rounded-xl border-2 border-dashed ${fotoAntes ? 'border-[#008080]/40 bg-white shadow-sm' : 'border-[#008080]/30 bg-[#008080]/5'} hover:bg-[#008080]/10 transition-colors cursor-pointer overflow-hidden relative`}>
+                        <label className={`flex flex-col items-center justify-center gap-2 h-40 rounded-xl border-2 border-dashed ${erros.fotoAntes ? 'border-red-500 bg-red-50 text-red-500' : fotoAntes ? 'border-[#008080]/40 bg-white shadow-sm' : 'border-[#008080]/30 bg-[#008080]/5'} hover:bg-[#008080]/10 transition-colors cursor-pointer overflow-hidden relative`}>
                             {fotoAntes ? (
                                 <img src={URL.createObjectURL(fotoAntes)} alt="Antes" className="w-full h-full object-cover" />
                             ) : (
@@ -511,12 +515,12 @@ function NovaVisita() {
                                     <span className="text-xs text-[#008080]/70 font-medium text-center px-4">Foto Antes (Câmera ou Galeria)</span>
                                 </>
                             )}
-                            <input type="file" accept="image/*" className="hidden" onChange={(e) => setFotoAntes(e.target.files[0])} />
+                            <input type="file" accept="image/*" className="hidden" onChange={(e) => { setFotoAntes(e.target.files[0]); setErros(prev => ({ ...prev, fotoAntes: false })); }} />
                         </label>
 
                         <label 
                             onClick={(e) => { if(!fotoAntes) { e.preventDefault(); toast.error('Por favor, registre a Foto Antes primeiro.'); } }}
-                            className={`flex flex-col items-center justify-center gap-2 h-40 rounded-xl border-2 border-dashed ${fotoDepois ? 'border-[#2ECC71]/40 bg-white shadow-sm' : !fotoAntes ? 'border-slate-200 bg-slate-50 opacity-60 cursor-not-allowed' : 'border-[#2ECC71]/40 bg-[#2ECC71]/5'} hover:bg-[#2ECC71]/10 transition-colors cursor-pointer overflow-hidden relative`}
+                            className={`flex flex-col items-center justify-center gap-2 h-40 rounded-xl border-2 border-dashed ${erros.fotoDepois ? 'border-red-500 bg-red-50 text-red-500' : fotoDepois ? 'border-[#2ECC71]/40 bg-white shadow-sm' : !fotoAntes ? 'border-slate-200 bg-slate-50 opacity-60 cursor-not-allowed' : 'border-[#2ECC71]/40 bg-[#2ECC71]/5'} hover:bg-[#2ECC71]/10 transition-colors cursor-pointer overflow-hidden relative`}
                         >
                             {fotoDepois ? (
                                 <img src={URL.createObjectURL(fotoDepois)} alt="Depois" className="w-full h-full object-cover" />
@@ -527,7 +531,7 @@ function NovaVisita() {
                                     {fotoAntes && <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-[#2ECC71]" />}
                                 </>
                             )}
-                            <input type="file" accept="image/*" disabled={!fotoAntes} className="hidden" onChange={(e) => setFotoDepois(e.target.files[0])} />
+                            <input type="file" accept="image/*" disabled={!fotoAntes} className="hidden" onChange={(e) => { setFotoDepois(e.target.files[0]); setErros(prev => ({ ...prev, fotoDepois: false })); }} />
                         </label>
                     </div>
 

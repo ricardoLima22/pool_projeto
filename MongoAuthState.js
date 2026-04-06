@@ -6,7 +6,7 @@ async function useMongoDBAuthState(collection) {
     // Dynamic import to support ESM format required by newer Baileys versions
     const baileys = await import('@whiskeysockets/baileys');
     const { BufferJSON, initAuthCreds } = baileys;
-    const { proto } = await import('@whiskeysockets/baileys/WAProto');
+    const { proto } = await import('@whiskeysockets/baileys/WAProto/index.js');
 
     const writeData = async (data, id) => {
         try {

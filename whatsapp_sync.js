@@ -2,8 +2,6 @@ require('dotenv').config();
 const mongoose = require('mongoose');
 const { createClient } = require('@supabase/supabase-js');
 const { useMongoDBAuthState } = require('./MongoAuthState');
-const makeWASocket = require('@whiskeysockets/baileys').default;
-const { DisconnectReason, Browsers, fetchLatestBaileysVersion } = require('@whiskeysockets/baileys');
 const pino = require('pino');
 
 // Database Configurations
@@ -66,6 +64,11 @@ async function syncSession(company) {
         console.log(`======================================================\n`);
 
         async function connectWhatsApp() {
+            // Dynamic import to support ESM format required by newer Baileys versions
+            const baileys = await import('@whiskeysockets/baileys');
+            const makeWASocket = baileys.default;
+            const { DisconnectReason, Browsers, fetchLatestBaileysVersion } = baileys;
+
             const collection = mongoose.connection.db.collection(company.whatsapp_session);
             const { state, saveCreds } = await useMongoDBAuthState(collection);
             const { version } = await fetchLatestBaileysVersion();

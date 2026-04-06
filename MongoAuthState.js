@@ -1,11 +1,12 @@
-const { BufferJSON, initAuthCreds } = require('@whiskeysockets/baileys');
-const { proto } = require('@whiskeysockets/baileys/WAProto');
-
 /**
  * Hook nativo para injeção de estado no Baileys (Substitui o useMultiFileAuthState)
  * Compatível exatamente com o uso de `collection` root.
  */
 async function useMongoDBAuthState(collection) {
+    // Dynamic import to support ESM format required by newer Baileys versions
+    const baileys = await import('@whiskeysockets/baileys');
+    const { BufferJSON, initAuthCreds } = baileys;
+    const { proto } = await import('@whiskeysockets/baileys/WAProto');
 
     const writeData = async (data, id) => {
         try {

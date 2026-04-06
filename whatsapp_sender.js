@@ -38,11 +38,14 @@ mongoose.connect(MONGODB_URI).then(async () => {
     console.log(">> 1. Conectado ao MongoDB. Mongoose pronto.");
     
     const { useMongoDBAuthState } = require('./MongoAuthState');
-    const makeWASocket = require('@whiskeysockets/baileys').default;
-    const { DisconnectReason, delay, Browsers, fetchLatestBaileysVersion } = require('@whiskeysockets/baileys');
     const pino = require('pino');
 
     async function connectWhatsApp() {
+        // Dynamic import to support ESM format required by newer Baileys versions
+        const baileys = await import('@whiskeysockets/baileys');
+        const makeWASocket = baileys.default;
+        const { DisconnectReason, delay, Browsers, fetchLatestBaileysVersion } = baileys;
+
         const collection = mongoose.connection.db.collection(session_id);
         const { state, saveCreds } = await useMongoDBAuthState(collection);
         const { version } = await fetchLatestBaileysVersion();

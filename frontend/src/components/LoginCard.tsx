@@ -106,7 +106,7 @@ const LoginCard = () => {
           <Droplets className="w-7 h-7 text-primary" />
         </div>
         <h1 className="text-2xl font-semibold tracking-tight text-primary">
-          Pool Light
+          Pureza Azul
         </h1>
       </div>
 
@@ -120,7 +120,7 @@ const LoginCard = () => {
       >
         {/* Welcome */}
         <h2 className="text-xl font-semibold text-card-foreground text-center mb-1">
-          Bem-vindo ao Pool Light!
+          Bem-vindo ao Pureza Azul!
         </h2>
         <p className="text-sm text-muted-foreground text-center mb-6">
           Acesse sua jornada diária.
@@ -246,7 +246,7 @@ const LoginCard = () => {
 
       {/* Footer */}
       <p className="text-xs text-foreground/30 text-center mt-6">
-        © 2026 Pool Light · Gestão inteligente de piscinas
+        © 2026 Pureza Azul · Gestão inteligente de piscinas
       </p>
     </motion.div>
   );

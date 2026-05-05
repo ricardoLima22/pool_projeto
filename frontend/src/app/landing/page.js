@@ -80,7 +80,7 @@ export default function LandingPage() {
         borderBottom: scrolled ? '1px solid rgba(255,255,255,0.08)' : 'none',
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <img src="/logo.png" alt="Pool Light Logo" style={{ height: 36, width: 'auto', objectFit: 'contain' }} />
+          <img src="/logo.png" alt="Pureza Azul Logo" style={{ height: 36, width: 'auto', objectFit: 'contain' }} />
         </div>
         <div style={{ display: 'flex', gap: 32, alignItems: 'center' }}>
           <a className="nav-link" onClick={() => document.getElementById('como-funciona')?.scrollIntoView({ behavior: 'smooth' })}>Como funciona</a>
@@ -135,7 +135,7 @@ export default function LandingPage() {
               <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 20, paddingBottom: 16, borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
                 <div style={{ width: 40, height: 40, borderRadius: '50%', background: '#25D366', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20 }}>💧</div>
                 <div>
-                  <p style={{ color: 'white', fontWeight: 700, fontSize: 14 }}>Pool Light Bot</p>
+                  <p style={{ color: 'white', fontWeight: 700, fontSize: 14 }}>Pureza Azul Bot</p>
                   <p style={{ color: '#25D366', fontSize: 12 }}>✓ Enviado automaticamente</p>
                 </div>
               </div>
@@ -272,7 +272,7 @@ export default function LandingPage() {
               <div style={{ background: '#075E54', borderRadius: '16px 16px 0 0', padding: '12px 16px', display: 'flex', alignItems: 'center', gap: 10, margin: '-24px -24px 16px' }}>
                 <div style={{ width: 36, height: 36, borderRadius: '50%', background: '#25D366', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18 }}>💧</div>
                 <div>
-                  <p style={{ color: 'white', fontWeight: 600, fontSize: 14 }}>Pool Light Bot</p>
+                  <p style={{ color: 'white', fontWeight: 600, fontSize: 14 }}>Pureza Azul Bot</p>
                   <p style={{ color: '#8bcea8', fontSize: 11 }}>online agora</p>
                 </div>
               </div>
@@ -414,7 +414,7 @@ export default function LandingPage() {
       <section style={{ padding: '100px 24px', background: 'linear-gradient(135deg, #0a1f3a, #0a6b7a)', textAlign: 'center' }}>
         <div style={{ maxWidth: 600, margin: '0 auto' }}>
           <div style={{ marginBottom: 24 }}>
-            <img src="/logo.png" alt="Pool Light" style={{ height: 72, width: 'auto', objectFit: 'contain' }} />
+            <img src="/logo.png" alt="Pureza Azul" style={{ height: 72, width: 'auto', objectFit: 'contain' }} />
           </div>
           <h2 style={{ fontSize: 'clamp(28px, 4vw, 44px)', fontWeight: 900, color: 'white', letterSpacing: '-1.5px', marginBottom: 20 }}>
             Pronto para impressionar seus clientes?
@@ -434,10 +434,10 @@ export default function LandingPage() {
       {/* FOOTER */}
       <footer style={{ background: '#0a1020', padding: '40px 24px', textAlign: 'center' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, marginBottom: 16 }}>
-          <img src="/logo.png" alt="Pool Light" style={{ height: 32, width: 'auto', objectFit: 'contain' }} />
+          <img src="/logo.png" alt="Pureza Azul" style={{ height: 32, width: 'auto', objectFit: 'contain' }} />
         </div>
         <p style={{ color: '#475569', fontSize: 13 }}>
-          © {new Date().getFullYear()} Pool Light. Feito para piscineiros brasileiros. 🇧🇷
+          © {new Date().getFullYear()} Pureza Azul. Feito para piscineiros brasileiros. 🇧🇷
         </p>
         <div style={{ display: 'flex', gap: 24, justifyContent: 'center', marginTop: 16 }}>
           <a onClick={() => router.push('/login')} style={{ color: '#64748b', fontSize: 13, cursor: 'pointer', textDecoration: 'none' }}>Entrar</a>

@@ -173,7 +173,7 @@ export default function Dashboard() {
                     <div className="flex items-center justify-between mb-6">
                         <div className="flex items-center gap-2">
                             <Droplets className="h-6 w-6 text-cyan-200" />
-                            <span className="font-bold tracking-tight text-lg">Pool Light</span>
+                            <span className="font-bold tracking-tight text-lg">Pureza Azul</span>
                         </div>
                         <button onClick={handleLogout} className="flex items-center gap-2 text-sm opacity-80 hover:opacity-100 transition-opacity">
                             <LogOut className="h-4 w-4" />

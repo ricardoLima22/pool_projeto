@@ -1,6 +1,6 @@
 {
-    "name": "PoolControl",
-    "short_name": "PoolControl",
+    "name": "Pureza Azul",
+    "short_name": "Pureza Azul",
     "description": "Gerenciamento de limpeza de piscinas",
     "start_url": "/home",
     "display": "standalone",

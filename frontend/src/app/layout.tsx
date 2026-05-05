@@ -19,7 +19,7 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: "Pool Light",
+  title: "Pureza Azul",
   description: "Gerenciamento de limpeza de piscinas",
   manifest: "/manifest.json",
   icons: {

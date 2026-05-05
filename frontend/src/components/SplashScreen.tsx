@@ -66,8 +66,8 @@ export default function SplashScreen({ message = "Carregando sistema" }: { messa
         @keyframes logo-pulse { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.85; transform: scale(1.04); } }
         @keyframes dot-bounce { 0%,80%,100% { transform: scale(0.6); opacity: 0.4; } 40% { transform: scale(1); opacity: 1; } }
       `}</style>
-      <img src="/logo.png" alt="Pool Light" className="splash-logo" />
-      <div className="splash-title">Pool Light</div>
+      <img src="/logo.png" alt="Pureza Azul" className="splash-logo" />
+      <div className="splash-title">Pureza Azul</div>
       <div className="splash-subtitle">{message}</div>
       <div className="splash-dots">
         <span></span>

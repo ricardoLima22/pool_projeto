@@ -31,14 +31,13 @@ export default function SplashScreen({ message = "Carregando sistema" }: { messa
       }}
     >
       <style>{`
-        .splash-logo-ring {
-          width: 80px;
-          height: 80px;
-          border-radius: 50%;
-          border: 4px solid rgba(255,255,255,0.15);
-          border-top-color: #fff;
-          animation: spin 1s linear infinite;
+        .splash-logo {
+          width: 140px;
+          height: auto;
+          object-fit: contain;
           margin-bottom: 32px;
+          animation: logo-pulse 2s ease-in-out infinite;
+          filter: drop-shadow(0 0 20px rgba(0,206,201,0.5));
         }
         .splash-title {
           color: #fff;
@@ -64,10 +63,10 @@ export default function SplashScreen({ message = "Carregando sistema" }: { messa
         }
         .splash-dots span:nth-child(2) { animation-delay: 0.2s; }
         .splash-dots span:nth-child(3) { animation-delay: 0.4s; }
-        @keyframes spin { to { transform: rotate(360deg); } }
+        @keyframes logo-pulse { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.85; transform: scale(1.04); } }
         @keyframes dot-bounce { 0%,80%,100% { transform: scale(0.6); opacity: 0.4; } 40% { transform: scale(1); opacity: 1; } }
       `}</style>
-      <div className="splash-logo-ring"></div>
+      <img src="/logo.png" alt="Pool Light" className="splash-logo" />
       <div className="splash-title">Pool Light</div>
       <div className="splash-subtitle">{message}</div>
       <div className="splash-dots">

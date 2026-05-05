@@ -10,7 +10,7 @@ const inter = Inter({
 });
 
 export const viewport: Viewport = {
-  themeColor: "#ffffff",
+  themeColor: "#00c8d4",
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
@@ -19,9 +19,13 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: "PoolControl",
+  title: "Pool Light",
   description: "Gerenciamento de limpeza de piscinas",
   manifest: "/manifest.json",
+  icons: {
+    icon: "/logo.png",
+    apple: "/logo.png",
+  },
 };
 
 export default function RootLayout({

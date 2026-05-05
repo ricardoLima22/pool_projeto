@@ -80,8 +80,7 @@ export default function LandingPage() {
         borderBottom: scrolled ? '1px solid rgba(255,255,255,0.08)' : 'none',
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <span style={{ fontSize: 22 }}>💧</span>
-          <span style={{ color: 'white', fontWeight: 800, fontSize: 18, letterSpacing: '-0.5px' }}>Pool Light</span>
+          <img src="/logo.png" alt="Pool Light Logo" style={{ height: 36, width: 'auto', objectFit: 'contain' }} />
         </div>
         <div style={{ display: 'flex', gap: 32, alignItems: 'center' }}>
           <a className="nav-link" onClick={() => document.getElementById('como-funciona')?.scrollIntoView({ behavior: 'smooth' })}>Como funciona</a>
@@ -414,7 +413,9 @@ export default function LandingPage() {
       {/* FINAL CTA */}
       <section style={{ padding: '100px 24px', background: 'linear-gradient(135deg, #0a1f3a, #0a6b7a)', textAlign: 'center' }}>
         <div style={{ maxWidth: 600, margin: '0 auto' }}>
-          <div style={{ fontSize: 56, marginBottom: 24 }}>💧</div>
+          <div style={{ marginBottom: 24 }}>
+            <img src="/logo.png" alt="Pool Light" style={{ height: 72, width: 'auto', objectFit: 'contain' }} />
+          </div>
           <h2 style={{ fontSize: 'clamp(28px, 4vw, 44px)', fontWeight: 900, color: 'white', letterSpacing: '-1.5px', marginBottom: 20 }}>
             Pronto para impressionar seus clientes?
           </h2>
@@ -433,8 +434,7 @@ export default function LandingPage() {
       {/* FOOTER */}
       <footer style={{ background: '#0a1020', padding: '40px 24px', textAlign: 'center' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, marginBottom: 16 }}>
-          <span style={{ fontSize: 20 }}>💧</span>
-          <span style={{ color: 'white', fontWeight: 800, fontSize: 16 }}>Pool Light</span>
+          <img src="/logo.png" alt="Pool Light" style={{ height: 32, width: 'auto', objectFit: 'contain' }} />
         </div>
         <p style={{ color: '#475569', fontSize: 13 }}>
           © {new Date().getFullYear()} Pool Light. Feito para piscineiros brasileiros. 🇧🇷

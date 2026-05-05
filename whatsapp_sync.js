@@ -1,6 +1,7 @@
 require('dotenv').config();
 const mongoose = require('mongoose');
 const { createClient } = require('@supabase/supabase-js');
+const ws = require('ws');
 const { useMongoDBAuthState } = require('./MongoAuthState');
 const pino = require('pino');
 
@@ -15,7 +16,9 @@ if (!MONGODB_URI || !SUPABASE_URL || !SUPABASE_KEY) {
     process.exit(1);
 }
 
-const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+const supabase = createClient(SUPABASE_URL, SUPABASE_KEY, {
+    realtime: { transport: ws }
+});
 
 async function getAllActiveCompanies() {
     console.log("-> Buscando todas as sessões registradas no Supabase...");

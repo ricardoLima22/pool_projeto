@@ -614,10 +614,10 @@ function NovaVisita() {
                     </div>
                 </div>
 
-                <div>  
-                    <h1 className="text-xs font-bold tracking-widest text-[#008080] mb-3">
-                        Lembre-se de verificar registro ao finalizar visita!
-                    </h1>
+                <div className="flex justify-center mt-2 mb-2">  
+                    <p className="text-xs italic text-slate-500 text-center">
+                        Lembre-se de verificar o registro da água ao finalizar a visita!                
+                    </p>
                 </div>
 
                 {/* Botão Enviar */}

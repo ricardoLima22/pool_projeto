@@ -661,7 +661,7 @@ function NovaVisita() {
 
                     <div className="px-6 py-5 bg-slate-50 border-t border-slate-200">
                         <p className="text-xs text-slate-500 leading-relaxed text-center mb-4">
-                            ⚠️ Confirme que todos os itens acima foram verificados antes de finalizar a visita.
+                            Confirme que todos os itens acima foram verificados antes de finalizar a visita.
                         </p>
                         <button
                             onClick={finalizarVisita}

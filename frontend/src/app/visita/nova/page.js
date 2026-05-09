@@ -614,6 +614,13 @@ function NovaVisita() {
                     </div>
                 </div>
 
+                <div>  
+                    <h1 className="text-xs font-bold tracking-widest text-[#008080] mb-3">
+                        Lembre-se de verificar registro ao finalizar visita!
+                    </h1>
+                </div>
+
+                {/* Botão Enviar */}
                 <button
                     onClick={finalizarVisita}
                     disabled={enviando}

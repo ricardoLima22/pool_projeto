@@ -5,8 +5,9 @@ import { useState, useEffect, Suspense } from 'react';
 import { supabase } from '../../../lib/supabase';
 import { useSearchParams, useRouter } from 'next/navigation';
 import SplashScreen from '../../../components/SplashScreen';
-import { ArrowLeft, Camera, Sparkles, Minus, Plus, Send } from 'lucide-react';
+import { ArrowLeft, Camera, Sparkles, Minus, Plus, Send, AlertTriangle } from 'lucide-react';
 import { toast } from 'sonner';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '../../../components/ui/dialog';
 
 export default function NovaVisitaPage() {
     return (
@@ -41,6 +42,7 @@ function NovaVisita() {
     const [observacao, setObservacao] = useState('');
     const [enviando, setEnviando] = useState(false);
     const [erros, setErros] = useState({});
+    const [showChecklist, setShowChecklist] = useState(false);
 
     const router = useRouter();
 
@@ -189,7 +191,7 @@ function NovaVisita() {
         }
     };
 
-    const finalizarVisita = async () => {
+    const handleFinalizarClick = () => {
         // Valida campos obrigatórios via borda vermelha
         const novosErros = {};
 
@@ -220,8 +222,12 @@ function NovaVisita() {
         }
 
         setErros({});
+        setShowChecklist(true);
+    };
 
+    const finalizarVisita = async () => {
         setEnviando(true);
+        setShowChecklist(false);
 
         // Faz o upload de ambas as fotos independentemente com os novos prefixos
         const [resultadoAntes, resultadoDepois] = await Promise.all([
@@ -622,7 +628,7 @@ function NovaVisita() {
 
                 {/* Botão Enviar */}
                 <button
-                    onClick={finalizarVisita}
+                    onClick={handleFinalizarClick}
                     disabled={enviando}
                     className="w-full flex items-center justify-center bg-[#2ECC71] hover:bg-[#27ae60] text-white h-14 rounded-xl font-bold tracking-wide active:scale-[0.98] transition-all shadow-md disabled:opacity-50 disabled:active:scale-100 mt-8 mb-4"
                 >
@@ -634,6 +640,39 @@ function NovaVisita() {
                     )}
                 </button>
             </div>
+
+            <Dialog open={showChecklist} onOpenChange={setShowChecklist}>
+                <DialogContent className="max-w-md rounded-2xl p-0 overflow-hidden gap-0 border-0 shadow-2xl w-[90vw]">
+                    <div className="bg-[#008080] px-6 pt-6 pb-5 text-white">
+                        <div className="flex items-center gap-3 mb-2">
+                            <div className="bg-white/20 rounded-full p-2">
+                                <AlertTriangle className="h-5 w-5" />
+                            </div>
+                            <DialogHeader className="text-left space-y-0">
+                                <DialogTitle className="text-white text-lg font-bold">
+                                    Antes de sair, confirme:
+                                </DialogTitle>
+                            </DialogHeader>
+                        </div>
+                        <DialogDescription className="text-white/90 text-sm leading-relaxed mt-2">
+                            Limpeza concluída! Antes de sair, verifique se o filtro está na posição <strong className="text-white font-bold">'Filtrar'</strong>, se os registros de aspiração e esgoto estão fechados, se o pré-filtro da bomba está limpo e se o timer de filtragem está programado corretamente.
+                        </DialogDescription>
+                    </div>
+
+                    <div className="px-6 py-5 bg-slate-50 border-t border-slate-200">
+                        <p className="text-xs text-slate-500 leading-relaxed text-center mb-4">
+                            ⚠️ Confirme que todos os itens acima foram verificados antes de finalizar a visita.
+                        </p>
+                        <button
+                            onClick={finalizarVisita}
+                            className="w-full flex items-center justify-center bg-[#2ECC71] hover:bg-[#27ae60] text-white h-12 rounded-xl font-bold tracking-wide active:scale-[0.98] transition-all shadow-md"
+                        >
+                            SIM, TUDO CERTO! FINALIZAR
+                            <Send className="h-4 w-4 ml-2" />
+                        </button>
+                    </div>
+                </DialogContent>
+            </Dialog>
         </div>
     );
 }

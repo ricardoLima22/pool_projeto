@@ -614,7 +614,7 @@ function NovaVisita() {
                     </div>
                 </div>
 
-                <div className="flex justify-center mt-2 mb-2">  
+                <div className="text-xs font-bold tracking-widest text-[#008080] mb-3">  
                     <p className="text-xs italic text-slate-500 text-center">
                         Lembre-se de verificar o registro da água ao finalizar a visita!                
                     </p>

@@ -17,6 +17,9 @@ export default function DetalhesCliente() {
     const [email, setEmail] = useState('');
     const [endereco, setEndereco] = useState('');
     const [volume, setVolume] = useState('');
+    const [price, setPrice] = useState('');
+    const [funcionarioId, setFuncionarioId] = useState('');
+    const [funcionarios, setFuncionarios] = useState([]);
     const [salvando, setSalvando] = useState(false);
     const [userRole, setUserRole] = useState('');
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -31,7 +34,9 @@ export default function DetalhesCliente() {
 
         async function fetchCliente() {
             if (!id) return;
-            const { data, error } = await supabase
+
+            // Busca o cliente
+            const { data } = await supabase
                 .from('customers')
                 .select('*')
                 .eq('id', id)
@@ -43,7 +48,21 @@ export default function DetalhesCliente() {
                 setWhatsapp(data.whatsapp);
                 setEmail(data.email || '');
                 setEndereco(data.address || '');
-                setVolume(data.pool_volume_m3);
+                setVolume(data.pool_volume_m3 ?? '');
+                setPrice(data.price ?? '');
+                setFuncionarioId(data.funcionario_id || '');
+
+                // Busca funcionários da mesma empresa
+                const { data: funcs } = await supabase
+                    .from('profiles')
+                    .select('id, full_name, roles(name)')
+                    .eq('company_id', data.company_id)
+                    .eq('roles.name', 'Funcionario');
+
+                const apenasFunc = (funcs || []).filter(
+                    (p) => p.roles?.name === 'Funcionario'
+                );
+                setFuncionarios(apenasFunc);
             }
             setLoading(false);
         }
@@ -89,12 +108,14 @@ export default function DetalhesCliente() {
                 whatsapp: somenteNumeros,
                 email,
                 address: endereco,
-                pool_volume_m3: parseFloat(volume)
+                pool_volume_m3: parseFloat(volume),
+                price: price !== '' ? parseFloat(price) : null,
+                funcionario_id: funcionarioId || null
             })
             .eq('id', id);
 
         if (!error) {
-            setCliente({ ...cliente, name: nomeLimpo, whatsapp: somenteNumeros, email, address: endereco, pool_volume_m3: parseFloat(volume) });
+            setCliente({ ...cliente, name: nomeLimpo, whatsapp: somenteNumeros, email, address: endereco, pool_volume_m3: parseFloat(volume), price: price !== '' ? parseFloat(price) : null, funcionario_id: funcionarioId || null });
             setNome(nomeLimpo);
             setEditando(false);
             toast.success('Cliente atualizado com sucesso!');
@@ -155,10 +176,22 @@ export default function DetalhesCliente() {
                             <p className="w-full border-b-2 border-slate-200 bg-transparent py-3 text-slate-800 text-sm font-medium">{cliente.address || 'Não informado'}</p>
                         </div>
                         <div className="pt-4">
+                            <h2 className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block mb-1">Valor (R$)</h2>
+                            <p className="w-full border-b-2 border-slate-200 bg-transparent py-3 text-slate-800 text-sm font-medium">
+                                {cliente.price != null ? `R$ ${Number(cliente.price).toFixed(2).replace('.', ',')}` : 'Não informado'}
+                            </p>
+                        </div>
+                        <div className="pt-4">
                             <h2 className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block mb-1">Volume da Piscina (m³)</h2>
                             <div className="w-full border-b-2 border-slate-200 bg-transparent py-3">
                                 <p className="text-sm font-bold text-[#3b82f6] bg-blue-50 inline-block px-3 py-1 rounded-md">{cliente.pool_volume_m3} m³</p>
                             </div>
+                        </div>
+                        <div className="pt-4">
+                            <h2 className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block mb-1">Funcionário Responsável</h2>
+                            <p className="w-full border-b-2 border-slate-200 bg-transparent py-3 text-slate-800 text-sm font-medium">
+                                {funcionarios.find(f => f.id === cliente.funcionario_id)?.full_name || 'Não atribuído'}
+                            </p>
                         </div>
 
                         {userRole !== 'funcionario' && (
@@ -209,17 +242,41 @@ export default function DetalhesCliente() {
                             />
                         </div>
                         <div className="pt-4">
-                            <label className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block mb-1">Volume (m³)</label>
+                            <label className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block mb-1">Valor (R$)</label>
                             <input
-                                required type="number" step="0.1" min="0" value={volume} 
+                                type="number" step="0.01" min="0" value={price}
+                                placeholder="Ex: 150.00"
                                 onChange={(e) => {
                                     const val = e.target.value;
-                                    if (val === '' || Number(val) >= 0) {
-                                        setVolume(val);
-                                    }
+                                    if (val === '' || Number(val) >= 0) setPrice(val);
                                 }}
                                 className="w-full border-b-2 border-slate-200 bg-transparent py-3 text-slate-800 placeholder:text-slate-400 focus:border-[#008080] focus:outline-none transition-colors text-sm"
                             />
+                        </div>
+                        <div className="pt-4">
+                            <label className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block mb-1">Volume (m³)</label>
+                            <input
+                                required type="number" step="0.1" min="0" value={volume}
+                                onChange={(e) => {
+                                    const val = e.target.value;
+                                    if (val === '' || Number(val) >= 0) setVolume(val);
+                                }}
+                                className="w-full border-b-2 border-slate-200 bg-transparent py-3 text-slate-800 placeholder:text-slate-400 focus:border-[#008080] focus:outline-none transition-colors text-sm"
+                            />
+                        </div>
+                        <div className="pt-4">
+                            <label className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block mb-1">Funcionário Responsável (Opcional)</label>
+                            <select
+                                value={funcionarioId}
+                                onChange={(e) => setFuncionarioId(e.target.value)}
+                                className="w-full border-b-2 border-slate-200 bg-transparent py-3 text-slate-800 focus:border-[#008080] focus:outline-none transition-colors text-sm appearance-none"
+                                style={{ backgroundImage: `url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%2394a3b8%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.4-12.8z%22%2F%3E%3C%2Fsvg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 0.5rem center', backgroundSize: '0.65em auto' }}
+                            >
+                                <option value="">Selecione um funcionário...</option>
+                                {funcionarios.map((f) => (
+                                    <option key={f.id} value={f.id}>{f.full_name}</option>
+                                ))}
+                            </select>
                         </div>
 
                         <div className="pt-8 flex gap-4">

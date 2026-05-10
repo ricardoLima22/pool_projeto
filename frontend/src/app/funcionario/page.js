@@ -74,11 +74,14 @@ export default function EmployeeDashboard() {
             try {
                 // Para o funcionário, podemos buscar chamados atribuídos a ele (profile_id)
                 const [customersRes, customersCountRes, ticketsCountRes, upcomingRes] = await Promise.all([
-                    // Se a tabela customer não tem profile_id, listamos os clientes da empresa ou limitamos a alguns
-                    supabase.from('customers').select('*').eq('company_id', companyId).limit(4),
+
+                    //supabase.from('customers').select('*').eq('company_id', companyId).limit(4),
+                    // Apenas clientes atribuídos a este funcionário
+                    supabase.from('customers').select('*').eq('company_id', companyId).eq('funcionario_id', profileId).limit(4),
                     
-                    // Contagem total de clientes da empresa deste funcionário
-                    supabase.from('customers').select('*', { count: 'exact', head: true }).eq('company_id', companyId),
+                    //supabase.from('customers').select('*', { count: 'exact', head: true }).eq('company_id', companyId),
+                    // Contagem de clientes atribuídos a este funcionário
+                    supabase.from('customers').select('*', { count: 'exact', head: true }).eq('company_id', companyId).eq('funcionario_id', profileId),
                     
                     // Chamados abertos/pendentes atribuídos a este funcionário
                     supabase.from('service_requests')

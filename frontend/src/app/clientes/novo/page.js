@@ -13,25 +13,43 @@ export default function NovoCliente() {
     const [endereco, setEndereco] = useState('');
     const [volume, setVolume] = useState('');
     const [price, setPrice] = useState('');
+    const [funcionarios, setFuncionarios] = useState([]);
+    const [funcionarioId, setFuncionarioId] = useState('');
     const [companyId, setCompanyId] = useState(null);
     const [loading, setLoading] = useState(false);
     const router = useRouter();
 
-    // 1. Ao carregar a tela, pegamos o ID da empresa do usuário logado
+    // 1. Ao carregar a tela, pegamos o ID da empresa e buscamos os funcionários
     useEffect(() => {
-        async function getCompany() {
+        async function init() {
             const { data: { user } } = await supabase.auth.getUser();
-            if (user) {
-                const { data: profile } = await supabase
-                    .from('profiles')
-                    .select('company_id')
-                    .eq('id', user.id)
-                    .single();
+            if (!user) return;
 
-                if (profile) setCompanyId(profile.company_id);
+            // Pega o company_id do usuário logado
+            const { data: profile } = await supabase
+                .from('profiles')
+                .select('company_id')
+                .eq('id', user.id)
+                .single();
+
+            if (profile) {
+                setCompanyId(profile.company_id);
+
+                // Busca apenas perfis com role = 'Funcionario' da mesma empresa
+                const { data: funcs } = await supabase
+                    .from('profiles')
+                    .select('id, full_name, roles(name)')
+                    .eq('company_id', profile.company_id)
+                    .eq('roles.name', 'Funcionario');
+
+                // Filtra no cliente para garantir apenas a role correta
+                const apenasFunc = (funcs || []).filter(
+                    (p) => p.roles?.name === 'Funcionario'
+                );
+                setFuncionarios(apenasFunc);
             }
         }
-        getCompany();
+        init();
     }, []);
 
     const handleSalvar = async (e) => {
@@ -71,7 +89,8 @@ export default function NovoCliente() {
                     price: price !== '' ? parseFloat(price) : null,
                     pool_volume_m3: parseFloat(volume),
                     company_id: companyId,
-                    piscineiro_id: user?.id
+                    piscineiro_id: user?.id,
+                    funcionario_id: funcionarioId || null
                 }
             ]);
 
@@ -169,6 +188,22 @@ export default function NovoCliente() {
                             }
                         }}
                     />
+                </div>
+
+                {/* Funcionário Responsável */}
+                <div className="pt-4">
+                    <label className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block mb-1">Funcionário Responsável (Opcional)</label>
+                    <select
+                        value={funcionarioId}
+                        onChange={(e) => setFuncionarioId(e.target.value)}
+                        className="w-full border-b-2 border-slate-200 bg-transparent py-3 text-slate-800 focus:border-[#008080] focus:outline-none transition-colors text-sm appearance-none"
+                        style={{ backgroundImage: `url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%2394a3b8%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.4-12.8z%22%2F%3E%3C%2Fsvg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 0.5rem center', backgroundSize: '0.65em auto' }}
+                    >
+                        <option value="">Selecione um funcionário...</option>
+                        {funcionarios.map((f) => (
+                            <option key={f.id} value={f.id}>{f.full_name}</option>
+                        ))}
+                    </select>
                 </div>
 
                 <div className="pt-8">

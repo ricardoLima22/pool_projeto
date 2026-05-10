@@ -12,6 +12,7 @@ export default function NovoCliente() {
     const [email, setEmail] = useState('');
     const [endereco, setEndereco] = useState('');
     const [volume, setVolume] = useState('');
+    const [price, setPrice] = useState('');
     const [companyId, setCompanyId] = useState(null);
     const [loading, setLoading] = useState(false);
     const router = useRouter();
@@ -67,6 +68,7 @@ export default function NovoCliente() {
                     whatsapp: somenteNumeros, // Salva formato limpo no banco
                     email: email || null,
                     address: endereco,
+                    price: price !== '' ? parseFloat(price) : null,
                     pool_volume_m3: parseFloat(volume),
                     company_id: companyId,
                     piscineiro_id: user?.id
@@ -131,6 +133,23 @@ export default function NovoCliente() {
                         placeholder="Rua, Número, Bairro"
                         className="w-full border-b-2 border-slate-200 bg-transparent py-3 text-slate-800 placeholder:text-slate-400 focus:border-[#008080] focus:outline-none transition-colors text-sm rounded-none appearance-none"
                         onChange={(e) => setEndereco(e.target.value)}
+                    />
+                </div>
+
+                <div className="pt-4">
+                    <label className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block mb-1">Valor (R$)</label>
+                    <input
+                        type="number"
+                        step="0.01"
+                        min="0"
+                        placeholder="Ex: 150.00"
+                        className="w-full border-b-2 border-slate-200 bg-transparent py-3 text-slate-800 placeholder:text-slate-400 focus:border-[#008080] focus:outline-none transition-colors text-sm rounded-none appearance-none"
+                        onChange={(e) => {
+                            const val = e.target.value;
+                            if (val === '' || Number(val) >= 0) {
+                                setPrice(val);
+                            }
+                        }}
                     />
                 </div>
 

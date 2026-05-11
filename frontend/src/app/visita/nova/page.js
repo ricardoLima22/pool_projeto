@@ -50,7 +50,11 @@ function NovaVisita() {
         async function carregarDados() {
             const { data: { user } } = await supabase.auth.getUser();
             if (user) {
-                const { data: profile } = await supabase.from('profiles').select('company_id, full_name').eq('id', user.id).single();
+                const { data: profile } = await supabase
+                    .from('profiles')
+                    .select('id, company_id, full_name, roles(name)')
+                    .eq('id', user.id)
+                    .single();
                 setUserProfile(profile);
 
                 // Busca a sessão configurada para essa empresa logada:
@@ -69,7 +73,18 @@ function NovaVisita() {
                     const resCliente = await supabase.from('customers').select('*').eq('id', clienteId).single();
                     setCliente(resCliente.data);
                 } else {
-                    const resClientes = await supabase.from('customers').select('*').eq('company_id', profile.company_id).order('name');
+                    // Verifica se o usuário é Funcionário para filtrar apenas seus clientes
+                    const roleName = Array.isArray(profile?.roles)
+                        ? profile.roles[0]?.name
+                        : profile?.roles?.name;
+
+                    let query = supabase.from('customers').select('*').eq('company_id', profile.company_id).order('name');
+
+                    if (roleName === 'Funcionario') {
+                        query = query.eq('funcionario_id', user.id);
+                    }
+
+                    const resClientes = await query;
                     setClientesList(resClientes.data || []);
                 }
             }

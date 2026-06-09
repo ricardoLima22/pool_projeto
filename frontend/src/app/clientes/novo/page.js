@@ -33,6 +33,7 @@ export default function NovoCliente() {
                 .eq('id', user.id)
                 .single();
 
+                
             if (profile) {
                 setCompanyId(profile.company_id);
 

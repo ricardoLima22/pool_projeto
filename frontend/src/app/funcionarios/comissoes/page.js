@@ -4,7 +4,7 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '../../../lib/supabase';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, Users, TrendingUp, Droplets, Wallet, ChevronDown, AlertCircle } from 'lucide-react';
+import { ChevronDown, AlertCircle } from 'lucide-react';
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 const fmt = (value) =>
@@ -16,7 +16,7 @@ const RATE_GRANDE = 0.50;
 // ─── Sub-components ──────────────────────────────────────────────────────────
 function SkeletonCard() {
     return (
-        <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-5 animate-pulse">
+        <div className="bg-white rounded-xl border border-slate-100 shadow-sm p-4 animate-pulse">
             <div className="flex items-center gap-3 mb-4">
                 <div className="w-10 h-10 bg-slate-200 rounded-full" />
                 <div className="flex-1">
@@ -27,7 +27,6 @@ function SkeletonCard() {
             <div className="space-y-2">
                 <div className="h-12 bg-slate-100 rounded-xl" />
                 <div className="h-12 bg-slate-100 rounded-xl" />
-                <div className="h-14 bg-slate-200 rounded-xl" />
             </div>
         </div>
     );
@@ -84,11 +83,11 @@ function FuncionarioCard({ funcionario }) {
         .toUpperCase();
 
     return (
-        <div className="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+        <div className="bg-white rounded-xl border border-slate-100 shadow-sm overflow-hidden">
             {/* Card Header */}
             <button
                 onClick={() => setExpanded((v) => !v)}
-                className="w-full p-5 text-left hover:bg-slate-50 transition-colors"
+                className="w-full p-4 text-left hover:border-[#008080]/30 transition-colors"
             >
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
@@ -100,9 +99,14 @@ function FuncionarioCard({ funcionario }) {
                             <p className="text-xs text-slate-500">{totalClientes} cliente{totalClientes !== 1 ? 's' : ''} atribuído{totalClientes !== 1 ? 's' : ''}</p>
                         </div>
                     </div>
-                    <div className="text-right">
-                        <p className="text-[11px] text-slate-500 mb-0.5">Total a receber</p>
-                        <p className="font-bold text-emerald-600 text-base">{fmt(comissaoTotal)}</p>
+                    <div className="flex items-center gap-2">
+                        <div className="text-right">
+                            <p className="text-[11px] text-slate-500 mb-0.5">Total a receber</p>
+                            <p className="font-bold text-emerald-600 text-base">{fmt(comissaoTotal)}</p>
+                        </div>
+                        <ChevronDown
+                            className={`h-5 w-5 text-[#008080] transition-transform duration-200 ${expanded ? 'rotate-180' : ''}`}
+                        />
                     </div>
                 </div>
 
@@ -115,20 +119,11 @@ function FuncionarioCard({ funcionario }) {
                         />
                     </div>
                 )}
-
-                <div className="flex items-center justify-end mt-2 gap-1">
-                    <span className="text-xs text-slate-400">
-                        {expanded ? 'Ocultar detalhes' : 'Ver detalhes'}
-                    </span>
-                    <ChevronDown
-                        className={`h-4 w-4 text-slate-400 transition-transform duration-200 ${expanded ? 'rotate-180' : ''}`}
-                    />
-                </div>
             </button>
 
             {/* Expanded Details */}
             {expanded && (
-                <div className="px-5 pb-5 space-y-2 border-t border-slate-50 pt-4">
+                <div className="px-4 pb-4 space-y-2 border-t border-slate-100 pt-4">
                     {qtdNormal > 0 && (
                         <PoolTypeBadge
                             type="Normal"
@@ -252,59 +247,41 @@ export default function ComissoesFuncionarios() {
     }, 0);
 
     return (
-        <div className="min-h-screen bg-slate-50 font-sans">
+        <main className="min-h-screen bg-[#fcfbf8]">
             {/* Header */}
-            <header className="bg-gradient-to-br from-slate-900 via-slate-800 to-cyan-900 px-5 pt-[calc(1.5rem+env(safe-area-inset-top))] pb-12 text-white shadow-xl">
-                <div className="max-w-2xl mx-auto">
+            <header className="px-4 py-4 pt-6 flex items-center justify-between bg-white border-b border-slate-200 sticky top-0 z-20">
+                <div className="flex items-center gap-3">
                     <button
                         id="btn-voltar-comissoes"
                         onClick={() => router.back()}
-                        className="flex items-center gap-2 text-sm text-white/70 hover:text-white transition-colors mb-5"
+                        className="text-slate-800 transition-colors"
                     >
-                        <ArrowLeft className="h-4 w-4" />
-                        Voltar
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
                     </button>
-
-                    <div className="flex items-start justify-between">
-                        <div>
-                            <div className="flex items-center gap-2 mb-1">
-                                <Wallet className="h-5 w-5 text-cyan-300" />
-                                <span className="text-xs font-bold uppercase tracking-widest text-cyan-300">Comissões</span>
-                            </div>
-                            <h1 className="text-2xl font-bold text-white">Fechamento Mensal</h1>
-                            <p className="text-white/60 text-sm mt-1">Comissões por tipo de piscina</p>
-                        </div>
-                        <div className="text-right">
-                            <p className="text-white/60 text-xs">Total a pagar</p>
-                            <p className="text-2xl font-bold text-emerald-300">{fmt(totalComissoes)}</p>
-                        </div>
-                    </div>
+                    <h1 className="text-xl font-bold text-slate-800">Comissões</h1>
+                </div>
+                <div className="text-right">
+                    <p className="text-[11px] text-slate-500">Total a pagar</p>
+                    <p className="font-bold text-emerald-600 text-base">{fmt(totalComissoes)}</p>
                 </div>
             </header>
 
-            {/* Main */}
-            <main className="max-w-2xl mx-auto px-5 -mt-6 pb-24 relative z-10">
+            <div className="px-4 py-6 space-y-4">
 
                 {/* Summary Cards */}
-                <div className="grid grid-cols-2 gap-3 mb-6">
-                    <div className="bg-white rounded-2xl p-4 shadow-sm border border-slate-100 text-center">
-                        <div className="flex justify-center mb-1">
-                            <TrendingUp className="h-5 w-5 text-slate-400" />
-                        </div>
-                        <p className="text-lg font-bold text-slate-800">{fmt(totalFaturamento)}</p>
-                        <p className="text-xs text-slate-500">Faturamento total</p>
+                <div className="grid grid-cols-2 gap-3">
+                    <div className="bg-white rounded-xl p-4 shadow-sm border border-slate-100 text-center">
+                        <p className="text-xs text-slate-500 mb-1">Faturamento total</p>
+                        <p className="text-base font-bold text-slate-800">{fmt(totalFaturamento)}</p>
                     </div>
-                    <div className="bg-white rounded-2xl p-4 shadow-sm border border-slate-100 text-center">
-                        <div className="flex justify-center mb-1">
-                            <Users className="h-5 w-5 text-slate-400" />
-                        </div>
-                        <p className="text-lg font-bold text-slate-800">{funcionarios.length}</p>
-                        <p className="text-xs text-slate-500">Funcionários</p>
+                    <div className="bg-white rounded-xl p-4 shadow-sm border border-slate-100 text-center">
+                        <p className="text-xs text-slate-500 mb-1">Funcionários</p>
+                        <p className="text-base font-bold text-slate-800">{funcionarios.length}</p>
                     </div>
                 </div>
 
                 {/* Regra de comissão */}
-                <div className="bg-white rounded-2xl p-4 shadow-sm border border-slate-100 mb-6 flex gap-4">
+                <div className="bg-white rounded-xl p-4 shadow-sm border border-slate-100 flex gap-4">
                     <div className="flex-1 text-center">
                         <span className="text-xl">💧</span>
                         <p className="text-xs text-slate-500 mt-1">Piscina Normal</p>
@@ -320,7 +297,7 @@ export default function ComissoesFuncionarios() {
 
                 {/* Aviso clientes sem pool_size */}
                 {nullCount > 0 && (
-                    <div className="flex items-start gap-3 bg-amber-50 border border-amber-200 rounded-xl p-4 mb-6">
+                    <div className="flex items-start gap-3 bg-amber-50 border border-amber-200 rounded-xl p-4">
                         <AlertCircle className="h-4 w-4 text-amber-500 shrink-0 mt-0.5" />
                         <p className="text-xs text-amber-700">
                             <span className="font-bold">{nullCount} cliente{nullCount !== 1 ? 's' : ''}</span> sem tamanho de piscina cadastrado — não entram no cálculo. Edite os cadastros para incluí-los.
@@ -335,30 +312,29 @@ export default function ComissoesFuncionarios() {
                     </h2>
 
                     {loading ? (
-                        <div className="space-y-4">
+                        <div className="space-y-3">
                             <SkeletonCard />
                             <SkeletonCard />
                         </div>
                     ) : error ? (
-                        <div className="bg-white rounded-2xl p-8 text-center border border-red-100">
+                        <div className="bg-white rounded-xl p-8 text-center border border-red-100 shadow-sm">
                             <AlertCircle className="h-8 w-8 text-red-400 mx-auto mb-2" />
                             <p className="text-slate-600 font-medium text-sm">{error}</p>
                         </div>
                     ) : funcionarios.length === 0 ? (
-                        <div className="bg-white rounded-2xl p-8 text-center border border-slate-100">
-                            <Droplets className="h-8 w-8 text-slate-300 mx-auto mb-2" />
-                            <p className="text-slate-600 font-medium">Nenhum dado encontrado</p>
-                            <p className="text-slate-400 text-sm mt-1">Cadastre clientes com tamanho de piscina para visualizar as comissões.</p>
+                        <div className="bg-white rounded-xl p-8 text-center border border-slate-100 shadow-sm">
+                            <p className="text-slate-400 text-sm">Nenhum dado encontrado.</p>
+                            <p className="text-slate-400 text-xs mt-1">Cadastre clientes com tamanho de piscina para visualizar as comissões.</p>
                         </div>
                     ) : (
-                        <div className="space-y-4">
+                        <div className="space-y-3">
                             {funcionarios.map((func) => (
                                 <FuncionarioCard key={func.name} funcionario={func} />
                             ))}
                         </div>
                     )}
                 </section>
-            </main>
-        </div>
+            </div>
+        </main>
     );
 }

@@ -149,7 +149,7 @@ function FuncionarioCard({ funcionario }) {
                                 <p className="text-white font-bold">{fmt(faturamentoTotal)}</p>
                             </div>
                             <div className="text-right">
-                                <p className="text-emerald-100 text-xs font-medium">💰 Comissão a pagar</p>
+                                <p className="text-emerald-100 text-xs font-medium">Comissão a pagar</p>
                                 <p className="text-white font-bold text-lg">{fmt(comissaoTotal)}</p>
                             </div>
                         </div>
@@ -283,13 +283,13 @@ export default function ComissoesFuncionarios() {
                 {/* Regra de comissão */}
                 <div className="bg-white rounded-xl p-4 shadow-sm border border-slate-100 flex gap-4">
                     <div className="flex-1 text-center">
-                        <span className="text-xl">💧</span>
+
                         <p className="text-xs text-slate-500 mt-1">Piscina Normal</p>
                         <p className="font-bold text-cyan-600 text-sm">40% de comissão</p>
                     </div>
                     <div className="w-px bg-slate-100" />
                     <div className="flex-1 text-center">
-                        <span className="text-xl">🌊</span>
+
                         <p className="text-xs text-slate-500 mt-1">Piscina Grande</p>
                         <p className="font-bold text-blue-600 text-sm">50% de comissão</p>
                     </div>

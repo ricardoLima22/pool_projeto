@@ -39,7 +39,6 @@ function PoolTypeBadge({ type, clientes, totalValor, comissao }) {
         <div className={`rounded-xl p-3 ${isGrande ? 'bg-blue-50 border border-blue-100' : 'bg-cyan-50 border border-cyan-100'}`}>
             <div className="flex items-center justify-between mb-1">
                 <div className="flex items-center gap-1.5">
-                    <span className="text-base">{isGrande ? '🌊' : '💧'}</span>
                     <span className={`text-xs font-bold uppercase tracking-wider ${isGrande ? 'text-blue-700' : 'text-cyan-700'}`}>
                         {type} <span className="font-normal opacity-70">({isGrande ? '50%' : '40%'})</span>
                     </span>

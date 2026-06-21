@@ -32,6 +32,8 @@ function SkeletonCard() {
     );
 }
 
+
+
 function PoolTypeBadge({ type, clientes, totalValor, comissao }) {
     const isGrande = type === 'Grande';
     return (
@@ -62,7 +64,7 @@ function PoolTypeBadge({ type, clientes, totalValor, comissao }) {
 
 function FuncionarioCard({ funcionario }) {
     const [expanded, setExpanded] = useState(false);
-    const { name, normal, grande } = funcionario;
+    const { name, normal, grande, isDono } = funcionario;
 
     const totalNormal = normal?.total || 0;
     const totalGrande = grande?.total || 0;
@@ -83,20 +85,23 @@ function FuncionarioCard({ funcionario }) {
         .toUpperCase();
 
     return (
-        <div className="bg-white rounded-xl border border-slate-100 shadow-sm overflow-hidden">
+        <div className={`rounded-xl border shadow-sm overflow-hidden ${isDono ? 'bg-amber-50 border-amber-200' : 'bg-white border-slate-100'}`}>
             {/* Card Header */}
             <button
                 onClick={() => setExpanded((v) => !v)}
-                className="w-full p-4 text-left hover:border-[#008080]/30 transition-colors"
+                className="w-full p-4 text-left hover:bg-slate-50 transition-colors"
             >
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center text-white font-bold text-sm shadow-sm">
+                        <div className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-sm shadow-sm ${isDono ? 'bg-gradient-to-br from-amber-500 to-orange-600' : 'bg-gradient-to-br from-cyan-500 to-blue-600'}`}>
                             {initials}
                         </div>
                         <div>
                             <p className="font-bold text-slate-800 text-sm">{name}</p>
-                            <p className="text-xs text-slate-500">{totalClientes} cliente{totalClientes !== 1 ? 's' : ''} atribuído{totalClientes !== 1 ? 's' : ''}</p>
+                            <p className="text-xs text-slate-500">
+                                {isDono && <span className="text-amber-600 font-semibold">Dono · </span>}
+                                {totalClientes} cliente{totalClientes !== 1 ? 's' : ''}
+                            </p>
                         </div>
                     </div>
                     <div className="flex items-center gap-2">
@@ -189,13 +194,13 @@ export default function ComissoesFuncionarios() {
                 return;
             }
 
-            // 2. Busca todos os clientes da empresa COM pool_size e funcionario_id definidos
+            // 2. Busca TODOS os clientes com pool_size definido (com ou sem funcionario_id)
+            //    Clientes sem funcionario_id = clientes do dono (Weverton)
             const { data: clientes, error: clientErr } = await supabase
                 .from('customers')
                 .select('funcionario_id, pool_size, price, profiles!customers_funcionario_id_fkey(full_name)')
                 .eq('company_id', profile.company_id)
-                .not('pool_size', 'is', null)
-                .not('funcionario_id', 'is', null);
+                .not('pool_size', 'is', null);
 
             // 3. Conta clientes sem pool_size (para aviso)
             const { count: nullCountRes } = await supabase
@@ -212,12 +217,22 @@ export default function ComissoesFuncionarios() {
 
             setNullCount(nullCountRes || 0);
 
-            // 4. Agrupa por funcionario_id e tipo de piscina
+            // 4. Agrupa por funcionario_id; clientes sem funcionario_id vão para o Dono
+            const DONO_KEY = '__dono__';
             const mapa = {};
             (clientes || []).forEach((c) => {
-                const id = c.funcionario_id;
-                const nome = c.profiles?.full_name || 'Desconhecido';
-                if (!mapa[id]) mapa[id] = { name: nome, normal: { total: 0, count: 0 }, grande: { total: 0, count: 0 } };
+                // Se não tem funcionario_id, pertence ao dono
+                const id = c.funcionario_id ?? DONO_KEY;
+                const nome = c.funcionario_id
+                    ? (c.profiles?.full_name || 'Desconhecido')
+                    : 'Weverton';
+
+                if (!mapa[id]) mapa[id] = {
+                    name: nome,
+                    isDono: id === DONO_KEY,
+                    normal: { total: 0, count: 0 },
+                    grande: { total: 0, count: 0 },
+                };
 
                 if (c.pool_size === 'Normal') {
                     mapa[id].normal.total += c.price || 0;
@@ -228,7 +243,13 @@ export default function ComissoesFuncionarios() {
                 }
             });
 
-            setFuncionarios(Object.values(mapa).sort((a, b) => a.name.localeCompare(b.name)));
+            // Ordena: funcionários em ordem alfabética, Weverton (dono) sempre por último
+            const lista = Object.values(mapa).sort((a, b) => {
+                if (a.isDono) return 1;
+                if (b.isDono) return -1;
+                return a.name.localeCompare(b.name);
+            });
+            setFuncionarios(lista);
             setLoading(false);
         }
 
@@ -283,14 +304,12 @@ export default function ComissoesFuncionarios() {
                 {/* Regra de comissão */}
                 <div className="bg-white rounded-xl p-4 shadow-sm border border-slate-100 flex gap-4">
                     <div className="flex-1 text-center">
-
-                        <p className="text-xs text-slate-500 mt-1">Piscina Normal</p>
+                        <p className="text-xs text-slate-500">Piscina Normal</p>
                         <p className="font-bold text-cyan-600 text-sm">40% de comissão</p>
                     </div>
                     <div className="w-px bg-slate-100" />
                     <div className="flex-1 text-center">
-
-                        <p className="text-xs text-slate-500 mt-1">Piscina Grande</p>
+                        <p className="text-xs text-slate-500">Piscina Grande</p>
                         <p className="font-bold text-blue-600 text-sm">50% de comissão</p>
                     </div>
                 </div>
@@ -334,6 +353,9 @@ export default function ComissoesFuncionarios() {
                         </div>
                     )}
                 </section>
+
+
+
             </div>
         </main>
     );

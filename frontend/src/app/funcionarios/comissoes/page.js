@@ -85,7 +85,7 @@ function FuncionarioCard({ funcionario }) {
         .toUpperCase();
 
     return (
-        <div className={`rounded-xl border shadow-sm overflow-hidden ${isDono ? 'bg-amber-50 border-amber-200' : 'bg-white border-slate-100'}`}>
+        <div className="bg-white rounded-xl border border-slate-100 shadow-sm overflow-hidden">
             {/* Card Header */}
             <button
                 onClick={() => setExpanded((v) => !v)}
@@ -93,15 +93,12 @@ function FuncionarioCard({ funcionario }) {
             >
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                        <div className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-sm shadow-sm ${isDono ? 'bg-gradient-to-br from-amber-500 to-orange-600' : 'bg-gradient-to-br from-cyan-500 to-blue-600'}`}>
+                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center text-white font-bold text-sm shadow-sm">
                             {initials}
                         </div>
                         <div>
                             <p className="font-bold text-slate-800 text-sm">{name}</p>
-                            <p className="text-xs text-slate-500">
-                                {isDono && <span className="text-amber-600 font-semibold">Dono · </span>}
-                                {totalClientes} cliente{totalClientes !== 1 ? 's' : ''}
-                            </p>
+                            <p className="text-xs text-slate-500">{totalClientes} cliente{totalClientes !== 1 ? 's' : ''} atribuído{totalClientes !== 1 ? 's' : ''}</p>
                         </div>
                     </div>
                     <div className="flex items-center gap-2">

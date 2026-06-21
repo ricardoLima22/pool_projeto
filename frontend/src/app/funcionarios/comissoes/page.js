@@ -73,8 +73,11 @@ function FuncionarioCard({ funcionario }) {
 
     const comissaoNormal = totalNormal * RATE_NORMAL;
     const comissaoGrande = totalGrande * RATE_GRANDE;
-    const comissaoTotal = comissaoNormal + comissaoGrande;
     const faturamentoTotal = totalNormal + totalGrande;
+    // Dono recebe o valor integral (sem desconto de porcentagem)
+    const comissaoTotal = isDono
+        ? faturamentoTotal
+        : comissaoNormal + comissaoGrande;
     const totalClientes = qtdNormal + qtdGrande;
 
     const initials = name
@@ -103,8 +106,8 @@ function FuncionarioCard({ funcionario }) {
                     </div>
                     <div className="flex items-center gap-2">
                         <div className="text-right">
-                            <p className="text-[11px] text-slate-500 mb-0.5">Total a receber</p>
-                            <p className="font-bold text-emerald-600 text-base">{fmt(comissaoTotal)}</p>
+                            <p className="text-[11px] text-slate-500 mb-0.5">{isDono ? 'Total a receber' : 'Comissão a receber'}</p>
+                             <p className="font-bold text-emerald-600 text-base">{fmt(comissaoTotal)}</p>
                         </div>
                         <ChevronDown
                             className={`h-5 w-5 text-[#008080] transition-transform duration-200 ${expanded ? 'rotate-180' : ''}`}
@@ -151,7 +154,7 @@ function FuncionarioCard({ funcionario }) {
                                 <p className="text-white font-bold">{fmt(faturamentoTotal)}</p>
                             </div>
                             <div className="text-right">
-                                <p className="text-emerald-100 text-xs font-medium">Comissão a pagar</p>
+                                <p className="text-emerald-100 text-xs font-medium">{isDono ? 'Total a receber' : 'Comissão a pagar'}</p>
                                 <p className="text-white font-bold text-lg">{fmt(comissaoTotal)}</p>
                             </div>
                         </div>

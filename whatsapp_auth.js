@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const { createClient } = require('@supabase/supabase-js');
 const { useMongoDBAuthState } = require('./MongoAuthState');
 const makeWASocket = require('@whiskeysockets/baileys').default;
-const { DisconnectReason, Browsers, fetchLatestBaileysVersion } = require('@whiskeysockets/baileys');
+const { DisconnectReason } = require('@whiskeysockets/baileys');
 const pino = require('pino');
 const qrcode = require('qrcode-terminal');
 
@@ -104,16 +104,14 @@ mongoose.connect(MONGODB_URI).then(async () => {
         // Inicia AuthAdapter customizado para MongoDB usando a Collection do session_id
         const collection = mongoose.connection.db.collection(session_id);
         const { state, saveCreds } = await useMongoDBAuthState(collection);
-        const { version } = await fetchLatestBaileysVersion();
-        console.log(`Baileys version: ${version.join('.')}`);
 
         // Inicia o Socket do WhatsApp
+        // Usa browser string padrão para evitar rejeição (StatusCode 428)
         const sock = makeWASocket({
-            version,
             auth: state,
             printQRInTerminal: false,
             logger: pino({ level: "silent" }),
-            browser: Browsers.macOS('Desktop')
+            browser: ["Ubuntu", "Chrome", "22.04"]
         });
 
         sock.ev.on('creds.update', saveCreds);

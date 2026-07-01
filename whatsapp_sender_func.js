@@ -120,20 +120,18 @@ mongoose.connect(MONGODB_URI).then(async () => {
 
     const { useMongoDBAuthState } = require('./MongoAuthState');
     const makeWASocket = require('@whiskeysockets/baileys').default;
-    const { DisconnectReason, delay, Browsers, fetchLatestBaileysVersion } = require('@whiskeysockets/baileys');
+    const { DisconnectReason, delay } = require('@whiskeysockets/baileys');
     const pino = require('pino');
 
     async function connectWhatsApp() {
         const collection = mongoose.connection.db.collection(session_id);
         const { state, saveCreds } = await useMongoDBAuthState(collection);
-        const { version } = await fetchLatestBaileysVersion();
 
         const sock = makeWASocket({
-            version,
             auth: state,
             printQRInTerminal: false,
             logger: pino({ level: "silent" }),
-            browser: Browsers.macOS('Desktop')
+            browser: ["Ubuntu", "Chrome", "22.04"]
         });
 
         sock.ev.on('creds.update', saveCreds);

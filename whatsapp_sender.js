@@ -44,18 +44,16 @@ mongoose.connect(MONGODB_URI).then(async () => {
         // Dynamic import to support ESM format required by newer Baileys versions
         const baileys = await import('@whiskeysockets/baileys');
         const makeWASocket = baileys.default;
-        const { DisconnectReason, delay, Browsers, fetchLatestBaileysVersion } = baileys;
+        const { DisconnectReason, delay } = baileys;
 
         const collection = mongoose.connection.db.collection(session_id);
         const { state, saveCreds } = await useMongoDBAuthState(collection);
-        const { version } = await fetchLatestBaileysVersion();
 
         const sock = makeWASocket({
-            version,
             auth: state,
             printQRInTerminal: false,
             logger: pino({ level: "silent" }),
-            browser: Browsers.macOS('Desktop')
+            browser: ["Ubuntu", "Chrome", "22.04"]
         });
 
         sock.ev.on('creds.update', saveCreds);

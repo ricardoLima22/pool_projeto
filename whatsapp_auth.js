@@ -44,15 +44,23 @@ async function getPendingCompanyToAuthenticate() {
     for (const company of companies) {
         if (!company.whatsapp_session) continue;
         
-        // Verifica se a empresa já tem a chave 'creds' salva na sua respectiva coleção do Mongo
+        // Verifica se a empresa já tem credenciais REALMENTE autenticadas no MongoDB
+        // (o campo 'me' só é preenchido após escanear o QR Code com sucesso)
         const collection = mongoose.connection.db.collection(company.whatsapp_session);
-        const exists = await collection.findOne({ _id: 'creds' });
+        const credsDoc = await collection.findOne({ _id: 'creds' });
         
-        if (!exists) {
+        const isAuthenticated = credsDoc && credsDoc.data && credsDoc.data.me;
+
+        if (!isAuthenticated) {
+            // Se existem creds órfãs (criadas mas nunca autenticadas), limpa a coleção inteira
+            if (credsDoc) {
+                console.log(`- [LIMPANDO] Sessão "${company.whatsapp_session}" possui credenciais não autenticadas. Limpando coleção...`);
+                await collection.drop().catch(() => {}); // drop silencioso se já não existir
+            }
             console.log(`- [PENDENTE] Empresa "${company.name}" (Sessão: ${company.whatsapp_session}) PRECISA SER AUTENTICADA!`);
             return company; 
         } else {
-            console.log(`- [OK] Empresa "${company.name}" (Sessão: ${company.whatsapp_session}) já está autenticada no MongoDB.`);
+            console.log(`- [OK] Empresa "${company.name}" (Sessão: ${company.whatsapp_session}) já está autenticada no MongoDB. (JID: ${credsDoc.data.me.id})`);
         }
     }
 
@@ -76,11 +84,28 @@ mongoose.connect(MONGODB_URI).then(async () => {
     console.log(`SESSION ID: ${session_id}`);
     console.log(`======================================================\n`);
 
+    let tentativas = 0;
+    const MAX_TENTATIVAS = 5;
+
     async function connectWhatsApp() {
+        tentativas++;
+        console.log(`\n--- Tentativa de conexão ${tentativas}/${MAX_TENTATIVAS} ---`);
+
+        if (tentativas > MAX_TENTATIVAS) {
+            console.error(`\nERRO: Não foi possível conectar após ${MAX_TENTATIVAS} tentativas.`);
+            console.error("Possíveis causas:");
+            console.error("  1. Rate limit do WhatsApp (aguarde alguns minutos e tente novamente)");
+            console.error("  2. Problema de rede/firewall");
+            console.error("  3. Versão do Baileys incompatível");
+            mongoose.disconnect();
+            process.exit(1);
+        }
+
         // Inicia AuthAdapter customizado para MongoDB usando a Collection do session_id
         const collection = mongoose.connection.db.collection(session_id);
         const { state, saveCreds } = await useMongoDBAuthState(collection);
         const { version } = await fetchLatestBaileysVersion();
+        console.log(`Baileys version: ${version.join('.')}`);
 
         // Inicia o Socket do WhatsApp
         const sock = makeWASocket({
@@ -97,6 +122,7 @@ mongoose.connect(MONGODB_URI).then(async () => {
             const { connection, lastDisconnect, qr } = update;
 
             if (qr) {
+                tentativas = 0; // Reset do contador quando QR é gerado (conexão está funcionando)
                 console.log('--- QR CODE RECEBIDO ---');
                 console.log('Escaneie o código abaixo com o seu WhatsApp:');
                 qrcode.generate(qr, { small: true });
@@ -106,12 +132,14 @@ mongoose.connect(MONGODB_URI).then(async () => {
             }
 
             if (connection === 'close') {
-                const shouldReconnect = (lastDisconnect.error)?.output?.statusCode !== DisconnectReason.loggedOut;
-                console.log('Conexão fechada. Motivo: ', lastDisconnect.error?.message, ', Reconectando:', shouldReconnect);
+                const statusCode = (lastDisconnect.error)?.output?.statusCode;
+                const shouldReconnect = statusCode !== DisconnectReason.loggedOut;
+                console.log(`Conexão fechada. Motivo: ${lastDisconnect.error?.message} | StatusCode: ${statusCode} | Reconectando: ${shouldReconnect}`);
                 
                 if (shouldReconnect) {
-                    console.log("A API do WhatsApp solicitou um recomeço (Stream Errored). Reconectando silenciosamente...");
-                    setTimeout(connectWhatsApp, 2000);
+                    const delayMs = tentativas * 3000; // Delay progressivo: 3s, 6s, 9s...
+                    console.log(`Aguardando ${delayMs/1000}s antes de reconectar...`);
+                    setTimeout(connectWhatsApp, delayMs);
                 } else {
                     console.log("Você foi deslogado. Delete as credenciais no MongoDB manualmente se precisar re-autenticar.");
                     process.exit(1);

@@ -20,6 +20,7 @@ export default function DetalhesCliente() {
     const [price, setPrice] = useState('');
     const [funcionarioId, setFuncionarioId] = useState('');
     const [tamanhoPiscina, setTamanhoPiscina] = useState('');
+    const [dataLimpeza, setDataLimpeza] = useState('');
     const [funcionarios, setFuncionarios] = useState([]);
     const [salvando, setSalvando] = useState(false);
     const [userRole, setUserRole] = useState('');
@@ -53,6 +54,7 @@ export default function DetalhesCliente() {
                 setPrice(data.price ?? '');
                 setFuncionarioId(data.funcionario_id || '');
                 setTamanhoPiscina(data.pool_size || '');
+                setDataLimpeza(data.data_limpeza || '');
 
                 // Busca funcionários da mesma empresa
                 const { data: funcs } = await supabase
@@ -113,12 +115,13 @@ export default function DetalhesCliente() {
                 pool_volume_m3: parseFloat(volume),
                 pool_size: tamanhoPiscina || null,
                 price: price !== '' ? parseFloat(price) : null,
-                funcionario_id: funcionarioId || null
+                funcionario_id: funcionarioId || null,
+                data_limpeza: dataLimpeza || null
             })
             .eq('id', id);
 
         if (!error) {
-            setCliente({ ...cliente, name: nomeLimpo, whatsapp: somenteNumeros, email, address: endereco, pool_volume_m3: parseFloat(volume), pool_size: tamanhoPiscina || null, price: price !== '' ? parseFloat(price) : null, funcionario_id: funcionarioId || null });
+            setCliente({ ...cliente, name: nomeLimpo, whatsapp: somenteNumeros, email, address: endereco, pool_volume_m3: parseFloat(volume), pool_size: tamanhoPiscina || null, price: price !== '' ? parseFloat(price) : null, funcionario_id: funcionarioId || null, data_limpeza: dataLimpeza || null });
             setNome(nomeLimpo);
             setEditando(false);
             toast.success('Cliente atualizado com sucesso!');
@@ -198,6 +201,12 @@ export default function DetalhesCliente() {
                             <h2 className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block mb-1">Funcionário Responsável</h2>
                             <p className="w-full border-b-2 border-slate-200 bg-transparent py-3 text-slate-800 text-sm font-medium">
                                 {funcionarios.find(f => f.id === cliente.funcionario_id)?.full_name || 'Não atribuído'}
+                            </p>
+                        </div>
+                        <div className="pt-4">
+                            <h2 className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block mb-1">Data da Limpeza</h2>
+                            <p className="w-full border-b-2 border-slate-200 bg-transparent py-3 text-slate-800 text-sm font-medium">
+                                {cliente.data_limpeza ? cliente.data_limpeza.split('-').reverse().join('/') : 'Não informada'}
                             </p>
                         </div>
 
@@ -298,6 +307,16 @@ export default function DetalhesCliente() {
                                     <option key={f.id} value={f.id}>{f.full_name}</option>
                                 ))}
                             </select>
+                        </div>
+                        <div className="pt-4">
+                            <label className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block mb-1">Data da Limpeza (Opcional)</label>
+                            <input
+                                type="date"
+                                value={dataLimpeza}
+                                placeholder="Selecione a data..."
+                                className="w-full border-b-2 border-slate-200 bg-transparent py-3 text-slate-800 placeholder:text-slate-400 focus:border-[#008080] focus:outline-none transition-colors text-sm rounded-none appearance-none"
+                                onChange={(e) => setDataLimpeza(e.target.value)}
+                            />
                         </div>
 
                         <div className="pt-8 flex gap-4">

@@ -14,6 +14,7 @@ export default function NovoCliente() {
     const [volume, setVolume] = useState('');
     const [tamanhoPiscina, setTamanhoPiscina] = useState('');
     const [price, setPrice] = useState('');
+    const [dataLimpeza, setDataLimpeza] = useState('');
     const [funcionarios, setFuncionarios] = useState([]);
     const [funcionarioId, setFuncionarioId] = useState('');
     const [companyId, setCompanyId] = useState(null);
@@ -93,7 +94,8 @@ export default function NovoCliente() {
                     pool_size: tamanhoPiscina,
                     company_id: companyId,
                     piscineiro_id: user?.id,
-                    funcionario_id: funcionarioId || null
+                    funcionario_id: funcionarioId || null,
+                    data_limpeza: dataLimpeza || null
                 }
             ]);
 
@@ -223,6 +225,18 @@ export default function NovoCliente() {
                             <option key={f.id} value={f.id}>{f.full_name}</option>
                         ))}
                     </select>
+                </div>
+
+                {/* Data da Limpeza */}
+                <div className="pt-4">
+                    <label className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block mb-1">Data da Limpeza (Opcional)</label>
+                    <input
+                        type="date"
+                        value={dataLimpeza}
+                        placeholder="Selecione a data..."
+                        className="w-full border-b-2 border-slate-200 bg-transparent py-3 text-slate-800 placeholder:text-slate-400 focus:border-[#008080] focus:outline-none transition-colors text-sm rounded-none appearance-none"
+                        onChange={(e) => setDataLimpeza(e.target.value)}
+                    />
                 </div>
 
                 <div className="pt-8">

@@ -141,7 +141,7 @@ export default function NovoCliente() {
                 </div>
 
                 <div className="pt-4">
-                    <label className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block mb-1">E-mail (Opcional)</label>
+                    <label className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block mb-1">E-mail</label>
                     <input
                         type="email"
                         placeholder="Ex: cliente@email.com"
@@ -213,7 +213,7 @@ export default function NovoCliente() {
 
                 {/* Funcionário Responsável */}
                 <div className="pt-4">
-                    <label className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block mb-1">Funcionário Responsável (Opcional)</label>
+                    <label className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block mb-1">Funcionário Responsável</label>
                     <select
                         value={funcionarioId}
                         onChange={(e) => setFuncionarioId(e.target.value)}
@@ -229,7 +229,7 @@ export default function NovoCliente() {
 
                 {/* Data da Limpeza */}
                 <div className="pt-4">
-                    <label className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block mb-1">Data da Limpeza (Opcional)</label>
+                    <label className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block mb-1">Data da Limpeza</label>
                     <input
                         type="date"
                         value={dataLimpeza}

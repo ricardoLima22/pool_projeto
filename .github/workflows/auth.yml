@@ -14,13 +14,12 @@ jobs:
       - name: 2. Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
           cache: 'npm'
 
       - name: 3. Instalar Dependências Básicas
         run: |
-          npm init -y
-          npm install mongoose @supabase/supabase-js dotenv @whiskeysockets/baileys pino qrcode-terminal jimp@0.16.13 --legacy-peer-deps
+          npm install mongoose @supabase/supabase-js dotenv @whiskeysockets/baileys pino qrcode-terminal jimp@0.16.13 ws --legacy-peer-deps
 
       - name: 4. Rodar Script de Autenticação (Ler QR Code)
         env:

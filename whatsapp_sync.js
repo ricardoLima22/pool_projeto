@@ -70,18 +70,16 @@ async function syncSession(company) {
             // Dynamic import to support ESM format required by newer Baileys versions
             const baileys = await import('@whiskeysockets/baileys');
             const makeWASocket = baileys.default;
-            const { DisconnectReason, Browsers, fetchLatestBaileysVersion } = baileys;
+            const { DisconnectReason } = baileys;
 
             const collection = mongoose.connection.db.collection(company.whatsapp_session);
             const { state, saveCreds } = await useMongoDBAuthState(collection);
-            const { version } = await fetchLatestBaileysVersion();
 
             const sock = makeWASocket({
-                version,
                 auth: state,
                 printQRInTerminal: false,
                 logger: pino({ level: "silent" }),
-                browser: Browsers.macOS('Desktop')
+                browser: ["Ubuntu", "Chrome", "22.04"]
             });
 
             sock.ev.on('creds.update', saveCreds);

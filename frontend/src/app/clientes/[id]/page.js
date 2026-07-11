@@ -20,7 +20,7 @@ export default function DetalhesCliente() {
     const [price, setPrice] = useState('');
     const [funcionarioId, setFuncionarioId] = useState('');
     const [tamanhoPiscina, setTamanhoPiscina] = useState('');
-    const [dataLimpeza, setDataLimpeza] = useState('');
+    const [diaLimpeza, setDiaLimpeza] = useState('');
     const [funcionarios, setFuncionarios] = useState([]);
     const [salvando, setSalvando] = useState(false);
     const [userRole, setUserRole] = useState('');
@@ -54,7 +54,7 @@ export default function DetalhesCliente() {
                 setPrice(data.price ?? '');
                 setFuncionarioId(data.funcionario_id || '');
                 setTamanhoPiscina(data.pool_size || '');
-                setDataLimpeza(data.data_limpeza || '');
+                setDiaLimpeza(data.dia_limpeza || '');
 
                 // Busca funcionários da mesma empresa
                 const { data: funcs } = await supabase
@@ -116,12 +116,12 @@ export default function DetalhesCliente() {
                 pool_size: tamanhoPiscina || null,
                 price: price !== '' ? parseFloat(price) : null,
                 funcionario_id: funcionarioId || null,
-                data_limpeza: dataLimpeza || null
+                dia_limpeza: diaLimpeza || null
             })
             .eq('id', id);
 
         if (!error) {
-            setCliente({ ...cliente, name: nomeLimpo, whatsapp: somenteNumeros, email, address: endereco, pool_volume_m3: parseFloat(volume), pool_size: tamanhoPiscina || null, price: price !== '' ? parseFloat(price) : null, funcionario_id: funcionarioId || null, data_limpeza: dataLimpeza || null });
+            setCliente({ ...cliente, name: nomeLimpo, whatsapp: somenteNumeros, email, address: endereco, pool_volume_m3: parseFloat(volume), pool_size: tamanhoPiscina || null, price: price !== '' ? parseFloat(price) : null, funcionario_id: funcionarioId || null, dia_limpeza: diaLimpeza || null });
             setNome(nomeLimpo);
             setEditando(false);
             toast.success('Cliente atualizado com sucesso!');
@@ -204,9 +204,9 @@ export default function DetalhesCliente() {
                             </p>
                         </div>
                         <div className="pt-4">
-                            <h2 className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block mb-1">Data da Limpeza</h2>
+                            <h2 className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block mb-1">Dia da Limpeza</h2>
                             <p className="w-full border-b-2 border-slate-200 bg-transparent py-3 text-slate-800 text-sm font-medium">
-                                {cliente.data_limpeza ? cliente.data_limpeza.split('-').reverse().join('/') : 'Não informada'}
+                                {cliente.dia_limpeza || 'Não informado'}
                             </p>
                         </div>
 
@@ -308,15 +308,24 @@ export default function DetalhesCliente() {
                                 ))}
                             </select>
                         </div>
+                        {/* Dia da Limpeza */}
                         <div className="pt-4">
-                            <label className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block mb-1">Data da Limpeza</label>
-                            <input
-                                type="date"
-                                value={dataLimpeza}
-                                placeholder="Selecione a data..."
-                                className="w-full border-b-2 border-slate-200 bg-transparent py-3 text-slate-800 placeholder:text-slate-400 focus:border-[#008080] focus:outline-none transition-colors text-sm rounded-none appearance-none"
-                                onChange={(e) => setDataLimpeza(e.target.value)}
-                            />
+                            <label className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block mb-1">Dia da Limpeza</label>
+                            <select
+                                value={diaLimpeza}
+                                onChange={(e) => setDiaLimpeza(e.target.value)}
+                                className="w-full border-b-2 border-slate-200 bg-transparent py-3 text-slate-800 focus:border-[#008080] focus:outline-none transition-colors text-sm appearance-none"
+                                style={{ backgroundImage: `url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%2394a3b8%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.4-12.8z%22%2F%3E%3C%2Fsvg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 0.5rem center', backgroundSize: '0.65em auto' }}
+                            >
+                                <option value="">Selecione o dia...</option>
+                                <option value="Segunda-feira">Segunda-feira</option>
+                                <option value="Terça-feira">Terça-feira</option>
+                                <option value="Quarta-feira">Quarta-feira</option>
+                                <option value="Quinta-feira">Quinta-feira</option>
+                                <option value="Sexta-feira">Sexta-feira</option>
+                                <option value="Sábado">Sábado</option>
+                                <option value="Domingo">Domingo</option>
+                            </select>
                         </div>
 
                         <div className="pt-8 flex gap-4">

@@ -114,9 +114,16 @@ export default function ListagemClientes() {
                                         <svg className="h-3 w-3 text-red-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
                                         {cliente.address || 'Endereço não informado'}
                                     </p>
-                                    <span className="inline-block mt-1 text-[10px] font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded uppercase">
-                                        {cliente.pool_volume_m3} M³
-                                    </span>
+                                    <div className="flex flex-wrap gap-2 mt-1">
+                                        <span className="inline-block text-[10px] font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded uppercase">
+                                            {cliente.pool_volume_m3} M³
+                                        </span>
+                                        {cliente.dia_limpeza && (
+                                            <span className="inline-block text-[10px] font-bold text-[#008080] bg-[#008080]/10 px-2 py-0.5 rounded uppercase">
+                                                Limpeza: {cliente.dia_limpeza}
+                                            </span>
+                                        )}
+                                    </div>
                                 </div>
                                 <svg className="h-5 w-5 text-[#008080]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
                             </button>

@@ -330,7 +330,20 @@ export default function DetalhesCliente() {
 
                         <div className="pt-8 flex gap-4">
                             <button
-                                type="button" onClick={() => setEditando(false)} disabled={salvando}
+                                type="button"
+                                onClick={() => {
+                                    setNome(cliente.name);
+                                    setWhatsapp(cliente.whatsapp);
+                                    setEmail(cliente.email || '');
+                                    setEndereco(cliente.address || '');
+                                    setVolume(cliente.pool_volume_m3 ?? '');
+                                    setPrice(cliente.price ?? '');
+                                    setFuncionarioId(cliente.funcionario_id || '');
+                                    setTamanhoPiscina(cliente.pool_size || '');
+                                    setDiaLimpeza(cliente.dia_limpeza || '');
+                                    setEditando(false);
+                                }}
+                                disabled={salvando}
                                 className="flex-1 bg-white border border-slate-300 text-slate-600 hover:bg-slate-50 py-3.5 rounded-xl font-bold active:scale-95 transition-all text-sm uppercase text-center"
                             >
                                 Cancelar

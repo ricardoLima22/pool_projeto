@@ -346,7 +346,7 @@ function NovaVisita() {
         if (phDepois) msg += `- pH Final (Depois): ${phDepois}\n`;
 
         if (itensTexto.length > 0) {
-            msg += `\n*Produtos utilizados na visita:*\n- ${itensTexto.join('\n- ')}\n`;
+            msg += `\n*Produtos entregues na visita:*\n- ${itensTexto.join('\n- ')}\n`;
         }
 
         if (valorServico && parseFloat(valorServico) > 0) {

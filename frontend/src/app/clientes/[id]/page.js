@@ -20,6 +20,7 @@ export default function DetalhesCliente() {
     const [price, setPrice] = useState('');
     const [funcionarioId, setFuncionarioId] = useState('');
     const [tamanhoPiscina, setTamanhoPiscina] = useState('');
+    const [diaLimpeza, setDiaLimpeza] = useState('');
     const [funcionarios, setFuncionarios] = useState([]);
     const [salvando, setSalvando] = useState(false);
     const [userRole, setUserRole] = useState('');
@@ -53,6 +54,7 @@ export default function DetalhesCliente() {
                 setPrice(data.price ?? '');
                 setFuncionarioId(data.funcionario_id || '');
                 setTamanhoPiscina(data.pool_size || '');
+                setDiaLimpeza(data.dia_limpeza || '');
 
                 // Busca funcionários da mesma empresa
                 const { data: funcs } = await supabase
@@ -113,12 +115,13 @@ export default function DetalhesCliente() {
                 pool_volume_m3: parseFloat(volume),
                 pool_size: tamanhoPiscina || null,
                 price: price !== '' ? parseFloat(price) : null,
-                funcionario_id: funcionarioId || null
+                funcionario_id: funcionarioId || null,
+                dia_limpeza: diaLimpeza || null
             })
             .eq('id', id);
 
         if (!error) {
-            setCliente({ ...cliente, name: nomeLimpo, whatsapp: somenteNumeros, email, address: endereco, pool_volume_m3: parseFloat(volume), pool_size: tamanhoPiscina || null, price: price !== '' ? parseFloat(price) : null, funcionario_id: funcionarioId || null });
+            setCliente({ ...cliente, name: nomeLimpo, whatsapp: somenteNumeros, email, address: endereco, pool_volume_m3: parseFloat(volume), pool_size: tamanhoPiscina || null, price: price !== '' ? parseFloat(price) : null, funcionario_id: funcionarioId || null, dia_limpeza: diaLimpeza || null });
             setNome(nomeLimpo);
             setEditando(false);
             toast.success('Cliente atualizado com sucesso!');
@@ -198,6 +201,12 @@ export default function DetalhesCliente() {
                             <h2 className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block mb-1">Funcionário Responsável</h2>
                             <p className="w-full border-b-2 border-slate-200 bg-transparent py-3 text-slate-800 text-sm font-medium">
                                 {funcionarios.find(f => f.id === cliente.funcionario_id)?.full_name || 'Não atribuído'}
+                            </p>
+                        </div>
+                        <div className="pt-4">
+                            <h2 className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block mb-1">Dia da Limpeza</h2>
+                            <p className="w-full border-b-2 border-slate-200 bg-transparent py-3 text-slate-800 text-sm font-medium">
+                                {cliente.dia_limpeza || 'Não informado'}
                             </p>
                         </div>
 
@@ -286,7 +295,7 @@ export default function DetalhesCliente() {
                             </select>
                         </div>
                         <div className="pt-4">
-                            <label className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block mb-1">Funcionário Responsável (Opcional)</label>
+                            <label className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block mb-1">Funcionário Responsável</label>
                             <select
                                 value={funcionarioId}
                                 onChange={(e) => setFuncionarioId(e.target.value)}
@@ -299,10 +308,42 @@ export default function DetalhesCliente() {
                                 ))}
                             </select>
                         </div>
+                        {/* Dia da Limpeza */}
+                        <div className="pt-4">
+                            <label className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block mb-1">Dia da Limpeza</label>
+                            <select
+                                value={diaLimpeza}
+                                onChange={(e) => setDiaLimpeza(e.target.value)}
+                                className="w-full border-b-2 border-slate-200 bg-transparent py-3 text-slate-800 focus:border-[#008080] focus:outline-none transition-colors text-sm appearance-none"
+                                style={{ backgroundImage: `url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%2394a3b8%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.4-12.8z%22%2F%3E%3C%2Fsvg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 0.5rem center', backgroundSize: '0.65em auto' }}
+                            >
+                                <option value="">Selecione o dia...</option>
+                                <option value="Segunda-feira">Segunda-feira</option>
+                                <option value="Terça-feira">Terça-feira</option>
+                                <option value="Quarta-feira">Quarta-feira</option>
+                                <option value="Quinta-feira">Quinta-feira</option>
+                                <option value="Sexta-feira">Sexta-feira</option>
+                                <option value="Sábado">Sábado</option>
+                                <option value="Domingo">Domingo</option>
+                            </select>
+                        </div>
 
                         <div className="pt-8 flex gap-4">
                             <button
-                                type="button" onClick={() => setEditando(false)} disabled={salvando}
+                                type="button"
+                                onClick={() => {
+                                    setNome(cliente.name);
+                                    setWhatsapp(cliente.whatsapp);
+                                    setEmail(cliente.email || '');
+                                    setEndereco(cliente.address || '');
+                                    setVolume(cliente.pool_volume_m3 ?? '');
+                                    setPrice(cliente.price ?? '');
+                                    setFuncionarioId(cliente.funcionario_id || '');
+                                    setTamanhoPiscina(cliente.pool_size || '');
+                                    setDiaLimpeza(cliente.dia_limpeza || '');
+                                    setEditando(false);
+                                }}
+                                disabled={salvando}
                                 className="flex-1 bg-white border border-slate-300 text-slate-600 hover:bg-slate-50 py-3.5 rounded-xl font-bold active:scale-95 transition-all text-sm uppercase text-center"
                             >
                                 Cancelar

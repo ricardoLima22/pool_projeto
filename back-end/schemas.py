@@ -17,6 +17,7 @@ class ClienteSchema(BaseModel):
     email: str
     address: str
     pool_volume_m3: float
+    dia_limpeza: Optional[str] = None
 
 class VisitaSchema(BaseModel):
     piscineiro_id: UUID

@@ -14,6 +14,7 @@ export default function NovoCliente() {
     const [volume, setVolume] = useState('');
     const [tamanhoPiscina, setTamanhoPiscina] = useState('');
     const [price, setPrice] = useState('');
+    const [diaLimpeza, setDiaLimpeza] = useState('');
     const [funcionarios, setFuncionarios] = useState([]);
     const [funcionarioId, setFuncionarioId] = useState('');
     const [companyId, setCompanyId] = useState(null);
@@ -93,7 +94,8 @@ export default function NovoCliente() {
                     pool_size: tamanhoPiscina,
                     company_id: companyId,
                     piscineiro_id: user?.id,
-                    funcionario_id: funcionarioId || null
+                    funcionario_id: funcionarioId || null,
+                    dia_limpeza: diaLimpeza || null
                 }
             ]);
 
@@ -139,7 +141,7 @@ export default function NovoCliente() {
                 </div>
 
                 <div className="pt-4">
-                    <label className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block mb-1">E-mail (Opcional)</label>
+                    <label className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block mb-1">E-mail</label>
                     <input
                         type="email"
                         placeholder="Ex: cliente@email.com"
@@ -211,7 +213,7 @@ export default function NovoCliente() {
 
                 {/* Funcionário Responsável */}
                 <div className="pt-4">
-                    <label className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block mb-1">Funcionário Responsável (Opcional)</label>
+                    <label className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block mb-1">Funcionário Responsável</label>
                     <select
                         value={funcionarioId}
                         onChange={(e) => setFuncionarioId(e.target.value)}
@@ -222,6 +224,26 @@ export default function NovoCliente() {
                         {funcionarios.map((f) => (
                             <option key={f.id} value={f.id}>{f.full_name}</option>
                         ))}
+                    </select>
+                </div>
+
+                {/* Dia da Limpeza */}
+                <div className="pt-4">
+                    <label className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block mb-1">Dia da Limpeza</label>
+                    <select
+                        value={diaLimpeza}
+                        onChange={(e) => setDiaLimpeza(e.target.value)}
+                        className="w-full border-b-2 border-slate-200 bg-transparent py-3 text-slate-800 focus:border-[#008080] focus:outline-none transition-colors text-sm appearance-none"
+                        style={{ backgroundImage: `url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%2394a3b8%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.4-12.8z%22%2F%3E%3C%2Fsvg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 0.5rem center', backgroundSize: '0.65em auto' }}
+                    >
+                        <option value="">Selecione o dia...</option>
+                        <option value="Segunda-feira">Segunda-feira</option>
+                        <option value="Terça-feira">Terça-feira</option>
+                        <option value="Quarta-feira">Quarta-feira</option>
+                        <option value="Quinta-feira">Quinta-feira</option>
+                        <option value="Sexta-feira">Sexta-feira</option>
+                        <option value="Sábado">Sábado</option>
+                        <option value="Domingo">Domingo</option>
                     </select>
                 </div>
 

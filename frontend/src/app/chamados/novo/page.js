@@ -80,7 +80,6 @@ export default function NovoChamado() {
                     .from('service_types')
                     .select('id, name')
                     .eq('company_id', profile.company_id)
-                    // .eq('active', true) // Pode habilitar se houver esse comportamento
                     .order('name');
                 setServicos(tRes.data || []);
             }

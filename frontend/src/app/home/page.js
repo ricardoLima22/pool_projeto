@@ -7,8 +7,11 @@ import { useWeather } from '../../hooks/useWeather';
 import { Droplets, LogOut, Camera, Users, UserPlus, Package, PlusCircle, BarChart3, Calendar, MapPin, Clock, TrendingUp, Waves, Thermometer, Wallet, User } from "lucide-react";
 import SplashScreen from '../../components/SplashScreen';
 
-const StatCard = ({ icon, value, label }) => (
-    <div className="bg-white rounded-xl p-4 shadow-sm border border-slate-200 text-center">
+const StatCard = ({ icon, value, label, onClick }) => (
+    <div
+        onClick={onClick}
+        className={`bg-white rounded-xl p-4 shadow-sm border border-slate-200 text-center ${onClick ? 'cursor-pointer hover:shadow-md hover:border-cyan-200 transition-all active:scale-95' : ''}`}
+    >
         <div className="flex justify-center text-cyan-600 mb-1">{icon}</div>
         <p className="text-xl font-bold text-slate-800">{value}</p>
         <p className="text-xs text-slate-500">{label}</p>
@@ -64,7 +67,7 @@ export default function Dashboard() {
     const router = useRouter();
 
     // Métricas reais do Supabase
-    const [stats, setStats] = useState({ visitsToday: null, activeCustomers: null });
+    const [stats, setStats] = useState({ visitsToday: null, activeCustomers: null, totalRevenue: null });
     const [upcomingVisits, setUpcomingVisits] = useState([]);
     const [dataLoading, setDataLoading] = useState(true);
 
@@ -141,7 +144,7 @@ export default function Dashboard() {
                         .select('id, full_name')
                         .eq('company_id', companyId),
                     supabase.from('customers')
-                        .select('id, name, address, pool_size, funcionario_id')
+                        .select('id, name, address, pool_size, price, funcionario_id')
                         .eq('company_id', companyId)
                 ]);
 
@@ -151,9 +154,13 @@ export default function Dashboard() {
                 });
 
                 const customerMap = {};
+                let totalRevenueSum = 0;
                 (allCustomersRes.data || []).forEach((cust) => {
                     customerMap[cust.id] = cust;
+                    totalRevenueSum += cust.price || 0;
                 });
+
+                const formattedRevenue = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(totalRevenueSum);
 
                 const visitsWithFunc = (schedulesTodayRes.data || []).map((visit) => {
                     const cust = customerMap[visit.customer_id] || (Array.isArray(visit.customers) ? visit.customers[0] : visit.customers);
@@ -168,7 +175,8 @@ export default function Dashboard() {
 
                 setStats({
                     activeCustomers: customersRes.count || 0,
-                    visitsToday: schedulesTodayRes.data?.length || 0
+                    visitsToday: schedulesTodayRes.data?.length || 0,
+                    totalRevenue: formattedRevenue
                 });
                 setUpcomingVisits(visitsWithFunc);
             } catch (error) {
@@ -253,7 +261,12 @@ export default function Dashboard() {
                     <div className="grid grid-cols-3 gap-3 mb-8 animate-slide-up" style={{ animationDelay: "0.1s" }}>
                         <StatCard icon={<Calendar className="h-6 w-6" />} value={stats.visitsToday !== null ? stats.visitsToday : '...'} label="Visitas hoje" />
                         <StatCard icon={<Users className="h-6 w-6" />} value={stats.activeCustomers !== null ? stats.activeCustomers : '...'} label="Clientes ativos" />
-                        <StatCard icon={<TrendingUp className="h-6 w-6 text-emerald-500" />} value="R$ --" label="Em breve" />
+                        <StatCard 
+                            icon={<TrendingUp className="h-6 w-6 text-emerald-500" />} 
+                            value={stats.totalRevenue !== null ? stats.totalRevenue : '...'} 
+                            label="Faturamento total" 
+                            onClick={() => router.push('/funcionarios/comissoes')}
+                        />
                     </div>
 
                     {/* Register Visit CTA */}

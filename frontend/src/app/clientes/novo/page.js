@@ -53,9 +53,9 @@ export default function NovoCliente() {
                     .eq('ativo', true)
                     .eq('roles.name', 'Funcionario');
 
-                // Filtra no cliente para garantir apenas a role correta e ativo
+                // Filtra no cliente para garantir apenas a role correta e ativo === true
                 const apenasFunc = (funcs || []).filter(
-                    (p) => p.roles?.name === 'Funcionario' && p.ativo !== false
+                    (p) => p.roles?.name === 'Funcionario' && p.ativo === true
                 );
                 setFuncionarios(apenasFunc);
             }

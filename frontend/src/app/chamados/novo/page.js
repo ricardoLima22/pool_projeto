@@ -69,8 +69,8 @@ export default function NovoChamado() {
                     .eq('ativo', true)
                     .order('full_name');
                 
-                // Filtramos apenas quem tem o role "Funcionario" e ativo = true
-                const funcList = (pRes.data || []).filter(p => p.ativo !== false && ((!Array.isArray(p.roles) && p.roles?.name?.toLowerCase() === 'funcionario') || (Array.isArray(p.roles) && p.roles[0]?.name?.toLowerCase() === 'funcionario')));
+                // Filtramos apenas quem tem o role "Funcionario" e ativo === true
+                const funcList = (pRes.data || []).filter(p => p.ativo === true && ((!Array.isArray(p.roles) && p.roles?.name?.toLowerCase() === 'funcionario') || (Array.isArray(p.roles) && p.roles[0]?.name?.toLowerCase() === 'funcionario')));
                 setFuncionarios(funcList);
                 // 3. Tipos de Serviço
                 const tRes = await supabase

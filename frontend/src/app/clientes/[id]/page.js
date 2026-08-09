@@ -80,7 +80,7 @@ export default function DetalhesCliente() {
                     .eq('roles.name', 'Funcionario');
 
                 const apenasFunc = (funcs || []).filter(
-                    (p) => p.roles?.name === 'Funcionario' && p.ativo !== false
+                    (p) => p.roles?.name === 'Funcionario' && p.ativo === true
                 );
                 setFuncionarios(apenasFunc);
             }

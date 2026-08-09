@@ -71,15 +71,16 @@ export default function DetalhesCliente() {
                 const loadedDias = (daysData || []).map((d) => d.dia_semana);
                 setDiasSemana(loadedDias);
 
-                // Busca funcionários da mesma empresa
+                // Busca funcionários ativos da mesma empresa
                 const { data: funcs } = await supabase
                     .from('profiles')
-                    .select('id, full_name, roles(name)')
+                    .select('id, full_name, ativo, roles(name)')
                     .eq('company_id', data.company_id)
+                    .eq('ativo', true)
                     .eq('roles.name', 'Funcionario');
 
                 const apenasFunc = (funcs || []).filter(
-                    (p) => p.roles?.name === 'Funcionario'
+                    (p) => p.roles?.name === 'Funcionario' && p.ativo !== false
                 );
                 setFuncionarios(apenasFunc);
             }

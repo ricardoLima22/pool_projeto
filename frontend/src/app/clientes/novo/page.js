@@ -45,16 +45,17 @@ export default function NovoCliente() {
             if (profile) {
                 setCompanyId(profile.company_id);
 
-                // Busca apenas perfis com role = 'Funcionario' da mesma empresa
+                // Busca apenas perfis com role = 'Funcionario' e ativo = true da mesma empresa
                 const { data: funcs } = await supabase
                     .from('profiles')
-                    .select('id, full_name, roles(name)')
+                    .select('id, full_name, ativo, roles(name)')
                     .eq('company_id', profile.company_id)
+                    .eq('ativo', true)
                     .eq('roles.name', 'Funcionario');
 
-                // Filtra no cliente para garantir apenas a role correta
+                // Filtra no cliente para garantir apenas a role correta e ativo
                 const apenasFunc = (funcs || []).filter(
-                    (p) => p.roles?.name === 'Funcionario'
+                    (p) => p.roles?.name === 'Funcionario' && p.ativo !== false
                 );
                 setFuncionarios(apenasFunc);
             }

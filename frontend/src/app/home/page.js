@@ -28,40 +28,40 @@ const QuickCard = ({ icon, title, subtitle, onClick }) => (
     </button>
 );
 
-const VisitCard = ({ id, name, address, funcionarioName, time, status, onClick }) => (
-    <button onClick={onClick} className="w-full text-left bg-white rounded-xl p-4 shadow-sm border border-slate-100 flex items-center gap-4 hover:shadow-md hover:border-blue-200 transition-all active:scale-[0.98]">
-        <div className="bg-cyan-50 rounded-full p-3 border border-cyan-100">
-            <Waves className="h-5 w-5 text-cyan-600" />
-        </div>
-        <div className="flex-1 min-w-0">
-            <p className="font-bold text-slate-800 truncate">{name}</p>
-            <div className="flex items-center gap-1.5 text-xs text-slate-500 mt-1">
-                <MapPin className="h-3 w-3 shrink-0 text-slate-400" />
-                <span className="truncate">{address || 'Endereço não cadastrado'}</span>
+const VisitCard = ({ id, name, address, funcionarioName, time, status, onClick }) => {
+    const isCompleted = ["concluido", "concluído", "confirmada", "em_execucao"].includes(status?.toLowerCase());
+    return (
+        <button onClick={onClick} className="w-full text-left bg-white rounded-xl p-4 shadow-sm border border-slate-100 flex items-center gap-4 hover:shadow-md hover:border-blue-200 transition-all active:scale-[0.98]">
+            <div className="bg-cyan-50 rounded-full p-3 border border-cyan-100">
+                <Waves className="h-5 w-5 text-cyan-600" />
             </div>
-            {funcionarioName && (
+            <div className="flex-1 min-w-0">
+                <p className="font-bold text-slate-800 truncate">{name}</p>
                 <div className="flex items-center gap-1.5 text-xs text-slate-500 mt-1">
-                    <User className="h-3 w-3 shrink-0 text-slate-400" />
-                    <span className="truncate">{funcionarioName}</span>
+                    <MapPin className="h-3 w-3 shrink-0 text-slate-400" />
+                    <span className="truncate">{address || 'Endereço não cadastrado'}</span>
                 </div>
-            )}
-        </div>
-        <div className="text-right shrink-0 flex flex-col justify-between items-end gap-1">
-            {time && (
-                <div className="flex items-center gap-1 text-xs font-semibold text-slate-700">
-                    <Clock className="h-3.5 w-3.5 text-slate-400" />
-                    {time}
-                </div>
-            )}
-            <span className={`text-[11px] font-bold ${["concluido", "concluído", "confirmada", "em_execucao"].includes(status?.toLowerCase())
-                ? "text-emerald-500"
-                : "text-amber-500"
-                }`}>
-                {status?.toLowerCase() === 'em_execucao' ? 'Em Execução' : status?.charAt(0).toUpperCase() + status?.slice(1).toLowerCase() || 'Pendente'}
-            </span>
-        </div>
-    </button>
-);
+                {funcionarioName && (
+                    <div className="flex items-center gap-1.5 text-xs text-slate-500 mt-1">
+                        <User className="h-3 w-3 shrink-0 text-slate-400" />
+                        <span className="truncate">{funcionarioName}</span>
+                    </div>
+                )}
+            </div>
+            <div className="text-right shrink-0 flex flex-col justify-between items-end gap-1.5">
+                {time && (
+                    <div className="flex items-center gap-1 text-xs font-semibold text-slate-700">
+                        <Clock className="h-3.5 w-3.5 text-slate-400" />
+                        {time}
+                    </div>
+                )}
+                <span className={`text-[11px] font-bold ${isCompleted ? "text-emerald-600 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-100" : "text-amber-600 bg-amber-50 px-2.5 py-0.5 rounded-full border border-amber-100"}`}>
+                    {isCompleted ? 'Concluído' : 'Pendente'}
+                </span>
+            </div>
+        </button>
+    );
+};
 
 export default function Dashboard() {
     const [profile, setProfile] = useState(null);
@@ -135,7 +135,10 @@ export default function Dashboard() {
             const todayStr = `${yearStr}-${monthStr}-${dateStr}`;
 
             try {
-                const [customersRes, schedulesTodayRes, employeesRes, allCustomersRes] = await Promise.all([
+                const inicioHoje = `${todayStr}T00:00:00.000Z`;
+                const fimHoje = `${todayStr}T23:59:59.999Z`;
+
+                const [customersRes, schedulesTodayRes, employeesRes, allCustomersRes, visitsTodayRes] = await Promise.all([
                     supabase.from('customers').select('*', { count: 'exact', head: true }).eq('company_id', companyId),
                     supabase.from('cleaning_schedules')
                         .select('*, customers!inner(*)')
@@ -147,8 +150,16 @@ export default function Dashboard() {
                         .eq('company_id', companyId),
                     supabase.from('customers')
                         .select('id, name, address, pool_size, price, funcionario_id')
-                        .eq('company_id', companyId)
+                        .eq('company_id', companyId),
+                    supabase.from('visits')
+                        .select('customer_id')
+                        .gte('created_at', inicioHoje)
+                        .lte('created_at', fimHoje)
                 ]);
+
+                const completedCustomerIds = new Set(
+                    (visitsTodayRes.data || []).map(v => v.customer_id)
+                );
 
                 const employeeMap = {};
                 (employeesRes.data || []).forEach((emp) => {
@@ -168,16 +179,22 @@ export default function Dashboard() {
                     const cust = customerMap[visit.customer_id] || (Array.isArray(visit.customers) ? visit.customers[0] : visit.customers);
                     const assignedId = cust?.funcionario_id || visit.funcionario_id;
                     const funcionarioName = assignedId ? (employeeMap[assignedId] || 'Não informado') : 'Não atribuído';
+                    
+                    const isCompletedInSchedule = visit.status?.toLowerCase() === 'concluido' || visit.status?.toLowerCase() === 'concluído';
+                    const isCompletedInVisits = completedCustomerIds.has(visit.customer_id);
+                    const resolvedStatus = (isCompletedInSchedule || isCompletedInVisits) ? 'concluido' : 'pendente';
+
                     return {
                         ...visit,
                         customers: cust || visit.customers,
-                        funcionarioName
+                        funcionarioName,
+                        status: resolvedStatus
                     };
                 });
 
                 setStats({
                     activeCustomers: customersRes.count || 0,
-                    visitsToday: schedulesTodayRes.data?.length || 0,
+                    visitsToday: visitsWithFunc.length,
                     totalRevenue: formattedRevenue
                 });
                 setUpcomingVisits(visitsWithFunc);

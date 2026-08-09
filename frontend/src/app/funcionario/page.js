@@ -70,7 +70,10 @@ export default function EmployeeDashboard() {
             const todayStr = `${yearStr}-${monthStr}-${dateStr}`;
 
             try {
-                const [myCustomersRes, allSchedulesRes, allCustomersRes] = await Promise.all([
+                const inicioHoje = `${todayStr}T00:00:00.000Z`;
+                const fimHoje = `${todayStr}T23:59:59.999Z`;
+
+                const [myCustomersRes, allSchedulesRes, allCustomersRes, visitsTodayRes] = await Promise.all([
                     // Clientes atribuídos a este funcionário
                     supabase.from('customers')
                         .select('*')
@@ -88,10 +91,20 @@ export default function EmployeeDashboard() {
                     // Todos os clientes atualizados da empresa
                     supabase.from('customers')
                         .select('id, name, address, pool_size, funcionario_id')
-                        .eq('company_id', companyId)
+                        .eq('company_id', companyId),
+
+                    // Visitas já realizadas hoje
+                    supabase.from('visits')
+                        .select('customer_id')
+                        .gte('created_at', inicioHoje)
+                        .lte('created_at', fimHoje)
                 ]);
 
                 const assignedCustomers = myCustomersRes.data || [];
+
+                const completedCustomerIds = new Set(
+                    (visitsTodayRes.data || []).map(v => v.customer_id)
+                );
 
                 const customerMap = {};
                 (allCustomersRes.data || []).forEach((cust) => {
@@ -105,9 +118,13 @@ export default function EmployeeDashboard() {
                     return assignedId === profileId;
                 }).map((s) => {
                     const cust = customerMap[s.customer_id] || (Array.isArray(s.customers) ? s.customers[0] : s.customers);
+                    const isCompletedInSchedule = s.status?.toLowerCase() === 'concluido' || s.status?.toLowerCase() === 'concluído';
+                    const isCompletedInVisits = completedCustomerIds.has(s.customer_id);
+                    const resolvedStatus = (isCompletedInSchedule || isCompletedInVisits) ? 'concluido' : 'pendente';
                     return {
                         ...s,
-                        customers: cust || s.customers
+                        customers: cust || s.customers,
+                        status: resolvedStatus
                     };
                 });
 
@@ -243,6 +260,7 @@ export default function EmployeeDashboard() {
                                         title={visit.customers?.pool_size ? `Piscina ${visit.customers.pool_size}` : 'Limpeza de Piscina'}
                                         client={visit.customers?.name || 'Cliente Desconhecido'}
                                         address={visit.customers?.address || 'Sem endereço'}
+                                        status={visit.status}
                                         onClick={() => router.push(`/visita/nova?clienteId=${visit.customer_id}`)}
                                     />
                                 );

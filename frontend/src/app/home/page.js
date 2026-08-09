@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { supabase } from '../../lib/supabase';
 import { useRouter } from 'next/navigation';
 import { useWeather } from '../../hooks/useWeather';
-import { Droplets, LogOut, Camera, Users, UserPlus, Package, PlusCircle, BarChart3, Calendar, MapPin, Clock, TrendingUp, Waves, Thermometer, Wallet } from "lucide-react";
+import { Droplets, LogOut, Camera, Users, UserPlus, Package, PlusCircle, BarChart3, Calendar, MapPin, Clock, TrendingUp, Waves, Thermometer, Wallet, User } from "lucide-react";
 import SplashScreen from '../../components/SplashScreen';
 
 const StatCard = ({ icon, value, label }) => (
@@ -23,7 +23,7 @@ const QuickCard = ({ icon, title, subtitle, onClick }) => (
     </button>
 );
 
-const VisitCard = ({ id, name, address, time, status, onClick }) => (
+const VisitCard = ({ id, name, address, funcionarioName, time, status, onClick }) => (
     <button onClick={onClick} className="w-full text-left bg-white rounded-xl p-4 shadow-sm border border-slate-100 flex items-center gap-4 hover:shadow-md hover:border-blue-200 transition-all active:scale-[0.98]">
         <div className="bg-cyan-50 rounded-full p-3 border border-cyan-100">
             <Waves className="h-5 w-5 text-cyan-600" />
@@ -34,12 +34,20 @@ const VisitCard = ({ id, name, address, time, status, onClick }) => (
                 <MapPin className="h-3 w-3 shrink-0 text-slate-400" />
                 <span className="truncate">{address || 'Endereço não cadastrado'}</span>
             </div>
+            {funcionarioName && (
+                <div className="flex items-center gap-1.5 text-xs text-slate-500 mt-1">
+                    <User className="h-3 w-3 shrink-0 text-slate-400" />
+                    <span className="truncate">{funcionarioName}</span>
+                </div>
+            )}
         </div>
         <div className="text-right shrink-0 flex flex-col justify-between items-end gap-1">
-            <div className="flex items-center gap-1 text-xs font-semibold text-slate-700">
-                <Clock className="h-3.5 w-3.5 text-slate-400" />
-                {time}
-            </div>
+            {time && (
+                <div className="flex items-center gap-1 text-xs font-semibold text-slate-700">
+                    <Clock className="h-3.5 w-3.5 text-slate-400" />
+                    {time}
+                </div>
+            )}
             <span className={`text-[11px] font-bold ${["concluido", "concluído", "confirmada", "em_execucao"].includes(status?.toLowerCase())
                 ? "text-emerald-500"
                 : "text-amber-500"
@@ -115,26 +123,44 @@ export default function Dashboard() {
 
         async function fetchMetrics(companyId) {
             setDataLoading(true);
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
-            const tomorrow = new Date(today);
-            tomorrow.setDate(tomorrow.getDate() + 1);
-
-            const todayStr = today.toISOString().split('T')[0];
-            const tomorrowStr = tomorrow.toISOString().split('T')[0];
+            const agora = new Date();
+            const yearStr = agora.getFullYear();
+            const monthStr = String(agora.getMonth() + 1).padStart(2, '0');
+            const dateStr = String(agora.getDate()).padStart(2, '0');
+            const todayStr = `${yearStr}-${monthStr}-${dateStr}`;
 
             try {
-                const [customersRes, visitsRes, upcomingRes] = await Promise.all([
+                const [customersRes, schedulesTodayRes, employeesRes] = await Promise.all([
                     supabase.from('customers').select('*', { count: 'exact', head: true }).eq('company_id', companyId),
-                    supabase.from('service_requests').select('*', { count: 'exact', head: true }).eq('company_id', companyId).gte('scheduled_date', todayStr).lt('scheduled_date', tomorrowStr),
-                    supabase.from('service_requests').select('*, customers!inner(*)').eq('company_id', companyId).in('status', ['pendente', 'Pendente', 'em_execucao', 'Em Execução', 'Confirmada', 'confirmada']).gte('scheduled_date', todayStr).order('scheduled_date', { ascending: true }).limit(5)
+                    supabase.from('cleaning_schedules')
+                        .select('*, customers!inner(*)')
+                        .eq('company_id', companyId)
+                        .eq('data_agendada', todayStr)
+                        .order('created_at', { ascending: true }),
+                    supabase.from('profiles')
+                        .select('id, full_name')
+                        .eq('company_id', companyId)
                 ]);
+
+                const employeeMap = {};
+                (employeesRes.data || []).forEach((emp) => {
+                    employeeMap[emp.id] = emp.full_name;
+                });
+
+                const visitsWithFunc = (schedulesTodayRes.data || []).map((visit) => {
+                    const assignedId = visit.funcionario_id || visit.customers?.funcionario_id;
+                    const funcionarioName = assignedId ? (employeeMap[assignedId] || 'Não informado') : 'Não atribuído';
+                    return {
+                        ...visit,
+                        funcionarioName
+                    };
+                });
 
                 setStats({
                     activeCustomers: customersRes.count || 0,
-                    visitsToday: visitsRes.count || 0
+                    visitsToday: schedulesTodayRes.data?.length || 0
                 });
-                setUpcomingVisits(upcomingRes.data || []);
+                setUpcomingVisits(visitsWithFunc);
             } catch (error) {
                 console.error("Erro ao buscar métricas", error);
             } finally {
@@ -252,7 +278,7 @@ export default function Dashboard() {
 
                     {/* Upcoming Visits */}
                     <section className="mb-8 animate-slide-up" style={{ animationDelay: "0.4s" }}>
-                        <h2 className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-4">Próximas Visitas</h2>
+                        <h2 className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-4">Visitas de Hoje</h2>
                         <div className="space-y-3">
                             {dataLoading ? (
                                 <div className="bg-white rounded-[20px] p-6 text-center border border-slate-100 shadow-sm animate-pulse">
@@ -261,17 +287,15 @@ export default function Dashboard() {
                                 </div>
                             ) : upcomingVisits.length > 0 ? (
                                 upcomingVisits.map((visit) => {
-                                    const visitDate = new Date(visit.scheduled_date);
-                                    const timeString = visitDate.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
                                     return (
                                         <VisitCard
                                             key={visit.id}
                                             id={visit.id}
                                             name={visit.customers?.name || 'Cliente Desconhecido'}
                                             address={visit.customers?.address || ''}
-                                            time={timeString}
+                                            funcionarioName={visit.funcionarioName}
                                             status={visit.status}
-                                            onClick={() => router.push(`/chamados/${visit.id}`)}
+                                            onClick={() => router.push(`/visita/nova?clienteId=${visit.customer_id}`)}
                                         />
                                     );
                                 })
@@ -280,8 +304,8 @@ export default function Dashboard() {
                                     <div className="bg-slate-50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-3">
                                         <Calendar className="h-8 w-8 text-slate-300" />
                                     </div>
-                                    <p className="text-slate-800 font-bold">Agenda Livre!</p>
-                                    <p className="text-slate-400 text-sm font-medium mt-1">Nenhuma visita confirmada para as próximas horas.</p>
+                                    <p className="text-slate-800 font-bold">Agenda Livre Hoje!</p>
+                                    <p className="text-slate-400 text-sm font-medium mt-1">Nenhuma limpeza agendada para o dia de hoje.</p>
                                 </div>
                             )}
                         </div>

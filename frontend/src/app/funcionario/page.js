@@ -63,52 +63,44 @@ export default function EmployeeDashboard() {
 
         async function fetchMetrics(companyId, profileId) {
             setDataLoading(true);
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
-            const tomorrow = new Date(today);
-            tomorrow.setDate(tomorrow.getDate() + 1);
-            
-            const todayStr = today.toISOString().split('T')[0];
-            const tomorrowStr = tomorrow.toISOString().split('T')[0];
-            
+            const agora = new Date();
+            const yearStr = agora.getFullYear();
+            const monthStr = String(agora.getMonth() + 1).padStart(2, '0');
+            const dateStr = String(agora.getDate()).padStart(2, '0');
+            const todayStr = `${yearStr}-${monthStr}-${dateStr}`;
+
             try {
-                // Para o funcionário, podemos buscar chamados atribuídos a ele (profile_id)
-                const [customersRes, customersCountRes, ticketsCountRes, upcomingRes] = await Promise.all([
-
-                    //supabase.from('customers').select('*').eq('company_id', companyId).limit(4),
-                    // Apenas clientes atribuídos a este funcionário
-                    supabase.from('customers').select('*').eq('company_id', companyId).eq('funcionario_id', profileId).limit(4),
-                    
-                    //supabase.from('customers').select('*', { count: 'exact', head: true }).eq('company_id', companyId),
-                    // Contagem de clientes atribuídos a este funcionário
-                    supabase.from('customers').select('*', { count: 'exact', head: true }).eq('company_id', companyId).eq('funcionario_id', profileId),
-                    
-                    // Chamados abertos/pendentes atribuídos a este funcionário
-                    supabase.from('service_requests')
-                        .select('*', { count: 'exact', head: true })
+                const [myCustomersRes, allSchedulesRes] = await Promise.all([
+                    // Clientes atribuídos a este funcionário
+                    supabase.from('customers')
+                        .select('*')
                         .eq('company_id', companyId)
-                        .eq('piscineiro_id', profileId)
-                        .in('status', ['pendente', 'Pendente', 'em_execucao', 'Em Execução', 'agendado', 'Agendado']),
+                        .eq('funcionario_id', profileId)
+                        .order('name', { ascending: true }),
 
-                    // Lista de chamados para o funcionário (filtrado apenas para os criados HOJE)
-                    supabase.from('service_requests')
-                        .select('*, customers(*), service_types(name)')
+                    // Limpezas de hoje na empresa
+                    supabase.from('cleaning_schedules')
+                        .select('*, customers!inner(*)')
                         .eq('company_id', companyId)
-                        .eq('piscineiro_id', profileId)
-                        .in('status', ['pendente', 'Pendente', 'em_execucao', 'Em Execução', 'Confirmada', 'agendado', 'Agendado'])
-                        .gte('created_at', todayStr)
-                        .order('created_at', { ascending: false })
-                        .limit(5)
+                        .eq('data_agendada', todayStr)
+                        .order('created_at', { ascending: true })
                 ]);
 
+                const assignedCustomers = myCustomersRes.data || [];
+
+                // Filtrar apenas as limpezas de hoje dos clientes atribuídos a este funcionário
+                const todayVisits = (allSchedulesRes.data || []).filter(
+                    (s) => s.funcionario_id === profileId || s.customers?.funcionario_id === profileId
+                );
+
                 setStats({
-                    activeCustomers: customersCountRes.count || 0, // Contagem total real da empresa
-                    pendingTickets: ticketsCountRes.count || 0
+                    activeCustomers: assignedCustomers.length,
+                    pendingTickets: todayVisits.length
                 });
-                setUpcomingVisits(upcomingRes.data || []);
-                setMyCustomers(customersRes.data || []);
+                setUpcomingVisits(todayVisits);
+                setMyCustomers(assignedCustomers.slice(0, 4));
             } catch (error) {
-                console.error("Erro ao buscar métricas", error);
+                console.error("Erro ao buscar métricas do funcionário", error);
             } finally {
                 setDataLoading(false);
             }
@@ -185,7 +177,7 @@ export default function EmployeeDashboard() {
                     <div className="bg-card rounded-xl p-4 shadow-sm border border-border text-center">
                         <div className="flex justify-center text-warning mb-1"><AlertCircle className="h-4 w-4" /></div>
                         <p className="text-xl font-bold text-card-foreground">{dataLoading ? '...' : stats.pendingTickets}</p>
-                        <p className="text-xs text-muted-foreground">Chamados abertos</p>
+                        <p className="text-xs text-muted-foreground">Limpezas hoje</p>
                     </div>
                 </div>
 
@@ -205,11 +197,10 @@ export default function EmployeeDashboard() {
                     </button>
                 </div>
 
-                {/* Chamados Section */}
+                {/* Visitas de Hoje Section */}
                 <section className="animate-slide-up" style={{ animationDelay: "0.2s" }}>
                     <div className="flex items-center justify-between mb-4">
-                        <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Chamados</h2>
-                        <span onClick={() => router.push('/chamados')} className="text-xs text-primary font-medium cursor-pointer hover:underline">Ver todos</span>
+                        <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Visitas de Hoje</h2>
                     </div>
                     <div className="space-y-3">
                         {dataLoading ? (
@@ -219,25 +210,19 @@ export default function EmployeeDashboard() {
                             </div>
                         ) : upcomingVisits.length > 0 ? (
                             upcomingVisits.map((visit) => {
-                                let timeString = '--:--';
-                                if (visit.scheduled_date) {
-                                    const visitDate = new Date(visit.scheduled_date);
-                                    timeString = visitDate.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-                                }
                                 return (
                                     <ChamadoCard
                                         key={visit.id}
-                                        title={visit.service_types?.name || 'Serviço'}
+                                        title={visit.customers?.pool_size ? `Piscina ${visit.customers.pool_size}` : 'Limpeza de Piscina'}
                                         client={visit.customers?.name || 'Cliente Desconhecido'}
                                         address={visit.customers?.address || 'Sem endereço'}
-                                        time={timeString}
-                                        onClick={() => router.push(`/chamados/${visit.id}`)}
+                                        onClick={() => router.push(`/visita/nova?clienteId=${visit.customer_id}`)}
                                     />
                                 );
                             })
                         ) : (
                             <div className="bg-card rounded-xl p-6 text-center border border-border mt-4">
-                                <p className="text-muted-foreground font-medium text-sm">Nenhum chamado pendente para hoje.</p>
+                                <p className="text-muted-foreground font-medium text-sm">Nenhuma limpeza agendada para você hoje.</p>
                             </div>
                         )}
                     </div>

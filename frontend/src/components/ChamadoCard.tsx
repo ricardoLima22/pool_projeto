@@ -10,7 +10,7 @@ export const ChamadoCard = ({
   title: string;
   client: string;
   address: string;
-  time: string;
+  time?: string;
   onClick?: () => void;
 }) => {
   return (
@@ -29,12 +29,14 @@ export const ChamadoCard = ({
             <MapPin className="h-3 w-3" />
             <span className="truncate">{address}</span>
           </div>
-          <div className="flex items-center gap-3 mt-2">
-            <div className="flex items-center gap-1 text-xs text-muted-foreground">
-              <Clock className="h-3 w-3" />
-              {time}
+          {time && (
+            <div className="flex items-center gap-3 mt-2">
+              <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                <Clock className="h-3 w-3" />
+                {time}
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
     </div>

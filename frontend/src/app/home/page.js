@@ -130,7 +130,7 @@ export default function Dashboard() {
             const todayStr = `${yearStr}-${monthStr}-${dateStr}`;
 
             try {
-                const [customersRes, schedulesTodayRes, employeesRes] = await Promise.all([
+                const [customersRes, schedulesTodayRes, employeesRes, allCustomersRes] = await Promise.all([
                     supabase.from('customers').select('*', { count: 'exact', head: true }).eq('company_id', companyId),
                     supabase.from('cleaning_schedules')
                         .select('*, customers!inner(*)')
@@ -139,6 +139,9 @@ export default function Dashboard() {
                         .order('created_at', { ascending: true }),
                     supabase.from('profiles')
                         .select('id, full_name')
+                        .eq('company_id', companyId),
+                    supabase.from('customers')
+                        .select('id, name, address, pool_size, funcionario_id')
                         .eq('company_id', companyId)
                 ]);
 
@@ -147,11 +150,18 @@ export default function Dashboard() {
                     employeeMap[emp.id] = emp.full_name;
                 });
 
+                const customerMap = {};
+                (allCustomersRes.data || []).forEach((cust) => {
+                    customerMap[cust.id] = cust;
+                });
+
                 const visitsWithFunc = (schedulesTodayRes.data || []).map((visit) => {
-                    const assignedId = visit.customers?.funcionario_id || visit.funcionario_id;
+                    const cust = customerMap[visit.customer_id] || (Array.isArray(visit.customers) ? visit.customers[0] : visit.customers);
+                    const assignedId = cust?.funcionario_id || visit.funcionario_id;
                     const funcionarioName = assignedId ? (employeeMap[assignedId] || 'Não informado') : 'Não atribuído';
                     return {
                         ...visit,
+                        customers: cust || visit.customers,
                         funcionarioName
                     };
                 });

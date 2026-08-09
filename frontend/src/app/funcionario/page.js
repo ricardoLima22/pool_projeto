@@ -70,7 +70,7 @@ export default function EmployeeDashboard() {
             const todayStr = `${yearStr}-${monthStr}-${dateStr}`;
 
             try {
-                const [myCustomersRes, allSchedulesRes] = await Promise.all([
+                const [myCustomersRes, allSchedulesRes, allCustomersRes] = await Promise.all([
                     // Clientes atribuídos a este funcionário
                     supabase.from('customers')
                         .select('*')
@@ -83,15 +83,33 @@ export default function EmployeeDashboard() {
                         .select('*, customers!inner(*)')
                         .eq('company_id', companyId)
                         .eq('data_agendada', todayStr)
-                        .order('created_at', { ascending: true })
+                        .order('created_at', { ascending: true }),
+
+                    // Todos os clientes atualizados da empresa
+                    supabase.from('customers')
+                        .select('id, name, address, pool_size, funcionario_id')
+                        .eq('company_id', companyId)
                 ]);
 
                 const assignedCustomers = myCustomersRes.data || [];
 
+                const customerMap = {};
+                (allCustomersRes.data || []).forEach((cust) => {
+                    customerMap[cust.id] = cust;
+                });
+
                 // Filtrar apenas as limpezas de hoje dos clientes atribuídos a este funcionário
-                const todayVisits = (allSchedulesRes.data || []).filter(
-                    (s) => s.funcionario_id === profileId || s.customers?.funcionario_id === profileId
-                );
+                const todayVisits = (allSchedulesRes.data || []).filter((s) => {
+                    const cust = customerMap[s.customer_id] || (Array.isArray(s.customers) ? s.customers[0] : s.customers);
+                    const assignedId = cust?.funcionario_id || s.funcionario_id;
+                    return assignedId === profileId;
+                }).map((s) => {
+                    const cust = customerMap[s.customer_id] || (Array.isArray(s.customers) ? s.customers[0] : s.customers);
+                    return {
+                        ...s,
+                        customers: cust || s.customers
+                    };
+                });
 
                 setStats({
                     activeCustomers: assignedCustomers.length,

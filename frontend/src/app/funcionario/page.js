@@ -125,6 +125,14 @@ export default function EmployeeDashboard() {
         }
 
         fetchUserAndData();
+
+        return () => {
+            const metaTheme = document.querySelector('meta[name="theme-color"]');
+            if (metaTheme) metaTheme.setAttribute('content', '#ffffff');
+
+            document.documentElement.style.backgroundColor = '#fcfbf8';
+            document.body.style.backgroundColor = '#fcfbf8';
+        };
     }, [router]);
 
     const handleLogout = async () => {
@@ -141,14 +149,14 @@ export default function EmployeeDashboard() {
     }
 
     return (
-        <div className="min-h-screen bg-background">
+        <div className="min-h-screen font-sans flex flex-col">
             {/* Header */}
-            <header className="gradient-hero px-6 pt-6 pb-10 text-primary-foreground">
+            <header className="gradient-hero px-6 pt-[calc(1.5rem+env(safe-area-inset-top))] pb-10 text-white shadow-md">
                 <div className="max-w-4xl mx-auto">
                     <div className="flex items-center justify-between mb-6">
                         <div className="flex items-center gap-2">
-                            <Droplets className="h-6 w-6 text-primary" />
-                            <span className="font-bold text-lg">Pureza Azul</span>
+                            <Droplets className="h-6 w-6 text-cyan-200" />
+                            <span className="font-bold tracking-tight text-lg">Pureza Azul</span>
                         </div>
                         <button onClick={handleLogout} className="flex items-center gap-2 text-sm opacity-80 hover:opacity-100 transition-opacity">
                             <LogOut className="h-4 w-4" />
@@ -161,7 +169,8 @@ export default function EmployeeDashboard() {
             </header>
 
             {/* Main Content */}
-            <main className="max-w-4xl mx-auto px-6 -mt-6">
+            <div className="flex-1 bg-slate-50 pb-24">
+                <main className="max-w-4xl mx-auto px-5 -mt-8 relative z-20">
                 {/* Weather Card */}
                 <div className="mb-4 animate-slide-up bg-white/60 backdrop-blur-sm rounded-xl p-4 border border-cyan-100 shadow-sm">
                     {weatherLoading ? (
@@ -274,5 +283,6 @@ export default function EmployeeDashboard() {
                 </section>
             </main>
         </div>
-    );
+    </div>
+);
 }

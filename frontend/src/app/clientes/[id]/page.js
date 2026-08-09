@@ -135,6 +135,13 @@ export default function DetalhesCliente() {
             .eq('id', id);
 
         if (!error) {
+            // Atualizar funcionario_id nos agendamentos pendentes do cliente
+            await supabase
+                .from('cleaning_schedules')
+                .update({ funcionario_id: funcionarioId || null })
+                .eq('customer_id', id)
+                .eq('status', 'pendente');
+
             // Atualizar dias da semana na tabela customer_cleaning_days
             await supabase.from('customer_cleaning_days').delete().eq('customer_id', id);
 

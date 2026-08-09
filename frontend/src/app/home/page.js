@@ -148,7 +148,7 @@ export default function Dashboard() {
                 });
 
                 const visitsWithFunc = (schedulesTodayRes.data || []).map((visit) => {
-                    const assignedId = visit.funcionario_id || visit.customers?.funcionario_id;
+                    const assignedId = visit.customers?.funcionario_id || visit.funcionario_id;
                     const funcionarioName = assignedId ? (employeeMap[assignedId] || 'Não informado') : 'Não atribuído';
                     return {
                         ...visit,

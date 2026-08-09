@@ -45,18 +45,18 @@ export default function NovoCliente() {
             if (profile) {
                 setCompanyId(profile.company_id);
 
-                // Busca apenas perfis com role = 'Funcionario' e ativo = true da mesma empresa
+                // Busca perfis ativos da mesma empresa com role Funcionario ou Dono
                 const { data: funcs } = await supabase
                     .from('profiles')
                     .select('id, full_name, ativo, roles(name)')
                     .eq('company_id', profile.company_id)
-                    .eq('ativo', true)
-                    .eq('roles.name', 'Funcionario');
+                    .eq('ativo', true);
 
-                // Filtra no cliente para garantir apenas a role correta e ativo === true
-                const apenasFunc = (funcs || []).filter(
-                    (p) => p.roles?.name === 'Funcionario' && p.ativo === true
-                );
+                // Filtra para incluir papéis de Funcionario e Dono ativos
+                const apenasFunc = (funcs || []).filter((p) => {
+                    const roleName = (Array.isArray(p.roles) ? p.roles[0]?.name : p.roles?.name)?.toLowerCase();
+                    return p.ativo === true && ['funcionario', 'dono', 'admin'].includes(roleName);
+                });
                 setFuncionarios(apenasFunc);
             }
         }

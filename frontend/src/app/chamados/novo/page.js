@@ -61,7 +61,7 @@ export default function NovoChamado() {
                     .order('name');
                 setClientes(cRes.data || []);
 
-                // 2. Funcionários ativos. Trazemos apenas quem tem ativo = true
+                // 2. Funcionários e Donos ativos
                 const pRes = await supabase
                     .from('profiles')
                     .select('id, full_name, ativo, roles(name)')
@@ -69,8 +69,11 @@ export default function NovoChamado() {
                     .eq('ativo', true)
                     .order('full_name');
                 
-                // Filtramos apenas quem tem o role "Funcionario" e ativo === true
-                const funcList = (pRes.data || []).filter(p => p.ativo === true && ((!Array.isArray(p.roles) && p.roles?.name?.toLowerCase() === 'funcionario') || (Array.isArray(p.roles) && p.roles[0]?.name?.toLowerCase() === 'funcionario')));
+                // Filtramos os perfis ativos que possuem role Funcionario, Dono ou Admin
+                const funcList = (pRes.data || []).filter((p) => {
+                    const roleName = (Array.isArray(p.roles) ? p.roles[0]?.name : p.roles?.name)?.toLowerCase();
+                    return p.ativo === true && ['funcionario', 'dono'].includes(roleName);
+                });
                 setFuncionarios(funcList);
                 // 3. Tipos de Serviço
                 const tRes = await supabase

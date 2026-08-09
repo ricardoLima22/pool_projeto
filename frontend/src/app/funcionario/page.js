@@ -4,10 +4,23 @@ import { useEffect, useState } from 'react';
 import { supabase } from '../../lib/supabase';
 import { useRouter } from 'next/navigation';
 import { useWeather } from '../../hooks/useWeather';
-import { Droplets, LogOut, Users, AlertCircle, Thermometer, Camera } from "lucide-react";
+import { Droplets, LogOut, Users, AlertCircle, Thermometer, Camera, Calendar, TrendingUp } from "lucide-react";
 import SplashScreen from '../../components/SplashScreen';
 import { ChamadoCard } from '../../components/ChamadoCard';
 import { ClientCard } from '../../components/ClientCard';
+
+const StatCard = ({ icon, value, label, onClick }) => (
+    <div
+        onClick={onClick}
+        className={`bg-white rounded-xl p-3 sm:p-4 shadow-sm border border-slate-200 text-center flex flex-col justify-between items-center overflow-hidden ${onClick ? 'cursor-pointer hover:shadow-md hover:border-cyan-200 transition-all active:scale-95' : ''}`}
+    >
+        <div className="flex justify-center text-cyan-600 mb-1">{icon}</div>
+        <p className="text-xs sm:text-sm md:text-xl font-bold text-slate-800 tracking-tight truncate w-full" title={String(value)}>
+            {value}
+        </p>
+        <p className="text-[10px] sm:text-xs text-slate-500 mt-0.5 truncate w-full">{label}</p>
+    </div>
+);
 
 export default function EmployeeDashboard() {
     const [profile, setProfile] = useState(null);
@@ -15,7 +28,7 @@ export default function EmployeeDashboard() {
     const router = useRouter();
     
     // Métricas
-    const [stats, setStats] = useState({ activeCustomers: 0, pendingTickets: 0 });
+    const [stats, setStats] = useState({ activeCustomers: 0, pendingTickets: 0, myCommissions: null });
     const [upcomingVisits, setUpcomingVisits] = useState([]);
     const [myCustomers, setMyCustomers] = useState([]);
     const [dataLoading, setDataLoading] = useState(true);
@@ -128,9 +141,18 @@ export default function EmployeeDashboard() {
                     };
                 });
 
+                let totalComissaoSum = 0;
+                (assignedCustomers || []).forEach((c) => {
+                    const price = c.price || 0;
+                    const rate = c.pool_size === 'Grande' ? 0.50 : 0.40;
+                    totalComissaoSum += price * rate;
+                });
+                const formattedCommission = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(totalComissaoSum);
+
                 setStats({
                     activeCustomers: assignedCustomers.length,
-                    pendingTickets: todayVisits.length
+                    pendingTickets: todayVisits.length,
+                    myCommissions: formattedCommission
                 });
                 setUpcomingVisits(todayVisits);
                 setMyCustomers(assignedCustomers.slice(0, 4));
@@ -212,17 +234,10 @@ export default function EmployeeDashboard() {
                 </div>
 
                 {/* Stats Row */}
-                <div className="grid grid-cols-2 gap-3 mb-8 animate-slide-up" style={{ animationDelay: "0.1s" }}>
-                    <div className="bg-card rounded-xl p-4 shadow-sm border border-border text-center">
-                        <div className="flex justify-center text-primary mb-1"><Users className="h-4 w-4" /></div>
-                        <p className="text-xl font-bold text-card-foreground">{dataLoading ? '...' : stats.activeCustomers}</p>
-                        <p className="text-xs text-muted-foreground">Clientes atribuídos</p>
-                    </div>
-                    <div className="bg-card rounded-xl p-4 shadow-sm border border-border text-center">
-                        <div className="flex justify-center text-warning mb-1"><AlertCircle className="h-4 w-4" /></div>
-                        <p className="text-xl font-bold text-card-foreground">{dataLoading ? '...' : stats.pendingTickets}</p>
-                        <p className="text-xs text-muted-foreground">Limpezas hoje</p>
-                    </div>
+                <div className="grid grid-cols-3 gap-3 mb-8 animate-slide-up" style={{ animationDelay: "0.1s" }}>
+                    <StatCard icon={<Calendar className="h-6 w-6" />} value={dataLoading ? '...' : stats.pendingTickets} label="Visitas hoje" />
+                    <StatCard icon={<Users className="h-6 w-6" />} value={dataLoading ? '...' : stats.activeCustomers} label="Meus clientes" />
+                    <StatCard icon={<TrendingUp className="h-6 w-6 text-emerald-500" />} value={dataLoading ? '...' : (stats.myCommissions || 'R$ 0,00')} label="Comissão" />
                 </div>
 
                 {/* Register Visit CTA */}

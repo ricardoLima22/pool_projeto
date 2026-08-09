@@ -10,11 +10,13 @@ import SplashScreen from '../../components/SplashScreen';
 const StatCard = ({ icon, value, label, onClick }) => (
     <div
         onClick={onClick}
-        className={`bg-white rounded-xl p-4 shadow-sm border border-slate-200 text-center ${onClick ? 'cursor-pointer hover:shadow-md hover:border-cyan-200 transition-all active:scale-95' : ''}`}
+        className={`bg-white rounded-xl p-3 sm:p-4 shadow-sm border border-slate-200 text-center flex flex-col justify-between items-center overflow-hidden ${onClick ? 'cursor-pointer hover:shadow-md hover:border-cyan-200 transition-all active:scale-95' : ''}`}
     >
         <div className="flex justify-center text-cyan-600 mb-1">{icon}</div>
-        <p className="text-xl font-bold text-slate-800">{value}</p>
-        <p className="text-xs text-slate-500">{label}</p>
+        <p className="text-xs sm:text-sm md:text-xl font-bold text-slate-800 tracking-tight truncate w-full" title={String(value)}>
+            {value}
+        </p>
+        <p className="text-[10px] sm:text-xs text-slate-500 mt-0.5 truncate w-full">{label}</p>
     </div>
 );
 

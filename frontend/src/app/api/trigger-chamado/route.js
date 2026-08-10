@@ -9,7 +9,10 @@ export async function POST(req) {
 
         if (!githubToken) {
             console.error("GITHUB_ACTIONS_TOKEN não configurado no .env");
-            return NextResponse.json({ error: 'GitHub token missing' }, { status: 500 });
+            return NextResponse.json({ 
+                error: 'GitHub token missing', 
+                details: 'A variável GITHUB_ACTIONS_TOKEN não está configurada no ambiente (Vercel/.env.local).' 
+            }, { status: 500 });
         }
 
         // Repositório do seu Robô
@@ -18,9 +21,10 @@ export async function POST(req) {
         const githubResponse = await fetch(`https://api.github.com/repos/${githubRepo}/dispatches`, {
             method: 'POST',
             headers: {
-                'Authorization': `Bearer ${githubToken}`,
+                'Authorization': `Bearer ${githubToken.trim()}`,
                 'Accept': 'application/vnd.github.v3+json',
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'User-Agent': 'pool_projeto-app'
             },
             body: JSON.stringify({
                 event_type: 'send_chamado_notification',
@@ -30,14 +34,19 @@ export async function POST(req) {
 
         if (!githubResponse.ok) {
             const errText = await githubResponse.text();
-            console.error("Erro ao chamar GitHub Actions:", errText);
-            return NextResponse.json({ error: 'Failed to trigger RPA', details: errText }, { status: githubResponse.status });
+            console.error("Erro ao chamar GitHub Actions:", githubResponse.status, errText);
+            return NextResponse.json({ 
+                error: 'Failed to trigger RPA', 
+                github_status: githubResponse.status,
+                details: errText 
+            }, { status: githubResponse.status });
         }
 
         return NextResponse.json({ success: true, message: 'RPA Triggered' });
 
     } catch (error) {
         console.error("Erro na API trigger-chamado:", error);
-        return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+        return NextResponse.json({ error: 'Internal server error', details: error.message }, { status: 500 });
     }
 }
+

@@ -4,10 +4,23 @@ import { useEffect, useState } from 'react';
 import { supabase } from '../../lib/supabase';
 import { useRouter } from 'next/navigation';
 import { useWeather } from '../../hooks/useWeather';
-import { Droplets, LogOut, Users, AlertCircle, Thermometer, Camera } from "lucide-react";
+import { Droplets, LogOut, Users, AlertCircle, Thermometer, Camera, Calendar, TrendingUp } from "lucide-react";
 import SplashScreen from '../../components/SplashScreen';
 import { ChamadoCard } from '../../components/ChamadoCard';
 import { ClientCard } from '../../components/ClientCard';
+
+const StatCard = ({ icon, value, label, onClick }) => (
+    <div
+        onClick={onClick}
+        className={`bg-white rounded-xl p-3 sm:p-4 shadow-sm border border-slate-200 text-center flex flex-col justify-between items-center overflow-hidden ${onClick ? 'cursor-pointer hover:shadow-md hover:border-cyan-200 transition-all active:scale-95' : ''}`}
+    >
+        <div className="flex justify-center text-cyan-600 mb-1">{icon}</div>
+        <p className="text-xs sm:text-sm md:text-xl font-bold text-slate-800 tracking-tight truncate w-full" title={String(value)}>
+            {value}
+        </p>
+        <p className="text-[10px] sm:text-xs text-slate-500 mt-0.5 truncate w-full">{label}</p>
+    </div>
+);
 
 export default function EmployeeDashboard() {
     const [profile, setProfile] = useState(null);
@@ -15,7 +28,7 @@ export default function EmployeeDashboard() {
     const router = useRouter();
     
     // Métricas
-    const [stats, setStats] = useState({ activeCustomers: 0, pendingTickets: 0 });
+    const [stats, setStats] = useState({ activeCustomers: 0, pendingTickets: 0, myCommissions: null });
     const [upcomingVisits, setUpcomingVisits] = useState([]);
     const [myCustomers, setMyCustomers] = useState([]);
     const [dataLoading, setDataLoading] = useState(true);
@@ -63,58 +76,102 @@ export default function EmployeeDashboard() {
 
         async function fetchMetrics(companyId, profileId) {
             setDataLoading(true);
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
-            const tomorrow = new Date(today);
-            tomorrow.setDate(tomorrow.getDate() + 1);
-            
-            const todayStr = today.toISOString().split('T')[0];
-            const tomorrowStr = tomorrow.toISOString().split('T')[0];
-            
+            const agora = new Date();
+            const yearStr = agora.getFullYear();
+            const monthStr = String(agora.getMonth() + 1).padStart(2, '0');
+            const dateStr = String(agora.getDate()).padStart(2, '0');
+            const todayStr = `${yearStr}-${monthStr}-${dateStr}`;
+
             try {
-                // Para o funcionário, podemos buscar chamados atribuídos a ele (profile_id)
-                const [customersRes, customersCountRes, ticketsCountRes, upcomingRes] = await Promise.all([
+                const inicioHoje = `${todayStr}T00:00:00.000Z`;
+                const fimHoje = `${todayStr}T23:59:59.999Z`;
 
-                    //supabase.from('customers').select('*').eq('company_id', companyId).limit(4),
-                    // Apenas clientes atribuídos a este funcionário
-                    supabase.from('customers').select('*').eq('company_id', companyId).eq('funcionario_id', profileId).limit(4),
-                    
-                    //supabase.from('customers').select('*', { count: 'exact', head: true }).eq('company_id', companyId),
-                    // Contagem de clientes atribuídos a este funcionário
-                    supabase.from('customers').select('*', { count: 'exact', head: true }).eq('company_id', companyId).eq('funcionario_id', profileId),
-                    
-                    // Chamados abertos/pendentes atribuídos a este funcionário
-                    supabase.from('service_requests')
-                        .select('*', { count: 'exact', head: true })
+                const [myCustomersRes, allSchedulesRes, allCustomersRes, visitsTodayRes] = await Promise.all([
+                    // Clientes atribuídos a este funcionário
+                    supabase.from('customers')
+                        .select('*')
                         .eq('company_id', companyId)
-                        .eq('piscineiro_id', profileId)
-                        .in('status', ['pendente', 'Pendente', 'em_execucao', 'Em Execução', 'agendado', 'Agendado']),
+                        .eq('funcionario_id', profileId)
+                        .order('name', { ascending: true }),
 
-                    // Lista de chamados para o funcionário (filtrado apenas para os criados HOJE)
-                    supabase.from('service_requests')
-                        .select('*, customers(*), service_types(name)')
+                    // Limpezas de hoje na empresa
+                    supabase.from('cleaning_schedules')
+                        .select('*, customers!inner(*)')
                         .eq('company_id', companyId)
-                        .eq('piscineiro_id', profileId)
-                        .in('status', ['pendente', 'Pendente', 'em_execucao', 'Em Execução', 'Confirmada', 'agendado', 'Agendado'])
-                        .gte('created_at', todayStr)
-                        .order('created_at', { ascending: false })
-                        .limit(5)
+                        .eq('data_agendada', todayStr)
+                        .order('created_at', { ascending: true }),
+
+                    // Todos os clientes atualizados da empresa
+                    supabase.from('customers')
+                        .select('id, name, address, pool_size, funcionario_id')
+                        .eq('company_id', companyId),
+
+                    // Visitas já realizadas hoje
+                    supabase.from('visits')
+                        .select('customer_id')
+                        .gte('created_at', inicioHoje)
+                        .lte('created_at', fimHoje)
                 ]);
 
-                setStats({
-                    activeCustomers: customersCountRes.count || 0, // Contagem total real da empresa
-                    pendingTickets: ticketsCountRes.count || 0
+                const assignedCustomers = myCustomersRes.data || [];
+
+                const completedCustomerIds = new Set(
+                    (visitsTodayRes.data || []).map(v => v.customer_id)
+                );
+
+                const customerMap = {};
+                (allCustomersRes.data || []).forEach((cust) => {
+                    customerMap[cust.id] = cust;
                 });
-                setUpcomingVisits(upcomingRes.data || []);
-                setMyCustomers(customersRes.data || []);
+
+                // Filtrar apenas as limpezas de hoje dos clientes atribuídos a este funcionário
+                const todayVisits = (allSchedulesRes.data || []).filter((s) => {
+                    const cust = customerMap[s.customer_id] || (Array.isArray(s.customers) ? s.customers[0] : s.customers);
+                    const assignedId = cust?.funcionario_id || s.funcionario_id;
+                    return assignedId === profileId;
+                }).map((s) => {
+                    const cust = customerMap[s.customer_id] || (Array.isArray(s.customers) ? s.customers[0] : s.customers);
+                    const isCompletedInSchedule = s.status?.toLowerCase() === 'concluido' || s.status?.toLowerCase() === 'concluído';
+                    const isCompletedInVisits = completedCustomerIds.has(s.customer_id);
+                    const resolvedStatus = (isCompletedInSchedule || isCompletedInVisits) ? 'concluido' : 'pendente';
+                    return {
+                        ...s,
+                        customers: cust || s.customers,
+                        status: resolvedStatus
+                    };
+                });
+
+                let totalComissaoSum = 0;
+                (assignedCustomers || []).forEach((c) => {
+                    const price = c.price || 0;
+                    const rate = c.pool_size === 'Grande' ? 0.50 : 0.40;
+                    totalComissaoSum += price * rate;
+                });
+                const formattedCommission = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(totalComissaoSum);
+
+                setStats({
+                    activeCustomers: assignedCustomers.length,
+                    pendingTickets: todayVisits.length,
+                    myCommissions: formattedCommission
+                });
+                setUpcomingVisits(todayVisits);
+                setMyCustomers(assignedCustomers.slice(0, 4));
             } catch (error) {
-                console.error("Erro ao buscar métricas", error);
+                console.error("Erro ao buscar métricas do funcionário", error);
             } finally {
                 setDataLoading(false);
             }
         }
 
         fetchUserAndData();
+
+        return () => {
+            const metaTheme = document.querySelector('meta[name="theme-color"]');
+            if (metaTheme) metaTheme.setAttribute('content', '#ffffff');
+
+            document.documentElement.style.backgroundColor = '#fcfbf8';
+            document.body.style.backgroundColor = '#fcfbf8';
+        };
     }, [router]);
 
     const handleLogout = async () => {
@@ -131,14 +188,14 @@ export default function EmployeeDashboard() {
     }
 
     return (
-        <div className="min-h-screen bg-background">
+        <div className="min-h-screen font-sans flex flex-col">
             {/* Header */}
-            <header className="gradient-hero px-6 pt-6 pb-10 text-primary-foreground">
+            <header className="gradient-hero px-6 pt-[calc(1.5rem+env(safe-area-inset-top))] pb-10 text-white shadow-md">
                 <div className="max-w-4xl mx-auto">
                     <div className="flex items-center justify-between mb-6">
                         <div className="flex items-center gap-2">
-                            <Droplets className="h-6 w-6 text-primary" />
-                            <span className="font-bold text-lg">Pureza Azul</span>
+                            <Droplets className="h-6 w-6 text-cyan-200" />
+                            <span className="font-bold tracking-tight text-lg">Pureza Azul</span>
                         </div>
                         <button onClick={handleLogout} className="flex items-center gap-2 text-sm opacity-80 hover:opacity-100 transition-opacity">
                             <LogOut className="h-4 w-4" />
@@ -151,7 +208,8 @@ export default function EmployeeDashboard() {
             </header>
 
             {/* Main Content */}
-            <main className="max-w-4xl mx-auto px-6 -mt-6">
+            <div className="flex-1 bg-slate-50 pb-24">
+                <main className="max-w-4xl mx-auto px-5 -mt-8 relative z-20">
                 {/* Weather Card */}
                 <div className="mb-4 animate-slide-up bg-white/60 backdrop-blur-sm rounded-xl p-4 border border-cyan-100 shadow-sm">
                     {weatherLoading ? (
@@ -176,17 +234,10 @@ export default function EmployeeDashboard() {
                 </div>
 
                 {/* Stats Row */}
-                <div className="grid grid-cols-2 gap-3 mb-8 animate-slide-up" style={{ animationDelay: "0.1s" }}>
-                    <div className="bg-card rounded-xl p-4 shadow-sm border border-border text-center">
-                        <div className="flex justify-center text-primary mb-1"><Users className="h-4 w-4" /></div>
-                        <p className="text-xl font-bold text-card-foreground">{dataLoading ? '...' : stats.activeCustomers}</p>
-                        <p className="text-xs text-muted-foreground">Clientes atribuídos</p>
-                    </div>
-                    <div className="bg-card rounded-xl p-4 shadow-sm border border-border text-center">
-                        <div className="flex justify-center text-warning mb-1"><AlertCircle className="h-4 w-4" /></div>
-                        <p className="text-xl font-bold text-card-foreground">{dataLoading ? '...' : stats.pendingTickets}</p>
-                        <p className="text-xs text-muted-foreground">Chamados abertos</p>
-                    </div>
+                <div className="grid grid-cols-3 gap-3 mb-8 animate-slide-up" style={{ animationDelay: "0.1s" }}>
+                    <StatCard icon={<Calendar className="h-6 w-6" />} value={dataLoading ? '...' : stats.pendingTickets} label="Visitas hoje" />
+                    <StatCard icon={<Users className="h-6 w-6" />} value={dataLoading ? '...' : stats.activeCustomers} label="Meus clientes" />
+                    <StatCard icon={<TrendingUp className="h-6 w-6 text-emerald-500" />} value={dataLoading ? '...' : (stats.myCommissions || 'R$ 0,00')} label="Comissão" />
                 </div>
 
                 {/* Register Visit CTA */}
@@ -205,11 +256,10 @@ export default function EmployeeDashboard() {
                     </button>
                 </div>
 
-                {/* Chamados Section */}
+                {/* Visitas de Hoje Section */}
                 <section className="animate-slide-up" style={{ animationDelay: "0.2s" }}>
                     <div className="flex items-center justify-between mb-4">
-                        <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Chamados</h2>
-                        <span onClick={() => router.push('/chamados')} className="text-xs text-primary font-medium cursor-pointer hover:underline">Ver todos</span>
+                        <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Visitas de Hoje</h2>
                     </div>
                     <div className="space-y-3">
                         {dataLoading ? (
@@ -219,25 +269,20 @@ export default function EmployeeDashboard() {
                             </div>
                         ) : upcomingVisits.length > 0 ? (
                             upcomingVisits.map((visit) => {
-                                let timeString = '--:--';
-                                if (visit.scheduled_date) {
-                                    const visitDate = new Date(visit.scheduled_date);
-                                    timeString = visitDate.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-                                }
                                 return (
                                     <ChamadoCard
                                         key={visit.id}
-                                        title={visit.service_types?.name || 'Serviço'}
+                                        title={visit.customers?.pool_size ? `Piscina ${visit.customers.pool_size}` : 'Limpeza de Piscina'}
                                         client={visit.customers?.name || 'Cliente Desconhecido'}
                                         address={visit.customers?.address || 'Sem endereço'}
-                                        time={timeString}
-                                        onClick={() => router.push(`/chamados/${visit.id}`)}
+                                        status={visit.status}
+                                        onClick={() => router.push(`/visita/nova?clienteId=${visit.customer_id}`)}
                                     />
                                 );
                             })
                         ) : (
                             <div className="bg-card rounded-xl p-6 text-center border border-border mt-4">
-                                <p className="text-muted-foreground font-medium text-sm">Nenhum chamado pendente para hoje.</p>
+                                <p className="text-muted-foreground font-medium text-sm">Nenhuma limpeza agendada para você hoje.</p>
                             </div>
                         )}
                     </div>
@@ -271,5 +316,6 @@ export default function EmployeeDashboard() {
                 </section>
             </main>
         </div>
-    );
+    </div>
+);
 }

@@ -287,6 +287,18 @@ function NovaVisita() {
         }
 
         // Se chegou aqui, a visita foi salva com sucesso
+        // Marcar agendamento de hoje do cliente como concluído em cleaning_schedules
+        const anoStr = hoje.getFullYear();
+        const mesStr = String(hoje.getMonth() + 1).padStart(2, '0');
+        const diaStr = String(hoje.getDate()).padStart(2, '0');
+        const dataHojeStr = `${anoStr}-${mesStr}-${diaStr}`;
+
+        await supabase
+            .from('cleaning_schedules')
+            .update({ status: 'concluido' })
+            .eq('customer_id', cliente.id)
+            .eq('data_agendada', dataHojeStr);
+
         // Dar baixa no estoque
         for (const pId of Object.keys(quantidades)) {
             const qtdUsada = quantidades[pId];

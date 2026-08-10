@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import { supabase } from '../../lib/supabase'; // Caminho relativo corrigido
 import { useRouter } from 'next/navigation';
 import SplashScreen from '../../components/SplashScreen';
+import { DIAS_SEMANA } from '../../lib/scheduleGenerator';
 
 export default function ListagemClientes() {
     const [clientes, setClientes] = useState([]);
@@ -21,22 +22,32 @@ export default function ListagemClientes() {
             const { data: { user } } = await supabase.auth.getUser();
 
             if (user) {
-                // 1. Primeiro pegamos o company_id do perfil do usuário
+                // 1. Primeiro pegamos a empresa e a role do perfil do usuário
                 const { data: profile } = await supabase
                     .from('profiles')
-                    .select('company_id')
+                    .select('company_id, role_id, roles(name)')
                     .eq('id', user.id)
                     .single();
 
                 if (profile?.company_id) {
-                    // 2. Buscamos os clientes filtrados por essa empresa
+                    const roleName = Array.isArray(profile.roles)
+                        ? profile.roles[0]?.name
+                        : profile.roles?.name;
+
+                    const storedRole = localStorage.getItem('user_role');
+                    const isFuncionario = (roleName?.toLowerCase() === 'funcionario') || (storedRole?.toLowerCase() === 'funcionario');
+
+                    // 2. Buscamos os clientes filtrados por essa empresa trazendo os dias de limpeza
                     let query = supabase
                         .from('customers')
-                        .select('*')
+                        .select('*, customer_cleaning_days(dia_semana)')
                         .eq('company_id', profile.company_id);
-                        
-                    // Se quisermos restringir clientes pro funcionario só os que ele atende, faríamos aqui.
-                    // Mas pela regra, apenas tiramos os botões de adicionar.
+
+                    // Se for funcionário, exibe apenas os clientes atribuídos a ele
+                    if (isFuncionario) {
+                        query = query.eq('funcionario_id', user.id);
+                    }
+
                     const { data } = await query.order('name', { ascending: true });
 
                     setClientes(data || []);
@@ -118,11 +129,21 @@ export default function ListagemClientes() {
                                         <span className="inline-block text-[10px] font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded uppercase">
                                             {cliente.pool_volume_m3} M³
                                         </span>
-                                        {cliente.dia_limpeza && (
-                                            <span className="inline-block text-[10px] font-bold text-[#008080] bg-[#008080]/10 px-2 py-0.5 rounded uppercase">
-                                                Limpeza: {cliente.dia_limpeza}
-                                            </span>
-                                        )}
+                                        {(() => {
+                                            const diasFormatados = cliente.customer_cleaning_days && cliente.customer_cleaning_days.length > 0
+                                                ? cliente.customer_cleaning_days
+                                                    .sort((a,b) => (a.dia_semana === 0 ? 7 : a.dia_semana) - (b.dia_semana === 0 ? 7 : b.dia_semana))
+                                                    .map(d => DIAS_SEMANA.find(ds => ds.id === d.dia_semana)?.label)
+                                                    .filter(Boolean)
+                                                    .join(', ')
+                                                : cliente.dia_limpeza;
+
+                                            return diasFormatados ? (
+                                                <span className="inline-block text-[10px] font-bold text-[#008080] bg-[#008080]/10 px-2 py-0.5 rounded uppercase">
+                                                    Limpeza: {diasFormatados}
+                                                </span>
+                                            ) : null;
+                                        })()}
                                     </div>
                                 </div>
                                 <svg className="h-5 w-5 text-[#008080]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>

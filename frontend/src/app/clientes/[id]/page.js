@@ -7,6 +7,7 @@ import { useParams, useRouter } from 'next/navigation';
 import SplashScreen from '../../../components/SplashScreen';
 import { toast } from 'sonner';
 import ConfirmDeleteDialog from '../../../components/ConfirmDeleteDialog';
+import { DIAS_SEMANA, gerarAgendaCliente } from '../../../lib/scheduleGenerator';
 
 export default function DetalhesCliente() {
     const [cliente, setCliente] = useState(null);
@@ -20,11 +21,17 @@ export default function DetalhesCliente() {
     const [price, setPrice] = useState('');
     const [funcionarioId, setFuncionarioId] = useState('');
     const [tamanhoPiscina, setTamanhoPiscina] = useState('');
-    const [diaLimpeza, setDiaLimpeza] = useState('');
+    const [diasSemana, setDiasSemana] = useState([]); // Array de id (0 a 6)
     const [funcionarios, setFuncionarios] = useState([]);
     const [salvando, setSalvando] = useState(false);
     const [userRole, setUserRole] = useState('');
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+
+    const toggleDiaSemana = (diaId) => {
+        setDiasSemana((prev) =>
+            prev.includes(diaId) ? prev.filter((d) => d !== diaId) : [...prev, diaId]
+        );
+    };
 
     const params = useParams();
     const router = useRouter();
@@ -54,18 +61,27 @@ export default function DetalhesCliente() {
                 setPrice(data.price ?? '');
                 setFuncionarioId(data.funcionario_id || '');
                 setTamanhoPiscina(data.pool_size || '');
-                setDiaLimpeza(data.dia_limpeza || '');
 
-                // Busca funcionários da mesma empresa
+                // Busca dias de limpeza recorrentes na tabela customer_cleaning_days
+                const { data: daysData } = await supabase
+                    .from('customer_cleaning_days')
+                    .select('dia_semana')
+                    .eq('customer_id', id);
+
+                const loadedDias = (daysData || []).map((d) => d.dia_semana);
+                setDiasSemana(loadedDias);
+
+                // Busca funcionários/donos ativos da mesma empresa
                 const { data: funcs } = await supabase
                     .from('profiles')
-                    .select('id, full_name, roles(name)')
+                    .select('id, full_name, ativo, roles(name)')
                     .eq('company_id', data.company_id)
-                    .eq('roles.name', 'Funcionario');
+                    .eq('ativo', true);
 
-                const apenasFunc = (funcs || []).filter(
-                    (p) => p.roles?.name === 'Funcionario'
-                );
+                const apenasFunc = (funcs || []).filter((p) => {
+                    const roleName = (Array.isArray(p.roles) ? p.roles[0]?.name : p.roles?.name)?.toLowerCase();
+                    return p.ativo === true && ['funcionario', 'dono', 'admin'].includes(roleName);
+                });
                 setFuncionarios(apenasFunc);
             }
             setLoading(false);
@@ -116,12 +132,31 @@ export default function DetalhesCliente() {
                 pool_size: tamanhoPiscina || null,
                 price: price !== '' ? parseFloat(price) : null,
                 funcionario_id: funcionarioId || null,
-                dia_limpeza: diaLimpeza || null
             })
             .eq('id', id);
 
         if (!error) {
-            setCliente({ ...cliente, name: nomeLimpo, whatsapp: somenteNumeros, email, address: endereco, pool_volume_m3: parseFloat(volume), pool_size: tamanhoPiscina || null, price: price !== '' ? parseFloat(price) : null, funcionario_id: funcionarioId || null, dia_limpeza: diaLimpeza || null });
+            // Atualizar funcionario_id nos agendamentos pendentes do cliente
+            await supabase
+                .from('cleaning_schedules')
+                .update({ funcionario_id: funcionarioId || null })
+                .eq('customer_id', id)
+                .eq('status', 'pendente');
+
+            // Atualizar dias da semana na tabela customer_cleaning_days
+            await supabase.from('customer_cleaning_days').delete().eq('customer_id', id);
+
+            if (diasSemana.length > 0) {
+                const cleaningDaysData = diasSemana.map((diaId) => ({
+                    customer_id: id,
+                    dia_semana: diaId,
+                    funcionario_id: funcionarioId || null,
+                }));
+                await supabase.from('customer_cleaning_days').insert(cleaningDaysData);
+                await gerarAgendaCliente(id, cliente.company_id, funcionarioId, diasSemana);
+            }
+
+            setCliente({ ...cliente, name: nomeLimpo, whatsapp: somenteNumeros, email, address: endereco, pool_volume_m3: parseFloat(volume), pool_size: tamanhoPiscina || null, price: price !== '' ? parseFloat(price) : null, funcionario_id: funcionarioId || null });
             setNome(nomeLimpo);
             setEditando(false);
             toast.success('Cliente atualizado com sucesso!');
@@ -204,10 +239,21 @@ export default function DetalhesCliente() {
                             </p>
                         </div>
                         <div className="pt-4">
-                            <h2 className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block mb-1">Dia da Limpeza</h2>
-                            <p className="w-full border-b-2 border-slate-200 bg-transparent py-3 text-slate-800 text-sm font-medium">
-                                {cliente.dia_limpeza || 'Não informado'}
-                            </p>
+                            <h2 className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block mb-1">Dias da Limpeza (Recorrentes)</h2>
+                            <div className="flex flex-wrap gap-1.5 pt-1">
+                                {diasSemana.length > 0 ? (
+                                    diasSemana.sort((a,b) => (a === 0 ? 7 : a) - (b === 0 ? 7 : b)).map((dId) => {
+                                        const diaObj = DIAS_SEMANA.find((d) => d.id === dId);
+                                        return (
+                                            <span key={dId} className="bg-teal-50 text-[#008080] border border-teal-200 text-xs font-semibold px-2.5 py-1 rounded-md">
+                                                {diaObj?.fullName || diaObj?.label}
+                                            </span>
+                                        );
+                                    })
+                                ) : (
+                                    <p className="w-full border-b-2 border-slate-200 bg-transparent py-3 text-slate-800 text-sm font-medium">Não informado</p>
+                                )}
+                            </div>
                         </div>
 
                         {userRole !== 'funcionario' && (
@@ -308,24 +354,28 @@ export default function DetalhesCliente() {
                                 ))}
                             </select>
                         </div>
-                        {/* Dia da Limpeza */}
+                        {/* Múltiplos Dias da Limpeza */}
                         <div className="pt-4">
-                            <label className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block mb-1">Dia da Limpeza</label>
-                            <select
-                                value={diaLimpeza}
-                                onChange={(e) => setDiaLimpeza(e.target.value)}
-                                className="w-full border-b-2 border-slate-200 bg-transparent py-3 text-slate-800 focus:border-[#008080] focus:outline-none transition-colors text-sm appearance-none"
-                                style={{ backgroundImage: `url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%2394a3b8%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.4-12.8z%22%2F%3E%3C%2Fsvg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 0.5rem center', backgroundSize: '0.65em auto' }}
-                            >
-                                <option value="">Selecione o dia...</option>
-                                <option value="Segunda-feira">Segunda-feira</option>
-                                <option value="Terça-feira">Terça-feira</option>
-                                <option value="Quarta-feira">Quarta-feira</option>
-                                <option value="Quinta-feira">Quinta-feira</option>
-                                <option value="Sexta-feira">Sexta-feira</option>
-                                <option value="Sábado">Sábado</option>
-                                <option value="Domingo">Domingo</option>
-                            </select>
+                            <label className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block mb-2">Dias da Limpeza (Recorrentes)</label>
+                            <div className="grid grid-cols-7 gap-1.5">
+                                {DIAS_SEMANA.map((dia) => {
+                                    const isSelected = diasSemana.includes(dia.id);
+                                    return (
+                                        <button
+                                            key={dia.id}
+                                            type="button"
+                                            onClick={() => toggleDiaSemana(dia.id)}
+                                            className={`py-2 rounded-lg text-xs font-semibold transition-all border ${
+                                                isSelected
+                                                    ? 'bg-[#008080] text-white border-[#008080] shadow-sm'
+                                                    : 'bg-white text-slate-600 border-slate-200 hover:border-slate-300'
+                                            }`}
+                                        >
+                                            {dia.label}
+                                        </button>
+                                    );
+                                })}
+                            </div>
                         </div>
 
                         <div className="pt-8 flex gap-4">

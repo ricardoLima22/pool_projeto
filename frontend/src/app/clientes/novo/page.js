@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '../../../lib/supabase'; // Caminho relativo corrigido
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
+import { DIAS_SEMANA, gerarAgendaCliente } from '../../../lib/scheduleGenerator';
 
 export default function NovoCliente() {
     const [nome, setNome] = useState('');
@@ -14,12 +15,18 @@ export default function NovoCliente() {
     const [volume, setVolume] = useState('');
     const [tamanhoPiscina, setTamanhoPiscina] = useState('');
     const [price, setPrice] = useState('');
-    const [diaLimpeza, setDiaLimpeza] = useState('');
+    const [diasSemana, setDiasSemana] = useState([]); // Array de id (0 a 6)
     const [funcionarios, setFuncionarios] = useState([]);
     const [funcionarioId, setFuncionarioId] = useState('');
     const [companyId, setCompanyId] = useState(null);
     const [loading, setLoading] = useState(false);
     const router = useRouter();
+
+    const toggleDiaSemana = (diaId) => {
+        setDiasSemana((prev) =>
+            prev.includes(diaId) ? prev.filter((d) => d !== diaId) : [...prev, diaId]
+        );
+    };
 
     // 1. Ao carregar a tela, pegamos o ID da empresa e buscamos os funcionários
     useEffect(() => {
@@ -38,17 +45,18 @@ export default function NovoCliente() {
             if (profile) {
                 setCompanyId(profile.company_id);
 
-                // Busca apenas perfis com role = 'Funcionario' da mesma empresa
+                // Busca perfis ativos da mesma empresa com role Funcionario ou Dono
                 const { data: funcs } = await supabase
                     .from('profiles')
-                    .select('id, full_name, roles(name)')
+                    .select('id, full_name, ativo, roles(name)')
                     .eq('company_id', profile.company_id)
-                    .eq('roles.name', 'Funcionario');
+                    .eq('ativo', true);
 
-                // Filtra no cliente para garantir apenas a role correta
-                const apenasFunc = (funcs || []).filter(
-                    (p) => p.roles?.name === 'Funcionario'
-                );
+                // Filtra para incluir papéis de Funcionario e Dono ativos
+                const apenasFunc = (funcs || []).filter((p) => {
+                    const roleName = (Array.isArray(p.roles) ? p.roles[0]?.name : p.roles?.name)?.toLowerCase();
+                    return p.ativo === true && ['funcionario', 'dono', 'admin'].includes(roleName);
+                });
                 setFuncionarios(apenasFunc);
             }
         }
@@ -81,7 +89,7 @@ export default function NovoCliente() {
         const { data: { user } } = await supabase.auth.getUser();
 
         // 2. Inserimos o cliente amarrado à empresa (Multi-tenancy) e ao usuário
-        const { error } = await supabase
+        const { data: newCustomer, error } = await supabase
             .from('customers')
             .insert([
                 {
@@ -95,16 +103,39 @@ export default function NovoCliente() {
                     company_id: companyId,
                     piscineiro_id: user?.id,
                     funcionario_id: funcionarioId || null,
-                    dia_limpeza: diaLimpeza || null
                 }
-            ]);
+            ])
+            .select('id')
+            .single();
 
         if (error) {
             toast.error('Erro ao salvar cliente: ' + error.message);
-        } else {
-            toast.success('Cliente cadastrado com sucesso!');
-            router.push('/clientes');
+            setLoading(false);
+            return;
         }
+
+        // 3. Inserir dias de limpeza na tabela customer_cleaning_days
+        if (diasSemana.length > 0 && newCustomer) {
+            const cleaningDaysData = diasSemana.map((diaId) => ({
+                customer_id: newCustomer.id,
+                dia_semana: diaId,
+                funcionario_id: funcionarioId || null,
+            }));
+
+            const { error: daysError } = await supabase
+                .from('customer_cleaning_days')
+                .insert(cleaningDaysData);
+
+            if (daysError) {
+                console.error('Erro ao salvar dias de limpeza:', daysError);
+            } else {
+                // 4. Gerar a agenda de limpezas do mês vigente
+                await gerarAgendaCliente(newCustomer.id, companyId, funcionarioId, diasSemana);
+            }
+        }
+
+        toast.success('Cliente cadastrado com sucesso!');
+        router.push('/clientes');
         setLoading(false);
     };
 
@@ -227,24 +258,28 @@ export default function NovoCliente() {
                     </select>
                 </div>
 
-                {/* Dia da Limpeza */}
+                {/* Múltiplos Dias da Limpeza */}
                 <div className="pt-4">
-                    <label className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block mb-1">Dia da Limpeza</label>
-                    <select
-                        value={diaLimpeza}
-                        onChange={(e) => setDiaLimpeza(e.target.value)}
-                        className="w-full border-b-2 border-slate-200 bg-transparent py-3 text-slate-800 focus:border-[#008080] focus:outline-none transition-colors text-sm appearance-none"
-                        style={{ backgroundImage: `url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%2394a3b8%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.4-12.8z%22%2F%3E%3C%2Fsvg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 0.5rem center', backgroundSize: '0.65em auto' }}
-                    >
-                        <option value="">Selecione o dia...</option>
-                        <option value="Segunda-feira">Segunda-feira</option>
-                        <option value="Terça-feira">Terça-feira</option>
-                        <option value="Quarta-feira">Quarta-feira</option>
-                        <option value="Quinta-feira">Quinta-feira</option>
-                        <option value="Sexta-feira">Sexta-feira</option>
-                        <option value="Sábado">Sábado</option>
-                        <option value="Domingo">Domingo</option>
-                    </select>
+                    <label className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block mb-2">Dias da Limpeza (Recorrentes)</label>
+                    <div className="grid grid-cols-7 gap-1.5">
+                        {DIAS_SEMANA.map((dia) => {
+                            const isSelected = diasSemana.includes(dia.id);
+                            return (
+                                <button
+                                    key={dia.id}
+                                    type="button"
+                                    onClick={() => toggleDiaSemana(dia.id)}
+                                    className={`py-2 rounded-lg text-xs font-semibold transition-all border ${
+                                        isSelected
+                                            ? 'bg-[#008080] text-white border-[#008080] shadow-sm'
+                                            : 'bg-white text-slate-600 border-slate-200 hover:border-slate-300'
+                                    }`}
+                                >
+                                    {dia.label}
+                                </button>
+                            );
+                        })}
+                    </div>
                 </div>
 
                 <div className="pt-8">

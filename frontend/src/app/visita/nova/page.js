@@ -288,6 +288,7 @@ function NovaVisita() {
 
         // Se chegou aqui, a visita foi salva com sucesso
         // Marcar agendamento de hoje do cliente como concluído em cleaning_schedules
+        const hoje = new Date();
         const anoStr = hoje.getFullYear();
         const mesStr = String(hoje.getMonth() + 1).padStart(2, '0');
         const diaStr = String(hoje.getDate()).padStart(2, '0');

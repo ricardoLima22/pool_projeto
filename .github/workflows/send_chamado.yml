@@ -3,6 +3,7 @@ name: 3. Enviar Novo Chamado
 on:
   repository_dispatch:
     types: [send_chamado_notification]
+  workflow_dispatch: # Permite ativar manualmente pelo painel do GitHub
 
 jobs:
   send_message:

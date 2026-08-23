@@ -5,6 +5,7 @@ import {
   RefreshCw,
   ArrowDownRight,
   DollarSign,
+  Wallet,
 } from "lucide-react";
 
 type Props = {
@@ -12,6 +13,7 @@ type Props = {
   totalRecorrente: number;
   totalUnico: number;
   mesAnterior: number;
+  totalComissoes?: number;
   loading?: boolean;
 };
 
@@ -38,7 +40,7 @@ function SkeletonCard() {
   );
 }
 
-// ─── KPI Card (replica fiel do Lovable) ──────────────────────────────────────
+// ─── KPI Card ─────────────────────────────────────────────────────────────────
 
 function KpiCard({
   icon,
@@ -72,6 +74,7 @@ export function ExpenseSummaryCards({
   totalRecorrente,
   totalUnico,
   mesAnterior,
+  totalComissoes = 0,
   loading,
 }: Props) {
   if (loading) {
@@ -84,24 +87,29 @@ export function ExpenseSummaryCards({
     );
   }
 
+  const totalGeral = totalMes + totalComissoes;
   const variacao =
     mesAnterior > 0 ? ((totalMes - mesAnterior) / mesAnterior) * 100 : null;
   const subiu = (variacao ?? 0) > 0;
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-      {/* Total do Mês */}
+      {/* 1. Total Geral de Saídas (Despesas + Comissões) */}
       <KpiCard
         icon={<DollarSign className="h-4 w-4 text-primary" />}
-        label="Total do Mês"
-        value={formatBRL(totalMes)}
+        label="Total de Saídas"
+        value={formatBRL(totalGeral)}
         hint={
-          mesAnterior === 0
+          totalComissoes > 0
+            ? "Despesas + Comissões"
+            : mesAnterior === 0
             ? "Primeiro mês registrado"
             : `${subiu ? "+" : ""}${variacao?.toFixed(0)}% vs mês anterior`
         }
         hintClass={
-          mesAnterior === 0
+          totalComissoes > 0
+            ? "text-primary font-medium"
+            : mesAnterior === 0
             ? "text-success"
             : subiu
             ? "text-warning"
@@ -109,7 +117,26 @@ export function ExpenseSummaryCards({
         }
       />
 
-      {/* Gastos Recorrentes */}
+      {/* 2. Total de Comissões dos Funcionários */}
+      <KpiCard
+        icon={<Wallet className="h-4 w-4 text-emerald-600" />}
+        label="Comissões a Pagar"
+        value={formatBRL(totalComissoes)}
+        hint="Cálculo mensal automático dos funcionários"
+        hintClass="text-emerald-600 font-medium"
+      />
+
+      {/* 3. Despesas Lançadas */}
+      <KpiCard
+        icon={<ArrowDownRight className="h-4 w-4 text-warning" />}
+        label="Despesas Lançadas"
+        value={formatBRL(totalMes)}
+        hint={`${
+          totalGeral > 0 ? Math.round((totalMes / totalGeral) * 100) : 0
+        }% do total de saídas`}
+      />
+
+      {/* 4. Gastos Recorrentes */}
       <KpiCard
         icon={<RefreshCw className="h-4 w-4 text-primary" />}
         label="Gastos Recorrentes"
@@ -118,25 +145,7 @@ export function ExpenseSummaryCards({
           totalMes > 0
             ? Math.round((totalRecorrente / totalMes) * 100)
             : 0
-        }% do total`}
-      />
-
-      {/* Gastos Únicos */}
-      <KpiCard
-        icon={<ArrowDownRight className="h-4 w-4 text-warning" />}
-        label="Gastos Únicos"
-        value={formatBRL(totalUnico)}
-        hint={`${
-          totalMes > 0 ? Math.round((totalUnico / totalMes) * 100) : 0
-        }% do total`}
-      />
-
-      {/* Mês Anterior */}
-      <KpiCard
-        icon={<TrendingUp className="h-4 w-4 text-accent" />}
-        label="Mês Anterior"
-        value={formatBRL(mesAnterior)}
-        hint="Referência de comparação"
+        }% das despesas`}
       />
     </div>
   );

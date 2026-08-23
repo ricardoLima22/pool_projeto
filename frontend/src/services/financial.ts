@@ -228,3 +228,31 @@ export async function getCategoryTotals(
 
   return Object.values(grouped).sort((a, b) => b.total - a.total);
 }
+
+// ─── Commissions (Comissões dos Funcionários) ─────────────────────────────────
+
+export async function getTotalCommissions(companyId: string): Promise<number> {
+  const RATE_NORMAL = 0.40;
+  const RATE_GRANDE = 0.50;
+
+  const { data: clientes, error } = await supabase
+    .from("customers")
+    .select("funcionario_id, pool_size, price")
+    .eq("company_id", companyId)
+    .not("pool_size", "is", null);
+
+  if (error) throw error;
+
+  let total = 0;
+  for (const c of clientes ?? []) {
+    const price = Number(c.price) || 0;
+    if (c.pool_size === "Normal") {
+      total += price * RATE_NORMAL;
+    } else if (c.pool_size === "Grande") {
+      total += price * RATE_GRANDE;
+    }
+  }
+
+  return total;
+}
+

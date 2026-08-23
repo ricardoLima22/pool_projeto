@@ -20,6 +20,7 @@ import { MonthlySummary, CategorySummary } from "@/services/financial";
 type Props = {
   monthlySummary: MonthlySummary[];
   categorySummary: CategorySummary[];
+  totalComissoes?: number;
   loading?: boolean;
 };
 
@@ -84,16 +85,23 @@ function EmptyChart() {
 
 function ChartCard({
   title,
+  subtitle,
   children,
 }: {
   title: string;
+  subtitle?: string;
   children: React.ReactNode;
 }) {
   return (
     <div className="bg-card border border-border rounded-2xl p-5 shadow-sm">
-      <h3 className="font-semibold text-card-foreground mb-4 text-sm">
-        {title}
-      </h3>
+      <div className="mb-4">
+        <h3 className="font-semibold text-card-foreground text-sm">
+          {title}
+        </h3>
+        {subtitle && (
+          <p className="text-xs text-muted-foreground mt-0.5">{subtitle}</p>
+        )}
+      </div>
       {children}
     </div>
   );
@@ -155,6 +163,7 @@ const PieTooltip = ({ active, payload }: {
 export function ExpenseDashboard({
   monthlySummary,
   categorySummary,
+  totalComissoes = 0,
   loading,
 }: Props) {
   if (loading) {
@@ -167,13 +176,26 @@ export function ExpenseDashboard({
     );
   }
 
-  // ── Dados do gráfico Pie (categorias) ─────────────────────────────────────
-  const totalCat = categorySummary.reduce((s, c) => s + c.total, 0);
-  const pieData = categorySummary.map((c) => ({
+  // ── Dados do gráfico Pie (categorias + comissões) ─────────────────────────
+  const rawPieData = categorySummary.map((c) => ({
     name: c.category_name,
     value: c.total,
     color: c.color,
-    percent: totalCat > 0 ? (c.total / totalCat) * 100 : 0,
+  }));
+
+  // Inclui comissões na distribuição geral
+  if (totalComissoes > 0) {
+    rawPieData.push({
+      name: "Comissões",
+      value: totalComissoes,
+      color: "#10b981", // Verde esmeralda
+    });
+  }
+
+  const totalSaidasMes = rawPieData.reduce((s, c) => s + c.value, 0);
+  const pieData = rawPieData.map((d) => ({
+    ...d,
+    percent: totalSaidasMes > 0 ? (d.value / totalSaidasMes) * 100 : 0,
   }));
 
   // ── Dados do gráfico Line (evolução 6 meses) ──────────────────────────────
@@ -194,121 +216,124 @@ export function ExpenseDashboard({
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
-      {/* ── Gráfico Pizza — Por Categoria ──────────────────────────────── */}
-      <ChartCard title="Por Categoria (Mês Atual)">
-        {isEmpty(pieData) ? (
-          <EmptyChart />
-        ) : (
-          <ResponsiveContainer width="100%" height={240}>
-            <PieChart>
-              <Pie
-                data={pieData}
-                dataKey="value"
-                nameKey="name"
-                innerRadius={55}
-                outerRadius={85}
-                paddingAngle={2}
-              >
-                {pieData.map((d, i) => (
-                  <Cell key={i} fill={d.color} stroke="none" />
-                ))}
-              </Pie>
-              <Tooltip content={<PieTooltip />} />
-              <Legend
-                iconType="circle"
-                wrapperStyle={{ fontSize: 12 }}
-                formatter={(value) => (
-                  <span className="text-xs text-card-foreground">{value}</span>
-                )}
-              />
-            </PieChart>
-          </ResponsiveContainer>
-        )}
-      </ChartCard>
+      {/* ── Gráfico Pizza — Por Categoria & Comissões ─────────────────── */}
+        <ChartCard
+          title="Distribuição de Saídas"
+          subtitle="Despesas por Categoria + Comissões"
+        >
+          {isEmpty(pieData) ? (
+            <EmptyChart />
+          ) : (
+            <ResponsiveContainer width="100%" height={240}>
+              <PieChart>
+                <Pie
+                  data={pieData}
+                  dataKey="value"
+                  nameKey="name"
+                  innerRadius={55}
+                  outerRadius={85}
+                  paddingAngle={2}
+                >
+                  {pieData.map((d, i) => (
+                    <Cell key={i} fill={d.color} stroke="none" />
+                  ))}
+                </Pie>
+                <Tooltip content={<PieTooltip />} />
+                <Legend
+                  iconType="circle"
+                  wrapperStyle={{ fontSize: 12 }}
+                  formatter={(value) => (
+                    <span className="text-xs text-card-foreground">{value}</span>
+                  )}
+                />
+              </PieChart>
+            </ResponsiveContainer>
+          )}
+        </ChartCard>
 
-      {/* ── Gráfico Linha — Evolução Mensal ────────────────────────────── */}
-      <ChartCard title="Evolução Mensal (6 meses)">
-        {isEmpty(lineData) ? (
-          <EmptyChart />
-        ) : (
-          <ResponsiveContainer width="100%" height={240}>
-            <LineChart data={lineData} margin={{ top: 5, right: 10, left: 0, bottom: 5 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke={gridStroke} />
-              <XAxis
-                dataKey="label"
-                tick={axisTick}
-                stroke={gridStroke}
-                axisLine={false}
-                tickLine={false}
-              />
-              <YAxis
-                tickFormatter={shortBRL}
-                tick={axisTick}
-                stroke={gridStroke}
-                axisLine={false}
-                tickLine={false}
-                width={45}
-              />
-              <Tooltip content={<CustomTooltip />} />
-              <Line
-                type="monotone"
-                dataKey="total"
-                stroke="hsl(187 80% 42%)"
-                strokeWidth={2}
-                dot={{ r: 4, fill: "hsl(187 80% 42%)" }}
-                activeDot={{ r: 6 }}
-                name="Total"
-              />
-              <Line
-                type="monotone"
-                dataKey="Recorrente"
-                stroke="#a855f7"
-                strokeWidth={2}
-                strokeDasharray="4 2"
-                dot={{ r: 3, fill: "#a855f7" }}
-              />
-            </LineChart>
-          </ResponsiveContainer>
-        )}
-      </ChartCard>
+        {/* ── Gráfico Linha — Evolução Mensal ───────────────────────────── */}
+        <ChartCard title="Evolução de Despesas" subtitle="Últimos 6 meses">
+          {isEmpty(lineData) ? (
+            <EmptyChart />
+          ) : (
+            <ResponsiveContainer width="100%" height={240}>
+              <LineChart data={lineData} margin={{ top: 5, right: 10, left: 0, bottom: 5 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke={gridStroke} />
+                <XAxis
+                  dataKey="label"
+                  tick={axisTick}
+                  stroke={gridStroke}
+                  axisLine={false}
+                  tickLine={false}
+                />
+                <YAxis
+                  tickFormatter={shortBRL}
+                  tick={axisTick}
+                  stroke={gridStroke}
+                  axisLine={false}
+                  tickLine={false}
+                  width={45}
+                />
+                <Tooltip content={<CustomTooltip />} />
+                <Line
+                  type="monotone"
+                  dataKey="total"
+                  stroke="hsl(187 80% 42%)"
+                  strokeWidth={2}
+                  dot={{ r: 4, fill: "hsl(187 80% 42%)" }}
+                  activeDot={{ r: 6 }}
+                  name="Total Despesas"
+                />
+                <Line
+                  type="monotone"
+                  dataKey="Recorrente"
+                  stroke="#a855f7"
+                  strokeWidth={2}
+                  strokeDasharray="4 2"
+                  dot={{ r: 3, fill: "#a855f7" }}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          )}
+        </ChartCard>
 
-      {/* ── Gráfico Barras — Recorrente × Único ────────────────────────── */}
-      <ChartCard title="Recorrente × Único (4 meses)">
-        {isEmpty(barData) ? (
-          <EmptyChart />
-        ) : (
-          <ResponsiveContainer width="100%" height={240}>
-            <BarChart data={barData} margin={{ top: 5, right: 10, left: 0, bottom: 5 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke={gridStroke} vertical={false} />
-              <XAxis
-                dataKey="label"
-                tick={axisTick}
-                stroke={gridStroke}
-                axisLine={false}
-                tickLine={false}
-              />
-              <YAxis
-                tickFormatter={shortBRL}
-                tick={axisTick}
-                stroke={gridStroke}
-                axisLine={false}
-                tickLine={false}
-                width={45}
-              />
-              <Tooltip content={<CustomTooltip />} />
-              <Legend
-                iconType="circle"
-                wrapperStyle={{ fontSize: 12 }}
-                formatter={(value) => (
-                  <span className="text-xs text-card-foreground">{value}</span>
-                )}
-              />
-              <Bar dataKey="Recorrente" fill="#a855f7" radius={[6, 6, 0, 0]} maxBarSize={30} />
-              <Bar dataKey="Único" fill="#f59e0b" radius={[6, 6, 0, 0]} maxBarSize={30} />
-            </BarChart>
-          </ResponsiveContainer>
-        )}
-      </ChartCard>
-    </div>
+        {/* ── Gráfico Barras — Recorrente × Único ───────────────────────── */}
+        <ChartCard title="Recorrente × Único" subtitle="Últimos 4 meses">
+          {isEmpty(barData) ? (
+            <EmptyChart />
+          ) : (
+            <ResponsiveContainer width="100%" height={240}>
+              <BarChart data={barData} margin={{ top: 5, right: 10, left: 0, bottom: 5 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke={gridStroke} vertical={false} />
+                <XAxis
+                  dataKey="label"
+                  tick={axisTick}
+                  stroke={gridStroke}
+                  axisLine={false}
+                  tickLine={false}
+                />
+                <YAxis
+                  tickFormatter={shortBRL}
+                  tick={axisTick}
+                  stroke={gridStroke}
+                  axisLine={false}
+                  tickLine={false}
+                  width={45}
+                />
+                <Tooltip content={<CustomTooltip />} />
+                <Legend
+                  iconType="circle"
+                  wrapperStyle={{ fontSize: 12 }}
+                  formatter={(value) => (
+                    <span className="text-xs text-card-foreground">{value}</span>
+                  )}
+                />
+                <Bar dataKey="Recorrente" fill="#a855f7" radius={[6, 6, 0, 0]} maxBarSize={30} />
+                <Bar dataKey="Único" fill="#f59e0b" radius={[6, 6, 0, 0]} maxBarSize={30} />
+              </BarChart>
+            </ResponsiveContainer>
+          )}
+        </ChartCard>
+      </div>
   );
 }

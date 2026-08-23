@@ -11,6 +11,7 @@ import {
   deleteExpense,
   getMonthlyTotals,
   getCategoryTotals,
+  getTotalCommissions,
   ExpenseCategory,
   Expense,
   ExpenseCreate,
@@ -264,6 +265,7 @@ export default function FinanceiroPage() {
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [monthlySummary, setMonthlySummary] = useState<MonthlySummary[]>([]);
   const [categorySummary, setCategorySummary] = useState<CategorySummary[]>([]);
+  const [totalComissoes, setTotalComissoes] = useState(0);
 
   const [filterMonth, setFilterMonth] = useState(now.getMonth() + 1);
   const [filterYear, setFilterYear] = useState(now.getFullYear());
@@ -306,7 +308,7 @@ export default function FinanceiroPage() {
     });
   }, [router]);
 
-  // ── Carrega gastos e categorias ───────────────────────────────────────────
+  // ── Carrega gastos, categorias e total de comissões ────────────────────────
   const loadExpenses = useCallback(async () => {
     if (!companyId) {
       setLoadingData(false);
@@ -314,16 +316,18 @@ export default function FinanceiroPage() {
     }
     setLoadingData(true);
     try {
-      const [cats, exps] = await Promise.all([
+      const [cats, exps, comissoes] = await Promise.all([
         getExpenseCategories(companyId),
         getExpenses(companyId, {
           month: filterMonth,
           year: filterYear,
           categoryId: filterCategory || undefined,
         }),
+        getTotalCommissions(companyId),
       ]);
       setCategories(cats);
       setExpenses(exps);
+      setTotalComissoes(comissoes);
     } catch (e) {
       console.error(e);
     } finally {
@@ -449,6 +453,7 @@ export default function FinanceiroPage() {
           <div style={{ animation: "slide-up 0.6s ease-out forwards" }}>
             <ExpenseSummaryCards
               totalMes={totalMes}
+              totalComissoes={totalComissoes}
               totalRecorrente={totalRecorrente}
               totalUnico={totalUnico}
               mesAnterior={mesAnterior}
@@ -516,6 +521,7 @@ export default function FinanceiroPage() {
               <ExpenseDashboard
                 monthlySummary={monthlySummary}
                 categorySummary={categorySummary}
+                totalComissoes={totalComissoes}
                 loading={loadingCharts}
               />
             </div>

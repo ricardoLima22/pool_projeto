@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { supabase } from '../../lib/supabase';
 import { useRouter } from 'next/navigation';
 import { useWeather } from '../../hooks/useWeather';
-import { Droplets, LogOut, Camera, Users, UserPlus, Package, PlusCircle, BarChart3, Calendar, MapPin, Clock, TrendingUp, Waves, Thermometer, Wallet, User, DollarSign } from "lucide-react";
+import { Droplets, LogOut, Camera, Users, UserPlus, Package, PlusCircle, Calendar, MapPin, Clock, TrendingUp, Waves, Thermometer, Wallet, User, DollarSign } from "lucide-react";
 import SplashScreen from '../../components/SplashScreen';
 
 const StatCard = ({ icon, value, label, onClick }) => (
@@ -355,22 +355,6 @@ export default function Dashboard() {
                             )}
                         </div>
                     </section>
-
-                    {/* Bottom Banner */}
-                    <div className="mt-8 mb-8 gradient-dark rounded-xl p-5 text-slate-200 animate-slide-up" style={{ animationDelay: "0.5s" }}>
-                        <div className="flex items-start gap-3">
-                            <div className="bg-cyan-900/50 rounded-lg p-2 mt-0.5">
-                                <BarChart3 className="h-5 w-5 text-cyan-400" />
-                            </div>
-                            <div>
-                                <p className="font-bold text-white">Seu negócio está crescendo! 📈</p>
-                                <p className="text-sm opacity-75 mt-1">Mantenha seu estoque atualizado para gerar relatórios precisos.</p>
-                                <span className="inline-block mt-3 text-xs bg-cyan-900/50 text-cyan-300 px-3 py-1 rounded-full font-medium">
-                                    Em breve: Relatórios
-                                </span>
-                            </div>
-                        </div>
-                    </div>
                 </main>
             </div>
         </div>

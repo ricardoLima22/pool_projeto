@@ -249,11 +249,10 @@ export function ExpenseTable({
                     {/* Recorrência badge */}
                     <td className="px-4 py-3">
                       <span
-                        className={`inline-flex items-center gap-1 text-xs font-medium px-2.5 py-1 rounded-full border ${
-                          exp.recurrence === "mensal"
+                        className={`inline-flex items-center gap-1 text-xs font-medium px-2.5 py-1 rounded-full border ${exp.recurrence === "mensal"
                             ? "border-primary/40 text-primary bg-primary/10"
                             : "border-border text-muted-foreground"
-                        }`}
+                          }`}
                       >
                         {exp.recurrence === "mensal" && (
                           <RefreshCw className="h-3 w-3" />

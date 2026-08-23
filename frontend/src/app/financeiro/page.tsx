@@ -242,11 +242,10 @@ function TabButton({
   return (
     <button
       onClick={onClick}
-      className={`flex items-center gap-2 pb-3 -mb-px text-sm font-semibold border-b-2 transition-colors ${
-        active
+      className={`flex items-center gap-2 pb-3 -mb-px text-sm font-semibold border-b-2 transition-colors ${active
           ? "border-primary text-primary"
           : "border-transparent text-muted-foreground hover:text-foreground"
-      }`}
+        }`}
     >
       {icon}
       {label}

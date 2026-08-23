@@ -8,6 +8,7 @@ import { Droplets, LogOut, Users, AlertCircle, Thermometer, Camera, Calendar, Tr
 import SplashScreen from '../../components/SplashScreen';
 import { ChamadoCard } from '../../components/ChamadoCard';
 import { ClientCard } from '../../components/ClientCard';
+import GpsNavigationModal from '../../components/GpsNavigationModal';
 
 const StatCard = ({ icon, value, label, onClick }) => (
     <div
@@ -32,6 +33,7 @@ export default function EmployeeDashboard() {
     const [upcomingVisits, setUpcomingVisits] = useState([]);
     const [myCustomers, setMyCustomers] = useState([]);
     const [dataLoading, setDataLoading] = useState(true);
+    const [gpsCustomer, setGpsCustomer] = useState(null);
 
     const currentHour = new Date().getHours();
     const greeting = currentHour < 12 ? "Bom dia" : currentHour < 18 ? "Boa tarde" : "Boa noite";
@@ -305,6 +307,7 @@ export default function EmployeeDashboard() {
                                     address={customer.address || 'Sem endereço'} 
                                     phone={customer.whatsapp || 'Não informado'} 
                                     onClick={() => router.push(`/clientes/${customer.id}`)}
+                                    onGpsClick={() => setGpsCustomer(customer)}
                                 />
                             ))
                         ) : (
@@ -315,6 +318,13 @@ export default function EmployeeDashboard() {
                     </div>
                 </section>
             </main>
+
+            <GpsNavigationModal
+                isOpen={!!gpsCustomer}
+                onClose={() => setGpsCustomer(null)}
+                address={gpsCustomer?.address}
+                clientName={gpsCustomer?.name}
+            />
         </div>
     </div>
 );

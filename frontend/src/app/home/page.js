@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { supabase } from '../../lib/supabase';
 import { useRouter } from 'next/navigation';
 import { useWeather } from '../../hooks/useWeather';
-import { Droplets, LogOut, Camera, Users, UserPlus, Package, PlusCircle, BarChart3, Calendar, MapPin, Clock, TrendingUp, Waves, Thermometer, Wallet, User } from "lucide-react";
+import { Droplets, LogOut, Camera, Users, UserPlus, Package, PlusCircle, BarChart3, Calendar, MapPin, Clock, TrendingUp, Waves, Thermometer, Wallet, User, DollarSign } from "lucide-react";
 import SplashScreen from '../../components/SplashScreen';
 
 const StatCard = ({ icon, value, label, onClick }) => (
@@ -315,6 +315,9 @@ export default function Dashboard() {
                             <QuickCard onClick={() => router.push('/chamados')} icon={<Calendar className="h-5 w-5 text-blue-500" />} title="Meus Chamados" subtitle="Agendamentos" />
                             <QuickCard onClick={() => router.push('/chamados/novo')} icon={<PlusCircle className="h-5 w-5 text-emerald-500" />} title="Novo Chamado" subtitle="Gerar serviço" />
                             <QuickCard onClick={() => router.push('/funcionarios/comissoes')} icon={<Wallet className="h-5 w-5 text-violet-500" />} title="Comissões" subtitle="Fechamento mensal" />
+                            {(!profile?.roleName || ['dono', 'admin'].includes(profile?.roleName?.toLowerCase()) || profile?.roleName?.toLowerCase() !== 'funcionario') && (
+                                <QuickCard onClick={() => router.push('/financeiro')} icon={<DollarSign className="h-5 w-5 text-cyan-600" />} title="Financeiro" subtitle="Controle de gastos" />
+                            )}
                         </div>
                     </section>
 

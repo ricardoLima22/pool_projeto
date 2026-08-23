@@ -7,6 +7,8 @@ import { useParams, useRouter } from 'next/navigation';
 import SplashScreen from '../../../components/SplashScreen';
 import { toast } from 'sonner';
 import ConfirmDeleteDialog from '../../../components/ConfirmDeleteDialog';
+import GpsNavigationModal from '../../../components/GpsNavigationModal';
+import { MapPin, Navigation } from 'lucide-react';
 import { DIAS_SEMANA, gerarAgendaCliente } from '../../../lib/scheduleGenerator';
 
 export default function DetalhesCliente() {
@@ -26,6 +28,7 @@ export default function DetalhesCliente() {
     const [salvando, setSalvando] = useState(false);
     const [userRole, setUserRole] = useState('');
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+    const [gpsModalOpen, setGpsModalOpen] = useState(false);
 
     const toggleDiaSemana = (diaId) => {
         setDiasSemana((prev) =>
@@ -214,7 +217,27 @@ export default function DetalhesCliente() {
                         </div>
                         <div className="pt-4">
                             <h2 className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block mb-1">Endereço</h2>
-                            <p className="w-full border-b-2 border-slate-200 bg-transparent py-3 text-slate-800 text-sm font-medium">{cliente.address || 'Não informado'}</p>
+                            {cliente.address ? (
+                                <div
+                                    onClick={() => setGpsModalOpen(true)}
+                                    className="w-full border-b-2 border-slate-200 hover:border-[#008080] bg-transparent py-3 flex items-center justify-between cursor-pointer group transition-all"
+                                    role="button"
+                                    tabIndex={0}
+                                    title="Clique para abrir no Google Maps, Waze ou Apple Maps"
+                                >
+                                    <div className="flex items-start min-w-0 pr-3">
+                                        <p className="text-slate-800 text-sm font-medium leading-tight group-hover:text-teal-900 transition-colors">
+                                            {cliente.address}
+                                        </p>
+                                    </div>
+                                    <span className="shrink-0 flex items-center gap-1 text-xs font-semibold text-[#008080] bg-teal-50 group-hover:bg-teal-100 px-2.5 py-1 rounded-full border border-teal-200/80 transition-all shadow-xs">
+                                        <Navigation className="w-3 h-3 text-[#008080]" />
+                                        Abrir GPS
+                                    </span>
+                                </div>
+                            ) : (
+                                <p className="w-full border-b-2 border-slate-200 bg-transparent py-3 text-slate-400 text-sm font-medium">Não informado</p>
+                            )}
                         </div>
                         <div className="pt-4">
                             <h2 className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block mb-1">Valor (R$)</h2>
@@ -408,6 +431,13 @@ export default function DetalhesCliente() {
                     </form>
                 )}
             </div>
+
+            <GpsNavigationModal
+                isOpen={gpsModalOpen}
+                onClose={() => setGpsModalOpen(false)}
+                address={cliente?.address}
+                clientName={cliente?.name}
+            />
         </main>
     );
 }

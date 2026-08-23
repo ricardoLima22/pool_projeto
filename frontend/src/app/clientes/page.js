@@ -6,12 +6,15 @@ import { supabase } from '../../lib/supabase'; // Caminho relativo corrigido
 import { useRouter } from 'next/navigation';
 import SplashScreen from '../../components/SplashScreen';
 import { DIAS_SEMANA } from '../../lib/scheduleGenerator';
+import GpsNavigationModal from '../../components/GpsNavigationModal';
+import { Navigation } from 'lucide-react';
 
 export default function ListagemClientes() {
     const [clientes, setClientes] = useState([]);
     const [busca, setBusca] = useState('');
     const [loading, setLoading] = useState(true);
     const [userRole, setUserRole] = useState('');
+    const [gpsClient, setGpsClient] = useState(null);
     const router = useRouter();
 
     useEffect(() => {
@@ -114,17 +117,33 @@ export default function ListagemClientes() {
 
                 <div className="space-y-3">
                     {clientesFiltrados.map(cliente => (
-                            <button
+                            <div
                                 key={cliente.id}
                                 onClick={() => router.push(`/clientes/${cliente.id}`)}
-                                className="w-full bg-white rounded-xl border border-slate-100 p-4 flex items-center justify-between hover:border-[#008080]/30 transition-colors text-left shadow-sm active:scale-[0.99]"
+                                className="w-full bg-white rounded-xl border border-slate-100 p-4 flex items-center justify-between hover:border-[#008080]/30 transition-colors text-left shadow-sm active:scale-[0.99] cursor-pointer"
                             >
-                                <div className="space-y-1">
-                                    <p className="font-bold text-slate-800 text-sm">{cliente.name}</p>
-                                    <p className="text-xs text-slate-500 flex items-center gap-1 mt-1">
-                                        <svg className="h-3 w-3 text-red-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
-                                        {cliente.address || 'Endereço não informado'}
-                                    </p>
+                                <div className="space-y-1 flex-1 min-w-0 pr-3">
+                                    <p className="font-bold text-slate-800 text-sm truncate">{cliente.name}</p>
+                                    <div className="flex items-center gap-1.5 mt-1">
+                                        <p className="text-xs text-slate-500 flex items-center gap-1 truncate">
+                                            <svg className="h-3 w-3 text-red-500 shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                                            <span className="truncate">{cliente.address || 'Endereço não informado'}</span>
+                                        </p>
+                                        {cliente.address && (
+                                            <button
+                                                type="button"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    setGpsClient(cliente);
+                                                }}
+                                                className="shrink-0 flex items-center gap-1 text-[10px] font-semibold text-[#008080] bg-teal-50 hover:bg-teal-100 border border-teal-200/70 px-1.5 py-0.5 rounded-md transition-colors"
+                                                title="Abrir GPS"
+                                            >
+                                                <Navigation className="h-2.5 w-2.5" />
+                                                GPS
+                                            </button>
+                                        )}
+                                    </div>
                                     <div className="flex flex-wrap gap-2 mt-1">
                                         <span className="inline-block text-[10px] font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded uppercase">
                                             {cliente.pool_volume_m3} M³
@@ -146,8 +165,8 @@ export default function ListagemClientes() {
                                         })()}
                                     </div>
                                 </div>
-                                <svg className="h-5 w-5 text-[#008080]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-                            </button>
+                                <svg className="h-5 w-5 text-[#008080] shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                            </div>
                         ))}
 
                         {clientesFiltrados.length === 0 && (
@@ -157,6 +176,13 @@ export default function ListagemClientes() {
                         )}
                     </div>
             </div>
+
+            <GpsNavigationModal
+                isOpen={!!gpsClient}
+                onClose={() => setGpsClient(null)}
+                address={gpsClient?.address}
+                clientName={gpsClient?.name}
+            />
         </main>
     );
 }

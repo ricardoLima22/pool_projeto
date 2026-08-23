@@ -188,7 +188,7 @@ export function ExpenseDashboard({
     rawPieData.push({
       name: "Comissões",
       value: totalComissoes,
-      color: "#10b981", // Verde esmeralda
+      color: "#4f46e5", // Índigo Real (fora da paleta de categorias)
     });
   }
 

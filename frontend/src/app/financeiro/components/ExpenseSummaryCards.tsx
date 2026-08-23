@@ -108,7 +108,7 @@ export function ExpenseSummaryCards({
         }
         hintClass={
           totalComissoes > 0
-            ? "text-primary font-medium"
+            ? "text-muted-foreground"
             : mesAnterior === 0
             ? "text-success"
             : subiu
@@ -119,11 +119,11 @@ export function ExpenseSummaryCards({
 
       {/* 2. Total de Comissões dos Funcionários */}
       <KpiCard
-        icon={<Wallet className="h-4 w-4 text-emerald-600" />}
+        icon={<Wallet className="h-4 w-4 text-indigo-600" />}
         label="Comissões a Pagar"
         value={formatBRL(totalComissoes)}
         hint="Cálculo mensal automático dos funcionários"
-        hintClass="text-emerald-600 font-medium"
+        hintClass="text-muted-foreground"
       />
 
       {/* 3. Despesas Lançadas */}

@@ -25,6 +25,7 @@ import { ExpenseTable } from "./components/ExpenseTable";
 import { ExpenseDashboard } from "./components/ExpenseDashboard";
 import { Settings, BarChart3, List, X, Plus, Trash2, ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
+import AppLayout from "@/components/AppLayout";
 
 // ─── Color palette ────────────────────────────────────────────────────────────
 
@@ -402,130 +403,98 @@ export default function FinanceiroPage() {
 
   // ── Render ────────────────────────────────────────────────────────────────
   return (
-    <>
-      {/* ── Header fixo — padrão Clientes ──────────────────────────────── */}
-      <header
-        style={{
-          position: "fixed",
-          top: 0,
-          left: 0,
-          right: 0,
-          zIndex: 30,
-          // iOS Safari fix: força GPU layer para evitar jitter no scroll
-          WebkitTransform: "translateZ(0)",
-          transform: "translateZ(0)",
-          WebkitBackfaceVisibility: "hidden",
-          backfaceVisibility: "hidden",
-          // Garante que o header não some com o scroll do iOS
-          WebkitOverflowScrolling: "auto",
-        }}
-        className="px-4 py-4 pt-6 flex items-center justify-between bg-white border-b border-slate-200"
-      >
-        {/* Esquerda: voltar + título */}
-        <div className="flex items-center gap-3">
-          <button
-            onClick={() => router.push("/home")}
-            className="text-slate-800 transition-colors"
-            aria-label="Voltar para a home"
-          >
-            <ArrowLeft className="h-5 w-5" />
-          </button>
-          <h1 className="text-xl font-bold text-slate-800">Financeiro</h1>
-        </div>
-
-        {/* Direita: botão Categorias */}
+    <AppLayout
+      title="Financeiro"
+      subtitle="Controle de despesas e relatórios gerenciais"
+      headerActions={
         <button
           onClick={() => setShowCategories(true)}
-          className="flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-semibold text-white shadow-sm transition-opacity hover:opacity-90"
-          style={{ background: "#3b82f6" }}
+          className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold text-white shadow-sm transition-opacity hover:opacity-90 bg-gradient-to-r from-cyan-500 to-blue-600"
           aria-label="Abrir gerenciador de categorias"
         >
           <Settings className="h-3.5 w-3.5" />
-          Categorias
+          <span>Categorias</span>
         </button>
-      </header>
+      }
+    >
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 pb-12">
+        {/* KPI Cards */}
+        <div style={{ animation: "slide-up 0.6s ease-out forwards" }}>
+          <ExpenseSummaryCards
+            totalMes={totalMes}
+            totalComissoes={totalComissoes}
+            totalRecorrente={totalRecorrente}
+            totalUnico={totalUnico}
+            mesAnterior={mesAnterior}
+            loading={loadingData}
+          />
+        </div>
 
-      {/* ── Conteúdo — empurrado pelo header fixo ─────────────────────── */}
-      <div className="min-h-screen bg-[#fcfbf8]" style={{ paddingTop: 72 }}>
-        <main className="max-w-6xl mx-auto px-4 sm:px-6 py-6 pb-12">
-          {/* KPI Cards */}
-          <div style={{ animation: "slide-up 0.6s ease-out forwards" }}>
-            <ExpenseSummaryCards
-              totalMes={totalMes}
-              totalComissoes={totalComissoes}
-              totalRecorrente={totalRecorrente}
-              totalUnico={totalUnico}
-              mesAnterior={mesAnterior}
-              loading={loadingData}
-            />
-          </div>
+        {/* Tabs */}
+        <div className="mt-8 border-b border-border flex gap-6">
+          <TabButton
+            active={activeTab === "lancamentos"}
+            onClick={() => setActiveTab("lancamentos")}
+            icon={<List className="h-4 w-4" />}
+            label="Lançamentos"
+          />
+          <TabButton
+            active={activeTab === "dashboard"}
+            onClick={() => setActiveTab("dashboard")}
+            icon={<BarChart3 className="h-4 w-4" />}
+            label="Dashboard"
+          />
+        </div>
 
-          {/* Tabs */}
-          <div className="mt-8 border-b border-border flex gap-6">
-            <TabButton
-              active={activeTab === "lancamentos"}
-              onClick={() => setActiveTab("lancamentos")}
-              icon={<List className="h-4 w-4" />}
-              label="Lançamentos"
-            />
-            <TabButton
-              active={activeTab === "dashboard"}
-              onClick={() => setActiveTab("dashboard")}
-              icon={<BarChart3 className="h-4 w-4" />}
-              label="Dashboard"
-            />
-          </div>
-
-          {/* Tab Content */}
-          {activeTab === "lancamentos" ? (
-            <div
-              className="grid grid-cols-1 lg:grid-cols-[340px_1fr] gap-5 mt-6"
-              style={{ animation: "slide-up 0.6s ease-out forwards" }}
-            >
-              {/* Formulário */}
-              <div>
-                <ExpenseForm
-                  categories={categories}
-                  companyId={companyId}
-                  userId={userId}
-                  editing={editing}
-                  onSubmit={editing ? handleUpdate : handleCreate}
-                  onCancel={() => setEditing(null)}
-                />
-              </div>
-
-              {/* Tabela */}
-              <ExpenseTable
-                expenses={expenses}
+        {/* Tab Content */}
+        {activeTab === "lancamentos" ? (
+          <div
+            className="grid grid-cols-1 lg:grid-cols-[340px_1fr] gap-5 mt-6"
+            style={{ animation: "slide-up 0.6s ease-out forwards" }}
+          >
+            {/* Formulário */}
+            <div>
+              <ExpenseForm
                 categories={categories}
-                loading={loadingData}
-                onEdit={(exp) => {
-                  setEditing(exp);
-                  setActiveTab("lancamentos");
-                }}
-                onDelete={handleDelete}
-                filterMonth={filterMonth}
-                filterYear={filterYear}
-                filterCategory={filterCategory}
-                onFilterMonth={setFilterMonth}
-                onFilterYear={setFilterYear}
-                onFilterCategory={setFilterCategory}
+                companyId={companyId}
+                userId={userId}
+                editing={editing}
+                onSubmit={editing ? handleUpdate : handleCreate}
+                onCancel={() => setEditing(null)}
               />
             </div>
-          ) : (
-            <div
-              className="mt-6"
-              style={{ animation: "slide-up 0.6s ease-out forwards" }}
-            >
-              <ExpenseDashboard
-                monthlySummary={monthlySummary}
-                categorySummary={categorySummary}
-                totalComissoes={totalComissoes}
-                loading={loadingCharts}
-              />
-            </div>
-          )}
-        </main>
+
+            {/* Tabela */}
+            <ExpenseTable
+              expenses={expenses}
+              categories={categories}
+              loading={loadingData}
+              onEdit={(exp) => {
+                setEditing(exp);
+                setActiveTab("lancamentos");
+              }}
+              onDelete={handleDelete}
+              filterMonth={filterMonth}
+              filterYear={filterYear}
+              filterCategory={filterCategory}
+              onFilterMonth={setFilterMonth}
+              onFilterYear={setFilterYear}
+              onFilterCategory={setFilterCategory}
+            />
+          </div>
+        ) : (
+          <div
+            className="mt-6"
+            style={{ animation: "slide-up 0.6s ease-out forwards" }}
+          >
+            <ExpenseDashboard
+              monthlySummary={monthlySummary}
+              categorySummary={categorySummary}
+              totalComissoes={totalComissoes}
+              loading={loadingCharts}
+            />
+          </div>
+        )}
       </div>
 
       {/* ── Categories Modal ────────────────────────────────────────────── */}
@@ -540,6 +509,6 @@ export default function FinanceiroPage() {
           onClose={() => setShowCategories(false)}
         />
       )}
-    </>
+    </AppLayout>
   );
 }

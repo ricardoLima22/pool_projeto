@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useWeather } from '../../hooks/useWeather';
 import { Droplets, LogOut, Camera, Users, UserPlus, Package, PlusCircle, Calendar, MapPin, Clock, TrendingUp, Waves, Thermometer, Wallet, User, DollarSign } from "lucide-react";
 import SplashScreen from '../../components/SplashScreen';
+import AppLayout, { MobileMenuButton } from '../../components/AppLayout';
 
 const StatCard = ({ icon, value, label, onClick }) => (
     <div
@@ -229,134 +230,141 @@ export default function Dashboard() {
     }
 
     return (
-        <div className="min-h-screen font-sans flex flex-col">
-            {/* Header */}
-            <header className="gradient-hero px-6 pt-[calc(1.5rem+env(safe-area-inset-top))] pb-10 text-white shadow-md">
-                <div className="max-w-4xl mx-auto">
-                    <div className="flex items-center justify-between mb-6">
-                        <div className="flex items-center gap-2">
-                            <Droplets className="h-6 w-6 text-cyan-200" />
-                            <span className="font-bold tracking-tight text-lg">Pureza Azul</span>
-                        </div>
-                        <button onClick={handleLogout} className="flex items-center gap-2 text-sm opacity-80 hover:opacity-100 transition-opacity">
-                            <LogOut className="h-4 w-4" />
-                            Sair
-                        </button>
-                    </div>
-                    <div>
-                        <h1 className="text-2xl font-bold animate-fade-in">{greeting}, {profile?.full_name?.split(' ')[0] || 'Usuário'}!</h1>
-                        <p className="text-sm opacity-75 mt-1">O que vamos fazer hoje?</p>
-                    </div>
-                </div>
-            </header>
-
-            {/* Main Content */}
-            <div className="flex-1 bg-slate-50 pb-24">
-                <main className="max-w-4xl mx-auto px-5 -mt-8 relative z-20">
-                    {/* Weather Card */}
-                    <div className="mb-4 animate-slide-up bg-white/40 backdrop-blur-sm rounded-xl p-4 border border-cyan-100 shadow-sm">
-                        {weatherLoading ? (
-                            <div className="flex items-center gap-3 text-slate-600 justify-center py-2">
-                                <Thermometer className="h-5 w-5 animate-pulse text-cyan-600" />
-                                <span className="text-sm font-bold uppercase tracking-widest">Buscando clima...</span>
+        <AppLayout customHeader={true}>
+            <div className="min-h-screen font-sans flex flex-col">
+                {/* Header */}
+                <header className="gradient-hero px-6 pt-[calc(1.25rem+env(safe-area-inset-top))] pb-10 text-white shadow-md">
+                    <div className="max-w-4xl mx-auto">
+                        <div className="flex items-center justify-between mb-6">
+                            <div className="flex items-center gap-3">
+                                {/* Botão das 3 barrinhas no Mobile */}
+                                <MobileMenuButton className="md:hidden -ml-2 text-white hover:bg-white/15" />
+                                
+                                <div className="flex items-center gap-2">
+                                    <Droplets className="h-6 w-6 text-cyan-200" />
+                                    <span className="font-bold tracking-tight text-lg">Pureza Azul</span>
+                                </div>
                             </div>
-                        ) : weather ? (
-                            <div className="flex items-center justify-between">
-                                <div className="flex items-center gap-4">
-                                    <span className="text-5xl drop-shadow-md">{weather.icon}</span>
-                                    <div>
-                                        <div className="flex items-baseline gap-2">
-                                            <span className="text-3xl font-bold text-slate-800">{weather.temperature}°C</span>
-                                            <span className="text-xs text-slate-500 uppercase">{weather.city}</span>
+                            <button onClick={handleLogout} className="flex items-center gap-2 text-sm opacity-80 hover:opacity-100 transition-opacity bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-xl backdrop-blur-xs">
+                                <LogOut className="h-4 w-4" />
+                                <span className="hidden sm:inline">Sair</span>
+                            </button>
+                        </div>
+                        <div>
+                            <h1 className="text-2xl font-bold animate-fade-in">{greeting}, {profile?.full_name?.split(' ')[0] || 'Usuário'}!</h1>
+                            <p className="text-sm opacity-75 mt-1">O que vamos fazer hoje?</p>
+                        </div>
+                    </div>
+                </header>
+
+                {/* Main Content */}
+                <div className="flex-1 bg-slate-50 pb-24">
+                    <main className="max-w-4xl mx-auto px-5 -mt-8 relative z-20">
+                        {/* Weather Card */}
+                        <div className="mb-4 animate-slide-up bg-white/40 backdrop-blur-sm rounded-xl p-4 border border-cyan-100 shadow-sm">
+                            {weatherLoading ? (
+                                <div className="flex items-center gap-3 text-slate-600 justify-center py-2">
+                                    <Thermometer className="h-5 w-5 animate-pulse text-cyan-600" />
+                                    <span className="text-sm font-bold uppercase tracking-widest">Buscando clima...</span>
+                                </div>
+                            ) : weather ? (
+                                <div className="flex items-center justify-between">
+                                    <div className="flex items-center gap-4">
+                                        <span className="text-5xl drop-shadow-md">{weather.icon}</span>
+                                        <div>
+                                            <div className="flex items-baseline gap-2">
+                                                <span className="text-3xl font-bold text-slate-800">{weather.temperature}°C</span>
+                                                <span className="text-xs text-slate-500 uppercase">{weather.city}</span>
+                                            </div>
+                                            <p className="text-xs text-slate-500 mt-0.5">{weather.description}</p>
                                         </div>
-                                        <p className="text-xs text-slate-500 mt-0.5">{weather.description}</p>
                                     </div>
                                 </div>
-                            </div>
-                        ) : null}
-                    </div>
-
-                    {/* Stats Row */}
-                    <div className="grid grid-cols-3 gap-3 mb-8 animate-slide-up" style={{ animationDelay: "0.1s" }}>
-                        <StatCard icon={<Calendar className="h-6 w-6" />} value={stats.visitsToday !== null ? stats.visitsToday : '...'} label="Visitas hoje" />
-                        <StatCard icon={<Users className="h-6 w-6" />} value={stats.activeCustomers !== null ? stats.activeCustomers : '...'} label="Clientes ativos" />
-                        <StatCard 
-                            icon={<TrendingUp className="h-6 w-6 text-emerald-500" />} 
-                            value={stats.totalRevenue !== null ? stats.totalRevenue : '...'} 
-                            label="Faturamento total" 
-                            onClick={() => router.push('/funcionarios/comissoes')}
-                        />
-                    </div>
-
-                    {/* Register Visit CTA */}
-                    <div className="animate-slide-up mb-8" style={{ animationDelay: "0.2s" }}>
-                        <button onClick={() => router.push('/visita/nova')} className="w-full gradient-success text-white rounded-xl p-5 text-left shadow-md hover:shadow-xl transition-shadow group relative overflow-hidden">
-                            <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-2xl -mr-10 -mt-10 group-active:scale-110 transition-transform"></div>
-                            <div className="flex items-center justify-between relative z-10">
-                                <div>
-                                    <p className="text-lg font-bold tracking-tight mb-0.5">Registrar Visita</p>
-                                    <p className="text-emerald-50 text-sm opacity-90">Fotos, medições e cobrança</p>
-                                </div>
-                                <div className="bg-emerald-700/30 rounded-full p-3 group-hover:scale-110 transition-transform">
-                                    <Camera className="h-6 w-6 text-white" />
-                                </div>
-                            </div>
-                        </button>
-                    </div>
-
-                    {/* Quick Access */}
-                    <section className="mb-8 animate-slide-up" style={{ animationDelay: "0.3s" }}>
-                        <h2 className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-4">Acesso Rápido</h2>
-                        <div className="grid grid-cols-2 gap-3">
-                            <QuickCard onClick={() => router.push('/clientes')} icon={<Users className="h-5 w-5 text-blue-500" />} title="Meus Clientes" subtitle="Sua carteira" />
-                            <QuickCard onClick={() => router.push('/clientes/novo')} icon={<UserPlus className="h-5 w-5 text-emerald-500" />} title="Novo Cliente" subtitle="Cadastrar" />
-                            <QuickCard onClick={() => router.push('/produtos')} icon={<Package className="h-5 w-5 text-blue-500" />} title="Meus Produtos" subtitle="Seu estoque" />
-                            <QuickCard onClick={() => router.push('/produtos/novo')} icon={<PlusCircle className="h-5 w-5 text-emerald-500" />} title="Novo Produto" subtitle="Cadastrar" />
-                            <QuickCard onClick={() => router.push('/chamados')} icon={<Calendar className="h-5 w-5 text-blue-500" />} title="Meus Chamados" subtitle="Agendamentos" />
-                            <QuickCard onClick={() => router.push('/chamados/novo')} icon={<PlusCircle className="h-5 w-5 text-emerald-500" />} title="Novo Chamado" subtitle="Gerar serviço" />
-                            <QuickCard onClick={() => router.push('/funcionarios/comissoes')} icon={<Wallet className="h-5 w-5 text-violet-500" />} title="Comissões" subtitle="Fechamento mensal" />
-                            {(!profile?.roleName || ['dono', 'admin'].includes(profile?.roleName?.toLowerCase()) || profile?.roleName?.toLowerCase() !== 'funcionario') && (
-                                <QuickCard onClick={() => router.push('/financeiro')} icon={<DollarSign className="h-5 w-5 text-cyan-600" />} title="Financeiro" subtitle="Controle de gastos" />
-                            )}
+                            ) : null}
                         </div>
-                    </section>
 
-                    {/* Upcoming Visits */}
-                    <section className="mb-8 animate-slide-up" style={{ animationDelay: "0.4s" }}>
-                        <h2 className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-4">Visitas de Hoje</h2>
-                        <div className="space-y-3">
-                            {dataLoading ? (
-                                <div className="bg-white rounded-[20px] p-6 text-center border border-slate-100 shadow-sm animate-pulse">
-                                    <div className="bg-slate-100 w-full h-12 rounded-lg mb-2"></div>
-                                    <div className="bg-slate-100 w-full h-12 rounded-lg mb-2"></div>
-                                </div>
-                            ) : upcomingVisits.length > 0 ? (
-                                upcomingVisits.map((visit) => {
-                                    return (
-                                        <VisitCard
-                                            key={visit.id}
-                                            id={visit.id}
-                                            name={visit.customers?.name || 'Cliente Desconhecido'}
-                                            address={visit.customers?.address || ''}
-                                            funcionarioName={visit.funcionarioName}
-                                            status={visit.status}
-                                            onClick={() => router.push(`/visita/nova?clienteId=${visit.customer_id}`)}
-                                        />
-                                    );
-                                })
-                            ) : (
-                                <div className="bg-white rounded-[20px] p-8 text-center border border-slate-100 shadow-sm">
-                                    <div className="bg-slate-50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-3">
-                                        <Calendar className="h-8 w-8 text-slate-300" />
+                        {/* Stats Row */}
+                        <div className="grid grid-cols-3 gap-3 mb-8 animate-slide-up" style={{ animationDelay: "0.1s" }}>
+                            <StatCard icon={<Calendar className="h-6 w-6" />} value={stats.visitsToday !== null ? stats.visitsToday : '...'} label="Visitas hoje" />
+                            <StatCard icon={<Users className="h-6 w-6" />} value={stats.activeCustomers !== null ? stats.activeCustomers : '...'} label="Clientes ativos" />
+                            <StatCard 
+                                icon={<TrendingUp className="h-6 w-6 text-emerald-500" />} 
+                                value={stats.totalRevenue !== null ? stats.totalRevenue : '...'} 
+                                label="Faturamento total" 
+                                onClick={() => router.push('/funcionarios/comissoes')}
+                            />
+                        </div>
+
+                        {/* Register Visit CTA */}
+                        <div className="animate-slide-up mb-8" style={{ animationDelay: "0.2s" }}>
+                            <button onClick={() => router.push('/visita/nova')} className="w-full gradient-success text-white rounded-xl p-5 text-left shadow-md hover:shadow-xl transition-shadow group relative overflow-hidden">
+                                <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-2xl -mr-10 -mt-10 group-active:scale-110 transition-transform"></div>
+                                <div className="flex items-center justify-between relative z-10">
+                                    <div>
+                                        <p className="text-lg font-bold tracking-tight mb-0.5">Registrar Visita</p>
+                                        <p className="text-emerald-50 text-sm opacity-90">Fotos, medições e cobrança</p>
                                     </div>
-                                    <p className="text-slate-800 font-bold">Agenda Livre Hoje!</p>
-                                    <p className="text-slate-400 text-sm font-medium mt-1">Nenhuma limpeza agendada para o dia de hoje.</p>
+                                    <div className="bg-emerald-700/30 rounded-full p-3 group-hover:scale-110 transition-transform">
+                                        <Camera className="h-6 w-6 text-white" />
+                                    </div>
                                 </div>
-                            )}
+                            </button>
                         </div>
-                    </section>
-                </main>
+
+                        {/* Quick Access */}
+                        <section className="mb-8 animate-slide-up" style={{ animationDelay: "0.3s" }}>
+                            <h2 className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-4">Acesso Rápido</h2>
+                            <div className="grid grid-cols-2 gap-3">
+                                <QuickCard onClick={() => router.push('/clientes')} icon={<Users className="h-5 w-5 text-blue-500" />} title="Meus Clientes" subtitle="Sua carteira" />
+                                <QuickCard onClick={() => router.push('/clientes/novo')} icon={<UserPlus className="h-5 w-5 text-emerald-500" />} title="Novo Cliente" subtitle="Cadastrar" />
+                                <QuickCard onClick={() => router.push('/produtos')} icon={<Package className="h-5 w-5 text-blue-500" />} title="Meus Produtos" subtitle="Seu estoque" />
+                                <QuickCard onClick={() => router.push('/produtos/novo')} icon={<PlusCircle className="h-5 w-5 text-emerald-500" />} title="Novo Produto" subtitle="Cadastrar" />
+                                <QuickCard onClick={() => router.push('/chamados')} icon={<Calendar className="h-5 w-5 text-blue-500" />} title="Meus Chamados" subtitle="Agendamentos" />
+                                <QuickCard onClick={() => router.push('/chamados/novo')} icon={<PlusCircle className="h-5 w-5 text-emerald-500" />} title="Novo Chamado" subtitle="Gerar serviço" />
+                                <QuickCard onClick={() => router.push('/funcionarios/comissoes')} icon={<Wallet className="h-5 w-5 text-violet-500" />} title="Comissões" subtitle="Fechamento mensal" />
+                                {(!profile?.roleName || ['dono', 'admin'].includes(profile?.roleName?.toLowerCase()) || profile?.roleName?.toLowerCase() !== 'funcionario') && (
+                                    <QuickCard onClick={() => router.push('/financeiro')} icon={<DollarSign className="h-5 w-5 text-cyan-600" />} title="Financeiro" subtitle="Controle de gastos" />
+                                )}
+                            </div>
+                        </section>
+
+                        {/* Upcoming Visits */}
+                        <section className="mb-8 animate-slide-up" style={{ animationDelay: "0.4s" }}>
+                            <h2 className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-4">Visitas de Hoje</h2>
+                            <div className="space-y-3">
+                                {dataLoading ? (
+                                    <div className="bg-white rounded-[20px] p-6 text-center border border-slate-100 shadow-sm animate-pulse">
+                                        <div className="bg-slate-100 w-full h-12 rounded-lg mb-2"></div>
+                                        <div className="bg-slate-100 w-full h-12 rounded-lg mb-2"></div>
+                                    </div>
+                                ) : upcomingVisits.length > 0 ? (
+                                    upcomingVisits.map((visit) => {
+                                        return (
+                                            <VisitCard
+                                                key={visit.id}
+                                                id={visit.id}
+                                                name={visit.customers?.name || 'Cliente Desconhecido'}
+                                                address={visit.customers?.address || ''}
+                                                funcionarioName={visit.funcionarioName}
+                                                status={visit.status}
+                                                onClick={() => router.push(`/visita/nova?clienteId=${visit.customer_id}`)}
+                                            />
+                                        );
+                                    })
+                                ) : (
+                                    <div className="bg-white rounded-[20px] p-8 text-center border border-slate-100 shadow-sm">
+                                        <div className="bg-slate-50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-3">
+                                            <Calendar className="h-8 w-8 text-slate-300" />
+                                        </div>
+                                        <p className="text-slate-800 font-bold">Agenda Livre Hoje!</p>
+                                        <p className="text-slate-400 text-sm font-medium mt-1">Nenhuma limpeza agendada para o dia de hoje.</p>
+                                    </div>
+                                )}
+                            </div>
+                        </section>
+                    </main>
+                </div>
             </div>
-        </div>
+        </AppLayout>
     );
 };

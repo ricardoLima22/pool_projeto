@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import { supabase } from '../../../lib/supabase';
 import { useRouter } from 'next/navigation';
 import { ChevronDown, AlertCircle } from 'lucide-react';
+import AppLayout from '../../../components/AppLayout';
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 const fmt = (value) =>
@@ -268,46 +269,37 @@ export default function ComissoesFuncionarios() {
     }, 0);
 
     return (
-        <main className="min-h-screen bg-[#fcfbf8]">
-            {/* Header */}
-            <header className="px-4 py-4 pt-6 flex items-center justify-between bg-white border-b border-slate-200 sticky top-0 z-20">
-                <div className="flex items-center gap-3">
-                    <button
-                        id="btn-voltar-comissoes"
-                        onClick={() => router.back()}
-                        className="text-slate-800 transition-colors"
-                    >
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
-                    </button>
-                    <h1 className="text-xl font-bold text-slate-800">Comissões</h1>
+        <AppLayout
+            title="Comissões"
+            subtitle="Fechamento de comissões por funcionário"
+            headerActions={
+                <div className="text-right bg-emerald-50 border border-emerald-200/80 px-3 py-1.5 rounded-xl">
+                    <p className="text-[10px] text-slate-500 font-semibold uppercase tracking-wider">Total a pagar</p>
+                    <p className="font-bold text-emerald-600 text-sm sm:text-base leading-none">{fmt(totalComissoes)}</p>
                 </div>
-                <div className="text-right">
-                    <p className="text-[11px] text-slate-500">Total a pagar</p>
-                    <p className="font-bold text-emerald-600 text-base">{fmt(totalComissoes)}</p>
-                </div>
-            </header>
-
-            <div className="px-4 py-6 space-y-4">
+            }
+        >
+            <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6 space-y-4">
 
                 {/* Summary Cards */}
                 <div className="grid grid-cols-2 gap-3">
-                    <div className="bg-white rounded-xl p-4 shadow-sm border border-slate-100 text-center">
-                        <p className="text-xs text-slate-500 mb-1">Faturamento total</p>
-                        <p className="text-base font-bold text-slate-800">{fmt(totalFaturamento)}</p>
+                    <div className="bg-white rounded-xl p-4 shadow-xs border border-slate-200/80 text-center">
+                        <p className="text-xs text-slate-500 mb-1 font-medium">Faturamento total</p>
+                        <p className="text-base sm:text-lg font-bold text-slate-800">{fmt(totalFaturamento)}</p>
                     </div>
-                    <div className="bg-white rounded-xl p-4 shadow-sm border border-slate-100 text-center">
-                        <p className="text-xs text-slate-500 mb-1">Funcionários</p>
-                        <p className="text-base font-bold text-slate-800">{funcionarios.length}</p>
+                    <div className="bg-white rounded-xl p-4 shadow-xs border border-slate-200/80 text-center">
+                        <p className="text-xs text-slate-500 mb-1 font-medium">Funcionários</p>
+                        <p className="text-base sm:text-lg font-bold text-slate-800">{funcionarios.length}</p>
                     </div>
                 </div>
 
                 {/* Regra de comissão */}
-                <div className="bg-white rounded-xl p-4 shadow-sm border border-slate-100 flex gap-4">
+                <div className="bg-white rounded-xl p-4 shadow-xs border border-slate-200/80 flex gap-4">
                     <div className="flex-1 text-center">
                         <p className="text-xs text-slate-500">Piscina Normal</p>
                         <p className="font-bold text-cyan-600 text-sm">40% de comissão</p>
                     </div>
-                    <div className="w-px bg-slate-100" />
+                    <div className="w-px bg-slate-200" />
                     <div className="flex-1 text-center">
                         <p className="text-xs text-slate-500">Piscina Grande</p>
                         <p className="font-bold text-blue-600 text-sm">50% de comissão</p>
@@ -353,10 +345,7 @@ export default function ComissoesFuncionarios() {
                         </div>
                     )}
                 </section>
-
-
-
             </div>
-        </main>
+        </AppLayout>
     );
 }

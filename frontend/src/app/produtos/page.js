@@ -4,8 +4,8 @@ import { useEffect, useState } from 'react';
 import { supabase } from '../../lib/supabase';
 import { useRouter } from 'next/navigation';
 import SplashScreen from '../../components/SplashScreen';
-import { ArrowLeft, Search, Plus, Package, ArrowRight } from "lucide-react";
-
+import AppLayout from '../../components/AppLayout';
+import { Search, Plus, Package, ArrowRight } from "lucide-react";
 
 export default function Produtos() {
     const [produtos, setProdutos] = useState([]);
@@ -56,57 +56,49 @@ export default function Produtos() {
     }
 
     return (
-        <main className="min-h-screen bg-[#fcfbf8]">
-            {/* Header */}
-            <header className="px-4 py-4 pt-6 flex items-center justify-between bg-white border-b border-slate-200 sticky top-0 z-20">
-                <div className="flex items-center gap-3">
-                    <button onClick={() => router.push('/home')} className="text-slate-800 transition-colors">
-                        <ArrowLeft className="h-5 w-5" />
-                    </button>
-                    <h1 className="text-xl font-bold text-slate-800">Meus Produtos</h1>
-                </div>
-                <div className="flex items-center gap-2">
-                    <button
-                        onClick={() => router.push('/produtos/novo')}
-                        className="flex items-center gap-1 px-4 py-2 rounded-full text-sm font-semibold text-white shadow-sm"
-                        style={{ background: "#3b82f6" }}
-                    >
-                        Novo 
-                        <Plus className="w-3.5 h-3.5" />
-                    </button>
-                </div>
-            </header>
-
-            <div className="px-4 py-6 space-y-4">
+        <AppLayout
+            title="Meus Produtos"
+            subtitle="Controle de estoque de insumos"
+            headerActions={
+                <button
+                    onClick={() => router.push('/produtos/novo')}
+                    className="flex items-center gap-1.5 px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold text-white shadow-sm bg-gradient-to-r from-cyan-500 to-blue-600 hover:opacity-95 transition-opacity"
+                >
+                    <Plus className="w-3.5 h-3.5" />
+                    <span>Novo</span>
+                </button>
+            }
+        >
+            <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6 space-y-4">
                 {/* Summary */}
                 <div className="grid grid-cols-3 gap-3">
-                    <div className="bg-white rounded-xl border border-slate-100 shadow-sm p-3 text-center flex flex-col justify-center">
-                        <span className="text-lg font-black text-slate-800">{produtos.length}</span>
-                        <p className="text-[9px] font-bold text-slate-500 uppercase tracking-widest mt-0.5">Produtos</p>
+                    <div className="bg-white rounded-xl border border-slate-200/80 shadow-xs p-3 text-center flex flex-col justify-center">
+                        <span className="text-xl font-bold text-slate-800">{produtos.length}</span>
+                        <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mt-0.5">Produtos</p>
                     </div>
-                    <div className="bg-white rounded-xl border border-slate-100 shadow-sm p-3 text-center flex flex-col justify-center">
-                        <span className="text-lg font-black text-amber-500">
+                    <div className="bg-white rounded-xl border border-slate-200/80 shadow-xs p-3 text-center flex flex-col justify-center">
+                        <span className="text-xl font-bold text-amber-500">
                             {produtos.filter((p) => p.status === "baixo").length}
                         </span>
-                        <p className="text-[9px] font-bold text-slate-500 uppercase tracking-widest mt-0.5">Baixo</p>
+                        <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mt-0.5">Baixo</p>
                     </div>
-                    <div className="bg-white rounded-xl border border-slate-100 shadow-sm p-3 text-center flex flex-col justify-center">
-                        <span className="text-lg font-black text-red-500">
+                    <div className="bg-white rounded-xl border border-slate-200/80 shadow-xs p-3 text-center flex flex-col justify-center">
+                        <span className="text-xl font-bold text-red-500">
                             {produtos.filter((p) => p.status === "crítico").length}
                         </span>
-                        <p className="text-[9px] font-bold text-slate-500 uppercase tracking-widest mt-0.5">Crítico</p>
+                        <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mt-0.5">Crítico</p>
                     </div>
                 </div>
 
                 {/* Search */}
                 <div className="relative">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                    <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
                     <input
                         type="text"
-                        placeholder="Buscar produto ou marca..."
+                        placeholder="Buscar produto por nome, marca ou descrição..."
                         value={busca}
                         onChange={(e) => setBusca(e.target.value)}
-                        className="w-full pl-9 pr-4 py-3 rounded-xl bg-white border border-slate-200 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-[#008080]/40 transition-colors shadow-sm"
+                        className="w-full pl-10 pr-4 py-3 rounded-xl bg-white border border-slate-200 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20 transition-all shadow-xs"
                     />
                 </div>
 
@@ -116,28 +108,28 @@ export default function Produtos() {
                         <button
                             key={p.id}
                             onClick={() => router.push(`/produtos/${p.id}`)}
-                            className="w-full bg-white rounded-xl border border-slate-100 p-4 flex items-center justify-between hover:border-[#008080]/30 transition-colors text-left shadow-sm active:scale-[0.99]"
+                            className="w-full bg-white rounded-xl border border-slate-200/80 p-4 flex items-center justify-between hover:border-cyan-400/60 hover:shadow-md transition-all text-left shadow-xs active:scale-[0.99] group"
                         >
                             <div className="space-y-1">
-                                <p className="font-bold text-slate-800 text-sm">{p.name}</p>
+                                <p className="font-bold text-slate-800 text-sm group-hover:text-cyan-700 transition-colors">{p.name}</p>
                                 <p className="text-xs text-slate-500 flex items-center gap-1 mt-1">
-                                    <Package className="w-3 h-3 text-slate-400" /> {p.brands?.name || p.description || "Sem marca"}
+                                    <Package className="w-3.5 h-3.5 text-slate-400" /> {p.brands?.name || p.description || "Sem marca"}
                                 </p>
-                                <p className={`text-xs mt-0.5 ${p.status === 'crítico' ? 'text-red-500' : 'text-slate-500'}`}>
-                                    {p.stock_quantity} {p.unit}
+                                <p className={`text-xs mt-0.5 font-medium ${p.status === 'crítico' ? 'text-red-500 font-bold' : (p.status === 'baixo' ? 'text-amber-500 font-semibold' : 'text-slate-500')}`}>
+                                    Estoque: {p.stock_quantity} {p.unit}
                                 </p>
                             </div>
-                            <ArrowRight className="h-5 w-5 text-[#008080]" />
+                            <ArrowRight className="h-5 w-5 text-slate-400 group-hover:text-cyan-600 transition-colors" />
                         </button>
                     ))}
 
                     {filtrados.length === 0 && (
-                        <div className="text-center py-10">
-                            <p className="text-slate-400 text-sm">Nenhum produto encontrado.</p>
+                        <div className="text-center py-12 bg-white rounded-2xl border border-slate-200/80 shadow-xs">
+                            <p className="text-slate-400 text-sm font-medium">Nenhum produto encontrado.</p>
                         </div>
                     )}
                 </div>
             </div>
-        </main>
+        </AppLayout>
     );
 }

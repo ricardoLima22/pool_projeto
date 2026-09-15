@@ -7,7 +7,8 @@ import { useRouter } from 'next/navigation';
 import SplashScreen from '../../components/SplashScreen';
 import { DIAS_SEMANA } from '../../lib/scheduleGenerator';
 import GpsNavigationModal from '../../components/GpsNavigationModal';
-import { Navigation } from 'lucide-react';
+import AppLayout from '../../components/AppLayout';
+import { Navigation, Plus, Calendar } from 'lucide-react';
 
 export default function ListagemClientes() {
     const [clientes, setClientes] = useState([]);
@@ -71,47 +72,41 @@ export default function ListagemClientes() {
     }
 
     return (
-        <main className="min-h-screen bg-[#fcfbf8]">
-            {/* Header */}
-            <header className="px-4 py-4 pt-6 flex items-center justify-between bg-white border-b border-slate-200 sticky top-0 z-20">
-                <div className="flex items-center gap-3">
-                    <button onClick={() => router.push('/home')} className="text-slate-800 transition-colors">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
-                    </button>
-                    <h1 className="text-xl font-bold text-slate-800">Clientes</h1>
-                </div>
-                {userRole !== 'funcionario' && (
+        <AppLayout
+            title="Clientes"
+            subtitle="Sua carteira de piscinas"
+            headerActions={
+                userRole !== 'funcionario' && (
                     <div className="flex items-center gap-2">
                         <button
                             onClick={() => router.push('/visita/nova')}
-                            className="flex items-center gap-1 px-4 py-2 rounded-full text-sm font-semibold text-white shadow-sm"
+                            className="flex items-center gap-1.5 px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold text-white shadow-sm hover:opacity-95 transition-opacity"
                             style={{ background: "#2ECC71" }}
                         >
-                            Visita 
-                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/><path d="M8 14h.01"/><path d="M12 14h.01"/><path d="M16 14h.01"/><path d="M8 18h.01"/><path d="M12 18h.01"/><path d="M16 18h.01"/></svg>
+                            <Calendar className="h-3.5 w-3.5" />
+                            <span className="hidden sm:inline">Visita</span>
                         </button>
                         <button
                             onClick={() => router.push('/clientes/novo')}
-                            className="flex items-center gap-1 px-4 py-2 rounded-full text-sm font-semibold text-white shadow-sm"
-                            style={{ background: "#3b82f6" }}
+                            className="flex items-center gap-1.5 px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold text-white shadow-sm bg-gradient-to-r from-cyan-500 to-blue-600 hover:opacity-95 transition-opacity"
                         >
-                            Novo 
-                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" x2="19" y1="8" y2="14"/><line x1="22" x2="16" y1="11" y2="11"/></svg>
+                            <Plus className="h-3.5 w-3.5" />
+                            <span>Novo</span>
                         </button>
                     </div>
-                )}
-            </header>
-
-            <div className="px-4 py-6 space-y-4">
+                )
+            }
+        >
+            <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6 space-y-4">
                 {/* Search */}
                 <div className="relative">
-                    <svg className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                    <svg className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
                     <input
                         type="text"
-                        placeholder="Buscar cliente..."
+                        placeholder="Buscar cliente por nome ou endereço..."
                         value={busca}
                         onChange={(e) => setBusca(e.target.value)}
-                        className="w-full pl-9 pr-4 py-3 rounded-xl bg-white border border-slate-200 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-[#008080]/40 transition-colors shadow-sm"
+                        className="w-full pl-10 pr-4 py-3 rounded-xl bg-white border border-slate-200 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-cyan-500 focus:ring-2 focus:ring-cyan-500/20 transition-all shadow-xs"
                     />
                 </div>
 
@@ -120,10 +115,10 @@ export default function ListagemClientes() {
                             <div
                                 key={cliente.id}
                                 onClick={() => router.push(`/clientes/${cliente.id}`)}
-                                className="w-full bg-white rounded-xl border border-slate-100 p-4 flex items-center justify-between hover:border-[#008080]/30 transition-colors text-left shadow-sm active:scale-[0.99] cursor-pointer"
+                                className="w-full bg-white rounded-xl border border-slate-200/80 p-4 flex items-center justify-between hover:border-cyan-400/60 hover:shadow-md transition-all text-left shadow-xs active:scale-[0.99] cursor-pointer group"
                             >
                                 <div className="space-y-1 flex-1 min-w-0 pr-3">
-                                    <p className="font-bold text-slate-800 text-sm truncate">{cliente.name}</p>
+                                    <p className="font-bold text-slate-800 text-sm truncate group-hover:text-cyan-700 transition-colors">{cliente.name}</p>
                                     <div className="flex items-center gap-1.5 mt-1">
                                         <p className="text-xs text-slate-500 flex items-center gap-1 truncate">
                                             <svg className="h-3 w-3 text-red-500 shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
@@ -136,7 +131,7 @@ export default function ListagemClientes() {
                                                     e.stopPropagation();
                                                     setGpsClient(cliente);
                                                 }}
-                                                className="shrink-0 flex items-center gap-1 text-[10px] font-semibold text-[#008080] bg-teal-50 hover:bg-teal-100 border border-teal-200/70 px-1.5 py-0.5 rounded-md transition-colors"
+                                                className="shrink-0 flex items-center gap-1 text-[10px] font-semibold text-teal-700 bg-teal-50 hover:bg-teal-100 border border-teal-200/70 px-1.5 py-0.5 rounded-md transition-colors"
                                                 title="Abrir GPS"
                                             >
                                                 <Navigation className="h-2.5 w-2.5" />
@@ -158,20 +153,20 @@ export default function ListagemClientes() {
                                                 : cliente.dia_limpeza;
 
                                             return diasFormatados ? (
-                                                <span className="inline-block text-[10px] font-bold text-[#008080] bg-[#008080]/10 px-2 py-0.5 rounded uppercase">
+                                                <span className="inline-block text-[10px] font-bold text-teal-700 bg-teal-50 border border-teal-100 px-2 py-0.5 rounded uppercase">
                                                     Limpeza: {diasFormatados}
                                                 </span>
                                             ) : null;
                                         })()}
                                     </div>
                                 </div>
-                                <svg className="h-5 w-5 text-[#008080] shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                                <svg className="h-5 w-5 text-slate-400 group-hover:text-cyan-600 transition-colors shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
                             </div>
                         ))}
 
                         {clientesFiltrados.length === 0 && (
-                            <div className="text-center py-10">
-                                <p className="text-slate-400 text-sm">Nenhum cliente encontrado.</p>
+                            <div className="text-center py-12 bg-white rounded-2xl border border-slate-200/80 shadow-xs">
+                                <p className="text-slate-400 text-sm font-medium">Nenhum cliente encontrado.</p>
                             </div>
                         )}
                     </div>
@@ -183,6 +178,6 @@ export default function ListagemClientes() {
                 address={gpsClient?.address}
                 clientName={gpsClient?.name}
             />
-        </main>
+        </AppLayout>
     );
 }

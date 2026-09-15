@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useWeather } from '../../hooks/useWeather';
 import { Droplets, LogOut, Camera, Users, UserPlus, Package, PlusCircle, Calendar, MapPin, Clock, TrendingUp, Waves, Thermometer, Wallet, User, DollarSign } from "lucide-react";
 import SplashScreen from '../../components/SplashScreen';
+import { garantirAgendaMesEmpresa } from '../../lib/scheduleGenerator';
 
 const StatCard = ({ icon, value, label, onClick }) => (
     <div
@@ -135,13 +136,16 @@ export default function Dashboard() {
             const todayStr = `${yearStr}-${monthStr}-${dateStr}`;
 
             try {
+                // Garante que a agenda do mês vigente esteja gerada para todos os clientes
+                await garantirAgendaMesEmpresa(companyId);
+
                 const inicioHoje = `${todayStr}T00:00:00.000Z`;
                 const fimHoje = `${todayStr}T23:59:59.999Z`;
 
                 const [customersRes, schedulesTodayRes, employeesRes, allCustomersRes, visitsTodayRes] = await Promise.all([
                     supabase.from('customers').select('*', { count: 'exact', head: true }).eq('company_id', companyId),
                     supabase.from('cleaning_schedules')
-                        .select('*, customers!inner(*)')
+                        .select('*, customers(*)')
                         .eq('company_id', companyId)
                         .eq('data_agendada', todayStr)
                         .order('created_at', { ascending: true }),

@@ -9,6 +9,7 @@ import SplashScreen from '../../components/SplashScreen';
 import { ChamadoCard } from '../../components/ChamadoCard';
 import { ClientCard } from '../../components/ClientCard';
 import GpsNavigationModal from '../../components/GpsNavigationModal';
+import { garantirAgendaMesEmpresa } from '../../lib/scheduleGenerator';
 
 const StatCard = ({ icon, value, label, onClick }) => (
     <div
@@ -85,6 +86,9 @@ export default function EmployeeDashboard() {
             const todayStr = `${yearStr}-${monthStr}-${dateStr}`;
 
             try {
+                // Garante que a agenda do mês vigente esteja gerada para todos os clientes da empresa
+                await garantirAgendaMesEmpresa(companyId);
+
                 const inicioHoje = `${todayStr}T00:00:00.000Z`;
                 const fimHoje = `${todayStr}T23:59:59.999Z`;
 
@@ -98,7 +102,7 @@ export default function EmployeeDashboard() {
 
                     // Limpezas de hoje na empresa
                     supabase.from('cleaning_schedules')
-                        .select('*, customers!inner(*)')
+                        .select('*, customers(*)')
                         .eq('company_id', companyId)
                         .eq('data_agendada', todayStr)
                         .order('created_at', { ascending: true }),

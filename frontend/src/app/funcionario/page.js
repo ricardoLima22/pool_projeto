@@ -283,6 +283,10 @@ export default function EmployeeDashboard() {
                                         address={visit.customers?.address || 'Sem endereço'}
                                         status={visit.status}
                                         onClick={() => router.push(`/visita/nova?clienteId=${visit.customer_id}`)}
+                                        onGpsClick={() => setGpsCustomer({
+                                            name: visit.customers?.name,
+                                            address: visit.customers?.address
+                                        })}
                                     />
                                 );
                             })

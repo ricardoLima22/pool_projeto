@@ -4,8 +4,9 @@ import { useEffect, useState } from 'react';
 import { supabase } from '../../lib/supabase';
 import { useRouter } from 'next/navigation';
 import { useWeather } from '../../hooks/useWeather';
-import { Droplets, LogOut, Camera, Users, UserPlus, Package, PlusCircle, Calendar, MapPin, Clock, TrendingUp, Waves, Thermometer, Wallet, User, DollarSign } from "lucide-react";
+import { Droplets, LogOut, Camera, Users, UserPlus, Package, PlusCircle, Calendar, MapPin, Clock, TrendingUp, Waves, Thermometer, Wallet, User, DollarSign, Navigation } from "lucide-react";
 import SplashScreen from '../../components/SplashScreen';
+import GpsNavigationModal from '../../components/GpsNavigationModal';
 import { garantirAgendaMesEmpresa } from '../../lib/scheduleGenerator';
 
 const StatCard = ({ icon, value, label, onClick }) => (
@@ -29,11 +30,11 @@ const QuickCard = ({ icon, title, subtitle, onClick }) => (
     </button>
 );
 
-const VisitCard = ({ id, name, address, funcionarioName, time, status, onClick }) => {
+const VisitCard = ({ id, name, address, funcionarioName, time, status, onClick, onGpsClick }) => {
     const isCompleted = ["concluido", "concluído", "confirmada", "em_execucao"].includes(status?.toLowerCase());
     return (
-        <button onClick={onClick} className="w-full text-left bg-white rounded-xl p-4 shadow-sm border border-slate-100 flex items-center gap-4 hover:shadow-md hover:border-blue-200 transition-all active:scale-[0.98]">
-            <div className="bg-cyan-50 rounded-full p-3 border border-cyan-100">
+        <div onClick={onClick} className="w-full text-left bg-white rounded-xl p-4 shadow-sm border border-slate-100 flex items-center gap-4 hover:shadow-md hover:border-blue-200 transition-all cursor-pointer group">
+            <div className="bg-cyan-50 rounded-full p-3 border border-cyan-100 shrink-0">
                 <Waves className="h-5 w-5 text-cyan-600" />
             </div>
             <div className="flex-1 min-w-0">
@@ -41,6 +42,20 @@ const VisitCard = ({ id, name, address, funcionarioName, time, status, onClick }
                 <div className="flex items-center gap-1.5 text-xs text-slate-500 mt-1">
                     <MapPin className="h-3 w-3 shrink-0 text-slate-400" />
                     <span className="truncate">{address || 'Endereço não cadastrado'}</span>
+                    {onGpsClick && address && address !== 'Sem endereço' && address !== 'Endereço não cadastrado' && address !== 'Endereço não informado' && (
+                        <button
+                            type="button"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                onGpsClick(e);
+                            }}
+                            className="shrink-0 text-[10px] text-[#008080] bg-teal-50 hover:bg-teal-100 px-1.5 py-0.5 rounded border border-teal-200/60 font-semibold flex items-center gap-0.5 ml-1 transition-colors"
+                            title="Abrir GPS"
+                        >
+                            <Navigation className="h-2.5 w-2.5" />
+                            GPS
+                        </button>
+                    )}
                 </div>
                 {funcionarioName && (
                     <div className="flex items-center gap-1.5 text-xs text-slate-500 mt-1">
@@ -60,13 +75,14 @@ const VisitCard = ({ id, name, address, funcionarioName, time, status, onClick }
                     {isCompleted ? 'Concluído' : 'Pendente'}
                 </span>
             </div>
-        </button>
+        </div>
     );
 };
 
 export default function Dashboard() {
     const [profile, setProfile] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [gpsCustomer, setGpsCustomer] = useState(null);
     const router = useRouter();
 
     // Métricas reais do Supabase
@@ -345,6 +361,10 @@ export default function Dashboard() {
                                             funcionarioName={visit.funcionarioName}
                                             status={visit.status}
                                             onClick={() => router.push(`/visita/nova?clienteId=${visit.customer_id}`)}
+                                            onGpsClick={() => setGpsCustomer({
+                                                name: visit.customers?.name,
+                                                address: visit.customers?.address
+                                            })}
                                         />
                                     );
                                 })
@@ -361,6 +381,13 @@ export default function Dashboard() {
                     </section>
                 </main>
             </div>
+
+            <GpsNavigationModal
+                isOpen={!!gpsCustomer}
+                onClose={() => setGpsCustomer(null)}
+                address={gpsCustomer?.address}
+                clientName={gpsCustomer?.name}
+            />
         </div>
     );
 };

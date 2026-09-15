@@ -1,4 +1,4 @@
-import { Wrench, ChevronRight, MapPin, Clock } from "lucide-react";
+import { Wrench, ChevronRight, MapPin, Clock, Navigation } from "lucide-react";
 
 export const ChamadoCard = ({
   title,
@@ -7,6 +7,7 @@ export const ChamadoCard = ({
   time,
   status,
   onClick,
+  onGpsClick,
 }: {
   title: string;
   client: string;
@@ -14,6 +15,7 @@ export const ChamadoCard = ({
   time?: string;
   status?: string;
   onClick?: () => void;
+  onGpsClick?: (e: React.MouseEvent) => void;
 }) => {
   const isCompleted = ["concluido", "concluído", "confirmada", "em_execucao"].includes(status?.toLowerCase() || "");
   return (
@@ -30,6 +32,20 @@ export const ChamadoCard = ({
         <div className="flex items-center gap-1 text-xs text-muted-foreground mt-1">
           <MapPin className="h-3 w-3 shrink-0" />
           <span className="truncate">{address}</span>
+          {onGpsClick && address && address !== 'Sem endereço' && address !== 'Endereço não informado' && address !== 'Endereço não cadastrado' && (
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                onGpsClick(e);
+              }}
+              className="shrink-0 text-[10px] text-[#008080] bg-teal-50 hover:bg-teal-100 px-1.5 py-0.5 rounded border border-teal-200/60 font-semibold flex items-center gap-0.5 ml-1 transition-colors"
+              title="Abrir GPS"
+            >
+              <Navigation className="h-2.5 w-2.5" />
+              GPS
+            </button>
+          )}
         </div>
         {time && (
           <div className="flex items-center gap-1 text-xs text-muted-foreground mt-1.5">

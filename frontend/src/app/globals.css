@@ -117,5 +117,6 @@ body {
 input, textarea, select {
   -webkit-appearance: none;
   appearance: none;
+  font-family: inherit;
   @apply bg-transparent;
 }

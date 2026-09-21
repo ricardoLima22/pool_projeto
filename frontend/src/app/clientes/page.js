@@ -15,6 +15,8 @@ export default function ListagemClientes() {
     const [loading, setLoading] = useState(true);
     const [userRole, setUserRole] = useState('');
     const [gpsClient, setGpsClient] = useState(null);
+    const [funcionarios, setFuncionarios] = useState([]);
+    const [filtroFuncionario, setFiltroFuncionario] = useState('');
     const router = useRouter();
 
     useEffect(() => {
@@ -49,6 +51,14 @@ export default function ListagemClientes() {
                     // Se for funcionário, exibe apenas os clientes atribuídos a ele
                     if (isFuncionario) {
                         query = query.eq('funcionario_id', user.id);
+                    } else {
+                        // Para dono/admin: busca a lista de funcionários da empresa para o filtro
+                        const { data: funcData } = await supabase
+                            .from('profiles')
+                            .select('id, full_name')
+                            .eq('company_id', profile.company_id)
+                            .order('full_name', { ascending: true });
+                        setFuncionarios(funcData || []);
                     }
 
                     const { data } = await query.order('name', { ascending: true });
@@ -61,10 +71,14 @@ export default function ListagemClientes() {
         fetchClientes();
     }, []);
 
-    // Filtro de busca em tempo real (UX para agilizar no sol)
-    const clientesFiltrados = clientes.filter(c =>
-        c.name.toLowerCase().includes(busca.toLowerCase())
-    );
+    // Filtro de busca em tempo real + filtro por funcionário
+    const clientesFiltrados = clientes.filter(c => {
+        const matchNome = c.name.toLowerCase().includes(busca.toLowerCase());
+        const matchFuncionario =
+            filtroFuncionario === '' ||
+            (filtroFuncionario === '__sem_funcionario__' ? !c.funcionario_id : c.funcionario_id === filtroFuncionario);
+        return matchNome && matchFuncionario;
+    });
 
     if (loading) {
         return <SplashScreen message="Carregando seus clientes..." />;
@@ -114,6 +128,25 @@ export default function ListagemClientes() {
                         className="w-full pl-9 pr-4 py-3 rounded-xl bg-white border border-slate-200 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-[#008080]/40 transition-colors shadow-sm"
                     />
                 </div>
+
+                {/* Filtro por funcionário — visível apenas para dono/admin */}
+                {userRole !== 'funcionario' && funcionarios.length > 0 && (
+                    <div className="relative">
+                        <svg className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                        <select
+                            value={filtroFuncionario}
+                            onChange={(e) => setFiltroFuncionario(e.target.value)}
+                            className="w-full pl-9 pr-4 py-3 rounded-xl bg-white border border-slate-200 text-sm text-slate-800 focus:outline-none focus:border-[#008080]/40 transition-colors shadow-sm appearance-none cursor-pointer"
+                        >
+                            <option value="">Todos os funcionários</option>
+                            <option value="__sem_funcionario__">Sem funcionário atribuído</option>
+                            {funcionarios.map(f => (
+                                <option key={f.id} value={f.id}>{f.full_name}</option>
+                            ))}
+                        </select>
+                        <svg className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                    </div>
+                )}
 
                 <div className="space-y-3">
                     {clientesFiltrados.map(cliente => (

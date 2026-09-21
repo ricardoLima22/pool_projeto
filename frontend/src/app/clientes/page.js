@@ -177,10 +177,15 @@ export default function ListagemClientes() {
                                             </button>
                                         )}
                                     </div>
-                                    <div className="flex flex-wrap gap-2 mt-1">
-                                        <span className="inline-block text-[10px] font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded uppercase">
+                                    <div className="flex flex-wrap gap-x-3 gap-y-1 mt-1">
+                                        <span className="text-[10px] font-bold text-slate-500 uppercase">
                                             {cliente.pool_volume_m3} M³
                                         </span>
+                                        {cliente.price != null && (
+                                            <span className="text-[10px] font-bold text-emerald-600 uppercase">
+                                                {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(cliente.price)}
+                                            </span>
+                                        )}
                                         {(() => {
                                             const diasFormatados = cliente.customer_cleaning_days && cliente.customer_cleaning_days.length > 0
                                                 ? cliente.customer_cleaning_days
@@ -191,7 +196,7 @@ export default function ListagemClientes() {
                                                 : cliente.dia_limpeza;
 
                                             return diasFormatados ? (
-                                                <span className="inline-block text-[10px] font-bold text-[#008080] bg-[#008080]/10 px-2 py-0.5 rounded uppercase">
+                                                <span className="text-[10px] font-bold text-[#008080] uppercase">
                                                     Limpeza: {diasFormatados}
                                                 </span>
                                             ) : null;

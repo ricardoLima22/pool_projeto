@@ -4,19 +4,17 @@ export async function POST(req) {
     try {
         const payload = await req.json();
 
-        // Variável de ambiente com o Personal Access Token do GitHub
-        // Crie essa variável no seu painel da Vercel ou no .env.local
         const githubToken = process.env.GITHUB_ACTIONS_TOKEN;
 
         if (!githubToken) {
             console.error("GITHUB_ACTIONS_TOKEN não configurado no .env");
             return NextResponse.json({ 
+                success: false,
                 error: 'GitHub token missing', 
-                details: 'A variável GITHUB_ACTIONS_TOKEN não está configurada no ambiente (Vercel/.env.local).' 
-            }, { status: 500 });
+                details: 'A variável GITHUB_ACTIONS_TOKEN não está configurada no ambiente.' 
+            });
         }
 
-        // Repositório do seu Robô
         const githubRepo = "ricardoLima22/pool_projeto"; 
 
         const githubResponse = await fetch(`https://api.github.com/repos/${githubRepo}/dispatches`, {
@@ -33,21 +31,26 @@ export async function POST(req) {
             })
         });
 
-        if (!githubResponse.ok) {
-            const errText = await githubResponse.text();
-            console.error("Erro ao chamar GitHub Actions:", githubResponse.status, errText);
-            return NextResponse.json({ 
-                error: 'Failed to trigger RPA', 
-                github_status: githubResponse.status,
-                details: errText 
-            }, { status: githubResponse.status });
+        // GitHub retorna 204 No Content em caso de sucesso (sem body)
+        if (githubResponse.ok) {
+            return NextResponse.json({ success: true, message: 'RPA Triggered' });
         }
 
-        return NextResponse.json({ success: true, message: 'RPA Triggered' });
+        // Erro: lê o body como texto para não quebrar em body vazio
+        const errText = await githubResponse.text();
+        console.error(`[trigger-bot] GitHub Actions falhou — Status: ${githubResponse.status} | Body: ${errText}`);
+
+        return NextResponse.json({ 
+            success: false,
+            error: 'Failed to trigger RPA', 
+            github_status: githubResponse.status,
+            details: errText || '(sem detalhes)'
+        });
 
     } catch (error) {
         console.error("Erro na API trigger-bot:", error);
-        return NextResponse.json({ error: 'Internal server error', details: error.message }, { status: 500 });
+        return NextResponse.json({ success: false, error: 'Internal server error', details: error.message });
     }
 }
+
 

@@ -389,12 +389,13 @@ function NovaVisita() {
                 })
             });
 
-            if (botResponse.ok) {
+            const responseData = await botResponse.json();
+
+            if (responseData.success) {
                 toast.success('Visita salva! Sua mensagem será enviada pelo WhatsApp da empresa em instantes.');
                 router.push('/home');
             } else {
-                const erroData = await botResponse.json();
-                console.error("Falha ao acionar bot:", erroData);
+                console.error("Falha ao acionar bot:", responseData.error, '| GitHub status:', responseData.github_status, '| Detalhes:', responseData.details);
                 toast.warning('A visita foi salva, mas houve um erro ao acionar o robô de WhatsApp.');
                 router.push('/home');
             }

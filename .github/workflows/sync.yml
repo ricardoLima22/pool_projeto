@@ -25,7 +25,7 @@ jobs:
 
     - name: Install Dependencies
       run: |
-        npm install mongoose @supabase/supabase-js dotenv @whiskeysockets/baileys pino jimp@0.16.13 ws --legacy-peer-deps
+        npm install mongoose @supabase/supabase-js dotenv @whiskeysockets/baileys pino sharp@0.33.5 ws --legacy-peer-deps --ignore-scripts=false
 
     - name: Executar Sync Script
       env:

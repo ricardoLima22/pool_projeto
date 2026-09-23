@@ -111,56 +111,72 @@ mongoose.connect(MONGODB_URI).then(async () => {
                     await delay(2000);
 
                     if (foto_antes_url && foto_depois_url) {
-                        console.log("-> 2 FOTOS DETECTADAS. Gerando Mosaico (Antes vs Depois) via Jimp para poupar rede...");
+                        console.log("-> 2 FOTOS DETECTADAS. Gerando Mosaico (Antes vs Depois) via sharp...");
                         try {
-                            const Jimp = require('jimp');
-                            const imgA = await Jimp.read(foto_antes_url);
-                            const imgD = await Jimp.read(foto_depois_url);
+                            const sharp = require('sharp');
+                            const https = require('https');
+                            const http = require('http');
 
-                            const targetHeight = 800; // Padronizar a altura
-                            imgA.resize(Jimp.AUTO, targetHeight);
-                            imgD.resize(Jimp.AUTO, targetHeight);
-
-                            // Adicionando um espaço de 20px (divisória) entre as imagens
-                            const divisorWidth = 20; 
-                            const collageWidth = imgA.bitmap.width + imgD.bitmap.width + divisorWidth;
-                            
-                            // Fundo da lona escuro (Preto) para a divisória ficar visível
-                            const collage = new Jimp(collageWidth, targetHeight, 0x000000FF);
-                            
-                            collage.composite(imgA, 0, 0);
-                            // Cola a segunda imagem com 20px de margem, criando a divisória no meio
-                            collage.composite(imgD, imgA.bitmap.width + divisorWidth, 0);
-
-                            // --- DESCOMENTE OU COMENTE ESTE BLOCO ABAIXO CASO QUEIRA TESTAR COM/SEM O TEXTO NAS FOTOS ---
-                            const comTextoEscritoNaFoto = true; // Flag pro seu Teste!
-
-                            if (comTextoEscritoNaFoto) {
-                                const font = await Jimp.loadFont(Jimp.FONT_SANS_64_WHITE);
-                                const fontShadow = await Jimp.loadFont(Jimp.FONT_SANS_64_BLACK);
-                                
-                                // Função simples para "sombra" pra melhorar a leitura (Borda preta nas letras brancas)
-                                function printWithShadow(x, y, text, w) {
-                                    collage.print(fontShadow, x+3, y+3, { text, alignmentX: Jimp.HORIZONTAL_ALIGN_CENTER }, w, targetHeight);
-                                    collage.print(font, x, y, { text, alignmentX: Jimp.HORIZONTAL_ALIGN_CENTER }, w, targetHeight);
-                                }
-                                
-                                printWithShadow(0, 30, "ANTES", imgA.bitmap.width);
-                                printWithShadow(imgA.bitmap.width + divisorWidth, 30, "DEPOIS", imgD.bitmap.width);
+                            // Baixa uma imagem de URL como Buffer
+                            function downloadImage(url) {
+                                return new Promise((resolve, reject) => {
+                                    const client = url.startsWith('https') ? https : http;
+                                    client.get(url, (res) => {
+                                        if (res.statusCode !== 200) {
+                                            reject(new Error(`Download falhou: HTTP ${res.statusCode} para ${url}`));
+                                            res.resume();
+                                            return;
+                                        }
+                                        const chunks = [];
+                                        res.on('data', chunk => chunks.push(chunk));
+                                        res.on('end', () => resolve(Buffer.concat(chunks)));
+                                        res.on('error', reject);
+                                    }).on('error', reject);
+                                });
                             }
-                            // --------------------------------------------------------------------------------------------
 
-                            const imageBuffer = await collage.getBufferAsync(Jimp.MIME_JPEG);
+                            const targetHeight = 800;
+                            const divisorWidth = 20;
 
-                            console.log("-> Mosaico gerado com sucesso! Enviando 1 único pacote de Mídia...");
-                            await sock.sendMessage(result.jid, { 
+                            // Baixa as duas fotos em paralelo
+                            const [bufA, bufD] = await Promise.all([
+                                downloadImage(foto_antes_url),
+                                downloadImage(foto_depois_url)
+                            ]);
+
+                            // Redimensiona ambas para a mesma altura preservando proporção
+                            const [resizedA, resizedD] = await Promise.all([
+                                sharp(bufA).resize({ height: targetHeight, withoutEnlargement: false }).toBuffer({ resolveWithObject: true }),
+                                sharp(bufD).resize({ height: targetHeight, withoutEnlargement: false }).toBuffer({ resolveWithObject: true })
+                            ]);
+
+                            const totalWidth = resizedA.info.width + resizedD.info.width + divisorWidth;
+
+                            // Cria canvas preto e compõe as duas imagens lado a lado com divisória de 20px
+                            const imageBuffer = await sharp({
+                                create: {
+                                    width: totalWidth,
+                                    height: targetHeight,
+                                    channels: 3,
+                                    background: { r: 0, g: 0, b: 0 }
+                                }
+                            })
+                            .composite([
+                                { input: resizedA.data, raw: { width: resizedA.info.width, height: targetHeight, channels: resizedA.info.channels }, left: 0, top: 0 },
+                                { input: resizedD.data, raw: { width: resizedD.info.width, height: targetHeight, channels: resizedD.info.channels }, left: resizedA.info.width + divisorWidth, top: 0 }
+                            ])
+                            .jpeg({ quality: 85 })
+                            .toBuffer();
+
+                            console.log("-> Mosaico gerado com sucesso via sharp! Enviando 1 único pacote de Mídia...");
+                            await sock.sendMessage(result.jid, {
                                 image: imageBuffer
-                                //caption: " *FOTOS DO SERVIÇO (Antes e Depois)*" 
+                                //caption: " *FOTOS DO SERVIÇO (Antes e Depois)*"
                             });
                             await delay(2000);
 
                         } catch (e) {
-                            console.error("Erro interno do Jimp ao gerar Mosaico. Revertendo para envio isolado:", e.message);
+                            console.error("Erro interno do sharp ao gerar Mosaico. Revertendo para envio isolado:", e.message);
                             // Fallback clássico
                             await sock.sendMessage(result.jid, { image: { url: foto_antes_url }, caption: "📸 *Antes*" });
                             await delay(2000);

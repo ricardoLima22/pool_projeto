@@ -153,7 +153,21 @@ mongoose.connect(MONGODB_URI).then(async () => {
 
                             const totalWidth = resizedA.info.width + resizedD.info.width + divisorWidth;
 
-                            // Cria canvas preto e compõe as duas imagens lado a lado com divisória de 20px
+                            // Cria SVG de texto com efeito de sombra (texto preto deslocado + branco por cima)
+                            function createTextSVG(text, width, height) {
+                                const cx = Math.round(width / 2);
+                                return Buffer.from(
+                                    `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}">` +
+                                    `<text x="${cx + 3}" y="73" font-family="Arial Black, Arial, sans-serif" font-size="64" font-weight="bold" text-anchor="middle" fill="black">${text}</text>` +
+                                    `<text x="${cx}" y="70" font-family="Arial Black, Arial, sans-serif" font-size="64" font-weight="bold" text-anchor="middle" fill="white">${text}</text>` +
+                                    `</svg>`
+                                );
+                            }
+
+                            const svgAntes  = createTextSVG('ANTES',  resizedA.info.width, targetHeight);
+                            const svgDepois = createTextSVG('DEPOIS', resizedD.info.width, targetHeight);
+
+                            // Cria canvas preto e compõe as duas imagens + labels lado a lado com divisória de 20px
                             const imageBuffer = await sharp({
                                 create: {
                                     width: totalWidth,
@@ -164,7 +178,9 @@ mongoose.connect(MONGODB_URI).then(async () => {
                             })
                             .composite([
                                 { input: resizedA.data, left: 0, top: 0 },
-                                { input: resizedD.data, left: resizedA.info.width + divisorWidth, top: 0 }
+                                { input: resizedD.data, left: resizedA.info.width + divisorWidth, top: 0 },
+                                { input: svgAntes,  top: 0, left: 0 },
+                                { input: svgDepois, top: 0, left: resizedA.info.width + divisorWidth }
                             ])
                             .jpeg({ quality: 85 })
                             .toBuffer();

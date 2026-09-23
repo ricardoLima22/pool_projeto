@@ -145,9 +145,10 @@ mongoose.connect(MONGODB_URI).then(async () => {
                             ]);
 
                             // Redimensiona ambas para a mesma altura preservando proporção
+                            // .png() garante buffer decodificado (lossless) para o composite — evita erro de 'raw bytes' com JPEG
                             const [resizedA, resizedD] = await Promise.all([
-                                sharp(bufA).resize({ height: targetHeight, withoutEnlargement: false }).toBuffer({ resolveWithObject: true }),
-                                sharp(bufD).resize({ height: targetHeight, withoutEnlargement: false }).toBuffer({ resolveWithObject: true })
+                                sharp(bufA).resize({ height: targetHeight }).png().toBuffer({ resolveWithObject: true }),
+                                sharp(bufD).resize({ height: targetHeight }).png().toBuffer({ resolveWithObject: true })
                             ]);
 
                             const totalWidth = resizedA.info.width + resizedD.info.width + divisorWidth;
@@ -162,8 +163,8 @@ mongoose.connect(MONGODB_URI).then(async () => {
                                 }
                             })
                             .composite([
-                                { input: resizedA.data, raw: { width: resizedA.info.width, height: targetHeight, channels: resizedA.info.channels }, left: 0, top: 0 },
-                                { input: resizedD.data, raw: { width: resizedD.info.width, height: targetHeight, channels: resizedD.info.channels }, left: resizedA.info.width + divisorWidth, top: 0 }
+                                { input: resizedA.data, left: 0, top: 0 },
+                                { input: resizedD.data, left: resizedA.info.width + divisorWidth, top: 0 }
                             ])
                             .jpeg({ quality: 85 })
                             .toBuffer();

@@ -239,12 +239,14 @@ export default function DetalhesCliente() {
                                 <p className="w-full border-b-2 border-slate-200 bg-transparent py-3 text-slate-400 text-sm font-medium">Não informado</p>
                             )}
                         </div>
+                        {userRole !== 'funcionario' && (
                         <div className="pt-4">
                             <h2 className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block mb-1">Valor (R$)</h2>
                             <p className="w-full border-b-2 border-slate-200 bg-transparent py-3 text-slate-800 text-sm font-medium">
                                 {cliente.price != null ? `R$ ${Number(cliente.price).toFixed(2).replace('.', ',')}` : 'Não informado'}
                             </p>
                         </div>
+                        )}
                         <div className="pt-4">
                             <h2 className="text-[11px] font-semibold tracking-wide text-[#008080] uppercase block mb-1">Volume da Piscina (m³)</h2>
                             <div className="w-full border-b-2 border-slate-200 bg-transparent py-3">

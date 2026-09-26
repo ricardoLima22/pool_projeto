@@ -181,7 +181,7 @@ export default function ListagemClientes() {
                                         <span className="text-[10px] font-bold text-slate-500 uppercase">
                                             {cliente.pool_volume_m3} M³
                                         </span>
-                                        {cliente.price != null && (
+                                        {userRole !== 'funcionario' && cliente.price != null && (
                                             <span className="text-[10px] font-bold text-emerald-600 uppercase">
                                                 {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(cliente.price)}
                                             </span>

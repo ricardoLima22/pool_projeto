@@ -86,29 +86,51 @@ export async function getExpenses(
   companyId: string,
   filters?: ExpenseFilters
 ) {
-  let query = supabase
+  // ── Gastos únicos filtrados pelo mês selecionado ──────────────────────────
+  let unicoQuery = supabase
     .from("expenses")
     .select("*, expense_categories(id, name, color, icon)")
     .eq("company_id", companyId)
+    .eq("recurrence", "unico")
     .order("expense_date", { ascending: false });
 
   if (filters?.categoryId) {
-    query = query.eq("category_id", filters.categoryId);
-  }
-  if (filters?.recurrence) {
-    query = query.eq("recurrence", filters.recurrence);
+    unicoQuery = unicoQuery.eq("category_id", filters.categoryId);
   }
   if (filters?.month && filters?.year) {
     const from = `${filters.year}-${String(filters.month).padStart(2, "0")}-01`;
     const lastDay = new Date(filters.year, filters.month, 0).getDate();
     const to = `${filters.year}-${String(filters.month).padStart(2, "0")}-${lastDay}`;
-    query = query.gte("expense_date", from).lte("expense_date", to);
+    unicoQuery = unicoQuery.gte("expense_date", from).lte("expense_date", to);
   }
 
-  const { data, error } = await query;
-  if (error) throw error;
-  return data as Expense[];
+  // ── Gastos fixos (mensal) — aparecem sempre, independente do mês ──────────
+  let mensalQuery = supabase
+    .from("expenses")
+    .select("*, expense_categories(id, name, color, icon)")
+    .eq("company_id", companyId)
+    .eq("recurrence", "mensal")
+    .order("expense_date", { ascending: false });
+
+  if (filters?.categoryId) {
+    mensalQuery = mensalQuery.eq("category_id", filters.categoryId);
+  }
+  // Gastos mensais NÃO são filtrados por data — são fixos e aparecem todo mês
+
+  const [{ data: unicoData, error: unicoError }, { data: mensalData, error: mensalError }] =
+    await Promise.all([unicoQuery, mensalQuery]);
+
+  if (unicoError) throw unicoError;
+  if (mensalError) throw mensalError;
+
+  // Mescla e ordena por data decrescente
+  const merged = [...(unicoData ?? []), ...(mensalData ?? [])].sort(
+    (a, b) => b.expense_date.localeCompare(a.expense_date)
+  );
+
+  return merged as Expense[];
 }
+
 
 export async function createExpense(payload: ExpenseCreate) {
   const { data, error } = await supabase
@@ -198,14 +220,27 @@ export async function getCategoryTotals(
   const lastDay = new Date(year, month, 0).getDate();
   const to = `${year}-${String(month).padStart(2, "0")}-${lastDay}`;
 
-  const { data, error } = await supabase
+  // Gastos únicos do mês selecionado
+  const { data: unicoData, error: unicoError } = await supabase
     .from("expenses")
-    .select("value, expense_categories(id, name, color)")
+    .select("value, recurrence, expense_categories(id, name, color)")
     .eq("company_id", companyId)
+    .eq("recurrence", "unico")
     .gte("expense_date", from)
     .lte("expense_date", to);
 
-  if (error) throw error;
+  // Gastos fixos (mensais) — sempre incluídos, sem filtro de data
+  const { data: mensalData, error: mensalError } = await supabase
+    .from("expenses")
+    .select("value, recurrence, expense_categories(id, name, color)")
+    .eq("company_id", companyId)
+    .eq("recurrence", "mensal");
+
+  if (unicoError) throw unicoError;
+  if (mensalError) throw mensalError;
+
+  const data = [...(unicoData ?? []), ...(mensalData ?? [])];
+
 
   const grouped: Record<string, CategorySummary> = {};
   for (const row of data ?? []) {

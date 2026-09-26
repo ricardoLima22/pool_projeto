@@ -395,16 +395,37 @@ export default function FinanceiroPage() {
   // ── Handlers CRUD ─────────────────────────────────────────────────────────
   const handleCreate = async (data: ExpenseCreate | ExpenseUpdate) => {
     const newExp = await createExpense(data as ExpenseCreate);
-    setExpenses((prev) => [newExp, ...prev]);
+    // Gastos mensais (fixos) sempre aparecem na lista
+    // Gastos únicos só entram na lista se pertencem ao mês/ano filtrado
+    if (newExp.recurrence === "mensal") {
+      setExpenses((prev) => [newExp, ...prev]);
+    } else {
+      const expMonth = new Date(newExp.expense_date + "T12:00:00").getMonth() + 1;
+      const expYear = new Date(newExp.expense_date + "T12:00:00").getFullYear();
+      if (expMonth === filterMonth && expYear === filterYear) {
+        setExpenses((prev) => [newExp, ...prev]);
+      }
+    }
     loadCharts();
   };
 
   const handleUpdate = async (data: ExpenseCreate | ExpenseUpdate) => {
     if (!editing) return;
     const updated = await updateExpense(editing.id, data as ExpenseUpdate);
-    setExpenses((prev) =>
-      prev.map((e) => (e.id === updated.id ? updated : e))
-    );
+    // Gastos mensais (fixos) sempre permanecem na lista
+    // Gastos únicos só ficam se a data ainda pertence ao mês filtrado
+    if (updated.recurrence === "mensal") {
+      setExpenses((prev) => prev.map((e) => (e.id === updated.id ? updated : e)));
+    } else {
+      const expMonth = new Date(updated.expense_date + "T12:00:00").getMonth() + 1;
+      const expYear = new Date(updated.expense_date + "T12:00:00").getFullYear();
+      if (expMonth === filterMonth && expYear === filterYear) {
+        setExpenses((prev) => prev.map((e) => (e.id === updated.id ? updated : e)));
+      } else {
+        // Data mudada para outro mês — remove da lista atual
+        setExpenses((prev) => prev.filter((e) => e.id !== updated.id));
+      }
+    }
     setEditing(null);
     loadCharts();
   };

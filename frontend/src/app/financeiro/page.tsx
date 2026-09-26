@@ -301,7 +301,7 @@ export default function FinanceiroPage() {
       // Extrai o nome da role (pode vir como array ou objeto)
       const roleName = Array.isArray(profile?.roles)
         ? (profile.roles[0] as { name: string })?.name
-        : (profile?.roles as { name: string } | null)?.name;
+        : ((profile?.roles as unknown) as { name: string } | null)?.name;
       const role = roleName?.toLowerCase() ?? "";
       setUserRole(role);
 

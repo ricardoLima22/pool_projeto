@@ -259,6 +259,7 @@ export default function FinanceiroPage() {
   const now = new Date();
   const [companyId, setCompanyId] = useState<string>("");
   const [userId, setUserId] = useState<string>("");
+  const [userRole, setUserRole] = useState<string>("");
 
   const [categories, setCategories] = useState<ExpenseCategory[]>([]);
   const [expenses, setExpenses] = useState<Expense[]>([]);
@@ -293,9 +294,22 @@ export default function FinanceiroPage() {
 
       const { data: profile } = await supabase
         .from("profiles")
-        .select("company_id")
+        .select("company_id, roles(name)")
         .eq("id", uid)
         .single();
+
+      // Extrai o nome da role (pode vir como array ou objeto)
+      const roleName = Array.isArray(profile?.roles)
+        ? (profile.roles[0] as { name: string })?.name
+        : (profile?.roles as { name: string } | null)?.name;
+      const role = roleName?.toLowerCase() ?? "";
+      setUserRole(role);
+
+      // Funcionários não têm acesso ao financeiro — redireciona para home
+      if (role === "funcionario") {
+        router.replace("/home");
+        return;
+      }
 
       if (profile?.company_id) {
         setCompanyId(profile.company_id);
@@ -306,6 +320,7 @@ export default function FinanceiroPage() {
       setSessionLoaded(true);
     });
   }, [router]);
+
 
   // ── Carrega gastos, categorias e total de comissões ────────────────────────
   const loadExpenses = useCallback(async () => {

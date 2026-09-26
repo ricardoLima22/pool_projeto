@@ -335,7 +335,7 @@ export default function Dashboard() {
                             <QuickCard onClick={() => router.push('/chamados')} icon={<Calendar className="h-5 w-5 text-blue-500" />} title="Meus Chamados" subtitle="Agendamentos" />
                             <QuickCard onClick={() => router.push('/chamados/novo')} icon={<PlusCircle className="h-5 w-5 text-emerald-500" />} title="Novo Chamado" subtitle="Gerar serviço" />
                             <QuickCard onClick={() => router.push('/funcionarios/comissoes')} icon={<Wallet className="h-5 w-5 text-violet-500" />} title="Comissões" subtitle="Fechamento mensal" />
-                            {(!profile?.roleName || ['dono', 'admin'].includes(profile?.roleName?.toLowerCase()) || profile?.roleName?.toLowerCase() !== 'funcionario') && (
+                            {profile?.roleName?.toLowerCase() !== 'funcionario' && (
                                 <QuickCard onClick={() => router.push('/financeiro')} icon={<DollarSign className="h-5 w-5 text-cyan-600" />} title="Financeiro" subtitle="Controle de gastos" />
                             )}
                         </div>

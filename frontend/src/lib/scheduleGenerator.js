@@ -14,6 +14,15 @@ export const DIAS_SEMANA = [
 ];
 
 /**
+ * Retorna o dia da semana (0=Dom..6=Sab) para uma data "YYYY-MM-DD"
+ * sem risco de drift de fuso horário.
+ */
+function getDayOfWeek(dateStr) {
+    const [y, m, d] = dateStr.split('-').map(Number);
+    return new Date(y, m - 1, d).getDay();
+}
+
+/**
  * Gerar agendamentos na tabela `cleaning_schedules` para um cliente
  * com base nos dias da semana selecionados (0 a 6) para o mês atual (ou especificado).
  */
@@ -24,21 +33,21 @@ export async function gerarAgendaCliente(customerId, companyId, funcionarioId, d
     const targetAno = ano !== null ? ano : agora.getFullYear();
     const targetMes = mes !== null ? mes : agora.getMonth(); // 0 = Jan, 11 = Dez
 
-    // Primeiro dia e último dia do mês
-    const primeiroDia = new Date(targetAno, targetMes, 1);
-    const ultimoDia = new Date(targetAno, targetMes + 1, 0);
+    const monthStr = String(targetMes + 1).padStart(2, '0');
+    // Último dia do mês (número)
+    const ultimoDiaNum = new Date(targetAno, targetMes + 1, 0).getDate();
+
+    const inicioStr = `${targetAno}-${monthStr}-01`;
+    const fimStr = `${targetAno}-${monthStr}-${String(ultimoDiaNum).padStart(2, '0')}`;
 
     const datasAgendadas = [];
 
-    for (let d = new Date(primeiroDia); d <= ultimoDia; d.setDate(d.getDate() + 1)) {
-        const dayOfWeek = d.getDay(); // 0 a 6
-        if (diasSemana.includes(dayOfWeek)) {
-            // Formatar YYYY-MM-DD em fuso local
-            const yearStr = d.getFullYear();
-            const monthStr = String(d.getMonth() + 1).padStart(2, '0');
-            const dateStr = String(d.getDate()).padStart(2, '0');
-            const dataFormatada = `${yearStr}-${monthStr}-${dateStr}`;
+    // ✅ Itera sobre números de dia — sem mutar objetos Date, sem drift de fuso
+    for (let dia = 1; dia <= ultimoDiaNum; dia++) {
+        const dataFormatada = `${targetAno}-${monthStr}-${String(dia).padStart(2, '0')}`;
+        const dayOfWeek = getDayOfWeek(dataFormatada); // 0=Dom, 1=Seg...
 
+        if (diasSemana.includes(dayOfWeek)) {
             datasAgendadas.push({
                 customer_id: customerId,
                 company_id: companyId || null,
@@ -52,9 +61,6 @@ export async function gerarAgendaCliente(customerId, companyId, funcionarioId, d
     if (datasAgendadas.length === 0) return;
 
     // Buscar agendamentos existentes no período para evitar duplicatas
-    const inicioStr = `${targetAno}-${String(targetMes + 1).padStart(2, '0')}-01`;
-    const fimStr = `${targetAno}-${String(targetMes + 1).padStart(2, '0')}-${String(ultimoDia.getDate()).padStart(2, '0')}`;
-
     const { data: existentes } = await supabase
         .from('cleaning_schedules')
         .select('data_agendada')
@@ -84,11 +90,11 @@ export async function garantirAgendaMesEmpresa(companyId, ano = null, mes = null
         const targetAno = ano !== null ? ano : agora.getFullYear();
         const targetMes = mes !== null ? mes : agora.getMonth(); // 0 = Jan, 11 = Dez
 
-        const primeiroDia = new Date(targetAno, targetMes, 1);
-        const ultimoDia = new Date(targetAno, targetMes + 1, 0);
+        const monthStr = String(targetMes + 1).padStart(2, '0');
+        const ultimoDiaNum = new Date(targetAno, targetMes + 1, 0).getDate();
 
-        const inicioStr = `${targetAno}-${String(targetMes + 1).padStart(2, '0')}-01`;
-        const fimStr = `${targetAno}-${String(targetMes + 1).padStart(2, '0')}-${String(ultimoDia.getDate()).padStart(2, '0')}`;
+        const inicioStr = `${targetAno}-${monthStr}-01`;
+        const fimStr = `${targetAno}-${monthStr}-${String(ultimoDiaNum).padStart(2, '0')}`;
 
         // 1. Buscar todos os clientes da empresa
         const { data: clientes, error: custError } = await supabase
@@ -140,14 +146,12 @@ export async function garantirAgendaMesEmpresa(companyId, ano = null, mes = null
         });
 
         for (const [custId, config] of Object.entries(clientConfig)) {
-            for (let d = new Date(primeiroDia); d <= ultimoDia; d.setDate(d.getDate() + 1)) {
-                const dayOfWeek = d.getDay();
-                if (config.dias.includes(dayOfWeek)) {
-                    const yearStr = d.getFullYear();
-                    const monthStr = String(d.getMonth() + 1).padStart(2, '0');
-                    const dateStr = String(d.getDate()).padStart(2, '0');
-                    const dataFormatada = `${yearStr}-${monthStr}-${dateStr}`;
+            // ✅ Itera sobre números de dia — sem mutar objetos Date, sem drift de fuso
+            for (let dia = 1; dia <= ultimoDiaNum; dia++) {
+                const dataFormatada = `${targetAno}-${monthStr}-${String(dia).padStart(2, '0')}`;
+                const dayOfWeek = getDayOfWeek(dataFormatada);
 
+                if (config.dias.includes(dayOfWeek)) {
                     const key = `${custId}_${dataFormatada}`;
                     if (!existingSet.has(key)) {
                         novosAgendamentos.push({

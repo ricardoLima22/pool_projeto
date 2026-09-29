@@ -89,8 +89,9 @@ export default function EmployeeDashboard() {
                 // Garante que a agenda do mês vigente esteja gerada para todos os clientes da empresa
                 await garantirAgendaMesEmpresa(companyId);
 
-                const inicioHoje = `${todayStr}T00:00:00.000Z`;
-                const fimHoje = `${todayStr}T23:59:59.999Z`;
+                // ✅ Usa offset UTC-3 (Brasil) para não misturar dias em horários próximos à meia-noite
+                const inicioHoje = `${todayStr}T03:00:00.000Z`;
+                const fimHoje = `${todayStr}T26:59:59.999Z`;
 
                 const [myCustomersRes, allSchedulesRes, allCustomersRes, visitsTodayRes] = await Promise.all([
                     // Clientes atribuídos a este funcionário
@@ -157,7 +158,8 @@ export default function EmployeeDashboard() {
 
                 setStats({
                     activeCustomers: assignedCustomers.length,
-                    pendingTickets: todayVisits.length,
+                    // ✅ Conta apenas as visitas PENDENTES (não o total)
+                    pendingTickets: todayVisits.filter(v => v.status === 'pendente').length,
                     myCommissions: formattedCommission
                 });
                 setUpcomingVisits(todayVisits);
@@ -241,7 +243,7 @@ export default function EmployeeDashboard() {
 
                 {/* Stats Row */}
                 <div className="grid grid-cols-3 gap-3 mb-8 animate-slide-up" style={{ animationDelay: "0.1s" }}>
-                    <StatCard icon={<Calendar className="h-6 w-6" />} value={dataLoading ? '...' : stats.pendingTickets} label="Visitas hoje" />
+                    <StatCard icon={<Calendar className="h-6 w-6" />} value={dataLoading ? '...' : stats.pendingTickets} label="Pendentes hoje" />
                     <StatCard icon={<Users className="h-6 w-6" />} value={dataLoading ? '...' : stats.activeCustomers} label="Meus clientes" />
                     <StatCard icon={<TrendingUp className="h-6 w-6 text-emerald-500" />} value={dataLoading ? '...' : (stats.myCommissions || 'R$ 0,00')} label="Comissão" />
                 </div>

@@ -9,7 +9,7 @@ import { toast } from 'sonner';
 import ConfirmDeleteDialog from '../../../components/ConfirmDeleteDialog';
 import GpsNavigationModal from '../../../components/GpsNavigationModal';
 import { MapPin, Navigation } from 'lucide-react';
-import { DIAS_SEMANA, gerarAgendaCliente } from '../../../lib/scheduleGenerator';
+import { DIAS_SEMANA, gerarAgendaCliente, sincronizarAgendaCliente } from '../../../lib/scheduleGenerator';
 
 export default function DetalhesCliente() {
     const [cliente, setCliente] = useState(null);
@@ -158,6 +158,9 @@ export default function DetalhesCliente() {
                 await supabase.from('customer_cleaning_days').insert(cleaningDaysData);
                 await gerarAgendaCliente(id, cliente.company_id, funcionarioId, diasSemana);
             }
+
+            // Remove agendamentos pendentes futuros em dias que o cliente não tem mais
+            await sincronizarAgendaCliente(id, diasSemana);
 
             setCliente({ ...cliente, name: nomeLimpo, whatsapp: somenteNumeros, email, address: endereco, pool_volume_m3: parseFloat(volume), pool_size: tamanhoPiscina || null, price: price !== '' ? parseFloat(price) : null, funcionario_id: funcionarioId || null });
             setNome(nomeLimpo);

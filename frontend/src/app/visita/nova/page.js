@@ -8,6 +8,7 @@ import SplashScreen from '../../../components/SplashScreen';
 import { ArrowLeft, Camera, Sparkles, Minus, Plus, Send, AlertTriangle } from 'lucide-react';
 import { toast } from 'sonner';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '../../../components/ui/dialog';
+import { getHojeStr } from '../../../lib/scheduleGenerator';
 
 export default function NovaVisitaPage() {
     return (
@@ -289,16 +290,36 @@ function NovaVisita() {
         // Se chegou aqui, a visita foi salva com sucesso
         // Marcar agendamento de hoje do cliente como concluído em cleaning_schedules
         const hoje = new Date();
-        const anoStr = hoje.getFullYear();
-        const mesStr = String(hoje.getMonth() + 1).padStart(2, '0');
-        const diaStr = String(hoje.getDate()).padStart(2, '0');
-        const dataHojeStr = `${anoStr}-${mesStr}-${diaStr}`;
+        const dataHojeStr = getHojeStr(hoje);
 
-        await supabase
+        const { data: concluidosHoje } = await supabase
             .from('cleaning_schedules')
             .update({ status: 'concluido' })
             .eq('customer_id', cliente.id)
-            .eq('data_agendada', dataHojeStr);
+            .eq('data_agendada', dataHojeStr)
+            .select('id');
+
+        // Se o cliente não tinha agendamento hoje (visita registrada com atraso),
+        // conclui o agendamento pendente mais recente dos últimos 6 dias
+        if (!concluidosHoje || concluidosHoje.length === 0) {
+            const limite = getHojeStr(new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate() - 6));
+            const { data: pendenteAnterior } = await supabase
+                .from('cleaning_schedules')
+                .select('id')
+                .eq('customer_id', cliente.id)
+                .eq('status', 'pendente')
+                .gte('data_agendada', limite)
+                .lt('data_agendada', dataHojeStr)
+                .order('data_agendada', { ascending: false })
+                .limit(1);
+
+            if (pendenteAnterior && pendenteAnterior.length > 0) {
+                await supabase
+                    .from('cleaning_schedules')
+                    .update({ status: 'concluido' })
+                    .eq('id', pendenteAnterior[0].id);
+            }
+        }
 
         // Dar baixa no estoque
         for (const pId of Object.keys(quantidades)) {

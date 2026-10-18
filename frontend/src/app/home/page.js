@@ -7,7 +7,7 @@ import { useWeather } from '../../hooks/useWeather';
 import { Droplets, LogOut, Camera, Users, UserPlus, Package, PlusCircle, Calendar, MapPin, Clock, TrendingUp, Waves, Thermometer, Wallet, User, DollarSign, Navigation } from "lucide-react";
 import SplashScreen from '../../components/SplashScreen';
 import GpsNavigationModal from '../../components/GpsNavigationModal';
-import { garantirAgendaMesEmpresa } from '../../lib/scheduleGenerator';
+import { garantirAgendaMesEmpresa, getHojeStr, getLimitesDiaLocalISO } from '../../lib/scheduleGenerator';
 
 const StatCard = ({ icon, value, label, onClick }) => (
     <div
@@ -146,17 +146,14 @@ export default function Dashboard() {
         async function fetchMetrics(companyId) {
             setDataLoading(true);
             const agora = new Date();
-            const yearStr = agora.getFullYear();
-            const monthStr = String(agora.getMonth() + 1).padStart(2, '0');
-            const dateStr = String(agora.getDate()).padStart(2, '0');
-            const todayStr = `${yearStr}-${monthStr}-${dateStr}`;
+            const todayStr = getHojeStr(agora);
 
             try {
                 // Garante que a agenda do mês vigente esteja gerada para todos os clientes
                 await garantirAgendaMesEmpresa(companyId);
 
-                const inicioHoje = `${todayStr}T00:00:00.000Z`;
-                const fimHoje = `${todayStr}T23:59:59.999Z`;
+                // ✅ Limites do dia LOCAL (evita contar visitas após 21h como do dia seguinte)
+                const { inicioISO: inicioHoje, fimISO: fimHoje } = getLimitesDiaLocalISO(agora);
 
                 const [customersRes, schedulesTodayRes, employeesRes, allCustomersRes, visitsTodayRes] = await Promise.all([
                     supabase.from('customers').select('*', { count: 'exact', head: true }).eq('company_id', companyId),
@@ -174,7 +171,7 @@ export default function Dashboard() {
                     supabase.from('visits')
                         .select('customer_id')
                         .gte('created_at', inicioHoje)
-                        .lte('created_at', fimHoje)
+                        .lt('created_at', fimHoje)
                 ]);
 
                 const completedCustomerIds = new Set(

@@ -42,3 +42,11 @@ class VisitaSchema(BaseModel):
     was_paid_on_spot: Optional[bool] = False
     sent_to_whatsapp: Optional[bool] = False
     photo_url: Optional[str] = None
+
+class CustomerProductToggleSchema(BaseModel):
+    customer_id: UUID
+    product_id: UUID
+    present: bool
+
+class CustomerDesignationSchema(BaseModel):
+    funcionario_id: Optional[UUID] = None

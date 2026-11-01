@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from routes import customers, products, visits
+from routes import customers, products, visits, customer_products
 
 app = FastAPI()
 
@@ -19,6 +19,7 @@ app.add_middleware(
 app.include_router(customers.router)
 app.include_router(products.router)
 app.include_router(visits.router)
+app.include_router(customer_products.router)
 
 @app.get("/")
 def home():

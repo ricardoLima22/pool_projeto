@@ -27,5 +27,41 @@ export const api = {
       body: JSON.stringify(dados),
     });
     return response.json();
+  },
+
+  // Buscar produtos nos clientes (respeitando o perfil do usuário)
+  getProdutosNosClientes: async () => {
+    const headers = await getAuthHeaders();
+    const response = await fetch(`/api/produtos-clientes`, { headers });
+    return response.json();
+  },
+
+  // Marcar ou desmarcar produto na residência do cliente
+  toggleProdutoNoCliente: async (customerId, productId, present) => {
+    const headers = await getAuthHeaders();
+    const response = await fetch(`/api/produtos-clientes`, {
+      method: "POST",
+      headers,
+      body: JSON.stringify({
+        customer_id: customerId,
+        product_id: productId,
+        present: Boolean(present),
+      }),
+    });
+    return response.json();
+  },
+
+  // Designar ou remover cliente de um funcionário (exclusivo Dono)
+  designarClienteFuncionario: async (customerId, funcionarioId) => {
+    const headers = await getAuthHeaders();
+    const response = await fetch(`/api/produtos-clientes`, {
+      method: "PATCH",
+      headers,
+      body: JSON.stringify({
+        customer_id: customerId,
+        funcionario_id: funcionarioId || null,
+      }),
+    });
+    return response.json();
   }
 };

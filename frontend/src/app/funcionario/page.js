@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { supabase } from '../../lib/supabase';
 import { useRouter } from 'next/navigation';
 import { useWeather } from '../../hooks/useWeather';
-import { Droplets, LogOut, Users, AlertCircle, Thermometer, Camera, Calendar, TrendingUp } from "lucide-react";
+import { Droplets, LogOut, Users, AlertCircle, Thermometer, Camera, Calendar, TrendingUp, Package } from "lucide-react";
 import SplashScreen from '../../components/SplashScreen';
 import { ChamadoCard } from '../../components/ChamadoCard';
 import { ClientCard } from '../../components/ClientCard';
@@ -257,6 +257,27 @@ export default function EmployeeDashboard() {
                                 <Camera className="h-6 w-6 text-white" />
                             </div>
                         </div>
+                    </button>
+                </div>
+
+                {/* Produtos nos Clientes CTA */}
+                <div className="animate-slide-up mb-8" style={{ animationDelay: "0.18s" }}>
+                    <button
+                        onClick={() => router.push('/produtos-clientes')}
+                        className="w-full bg-white rounded-xl p-4 shadow-sm border border-slate-200 text-left hover:shadow-md hover:border-cyan-200 transition-all flex items-center justify-between group"
+                    >
+                        <div className="flex items-center gap-3">
+                            <div className="bg-teal-50 rounded-full p-3 border border-teal-100 text-[#008080] group-hover:scale-105 transition-transform">
+                                <Package className="h-5 w-5" />
+                            </div>
+                            <div>
+                                <p className="font-bold text-slate-800 text-sm">Produtos nos Clientes</p>
+                                <p className="text-xs text-slate-500 mt-0.5">Gerencie os produtos presentes em seus clientes</p>
+                            </div>
+                        </div>
+                        <span className="text-xs font-bold text-[#008080] bg-teal-50 px-3 py-1.5 rounded-full border border-teal-200/70">
+                            Acessar
+                        </span>
                     </button>
                 </div>
 

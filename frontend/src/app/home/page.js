@@ -326,14 +326,15 @@ export default function Dashboard() {
                         <h2 className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-4">Acesso Rápido</h2>
                         <div className="grid grid-cols-2 gap-3">
                             <QuickCard onClick={() => router.push('/clientes')} icon={<Users className="h-5 w-5 text-blue-500" />} title="Meus Clientes" subtitle="Sua carteira" />
-                            <QuickCard onClick={() => router.push('/clientes/novo')} icon={<UserPlus className="h-5 w-5 text-emerald-500" />} title="Novo Cliente" subtitle="Cadastrar" />
+                            <QuickCard onClick={() => router.push('/clientes/novo')} icon={<UserPlus className="h-5 w-5 text-blue-500" />} title="Novo Cliente" subtitle="Cadastrar" />
                             <QuickCard onClick={() => router.push('/produtos')} icon={<Package className="h-5 w-5 text-blue-500" />} title="Meus Produtos" subtitle="Seu estoque" />
-                            <QuickCard onClick={() => router.push('/produtos/novo')} icon={<PlusCircle className="h-5 w-5 text-emerald-500" />} title="Novo Produto" subtitle="Cadastrar" />
-                            <QuickCard onClick={() => router.push('/chamados')} icon={<Calendar className="h-5 w-5 text-blue-500" />} title="Meus Chamados" subtitle="Agendamentos" />
-                            <QuickCard onClick={() => router.push('/chamados/novo')} icon={<PlusCircle className="h-5 w-5 text-emerald-500" />} title="Novo Chamado" subtitle="Gerar serviço" />
-                            <QuickCard onClick={() => router.push('/funcionarios/comissoes')} icon={<Wallet className="h-5 w-5 text-violet-500" />} title="Comissões" subtitle="Fechamento mensal" />
+                            <QuickCard onClick={() => router.push('/produtos/novo')} icon={<PlusCircle className="h-5 w-5 text-blue-500" />} title="Novo Produto" subtitle="Cadastrar" />
+                            <QuickCard onClick={() => router.push('/produtos-clientes')} icon={<Package className="h-5 w-5 text-blue-500" />} title="Produtos nos Clientes" subtitle="Controle nas residências" />
+                            {/* <QuickCard onClick={() => router.push('/chamados')} icon={<Calendar className="h-5 w-5 text-blue-500" />} title="Meus Chamados" subtitle="Agendamentos" /> */}
+                            {/* <QuickCard onClick={() => router.push('/chamados/novo')} icon={<PlusCircle className="h-5 w-5 text-blue-500" />} title="Novo Chamado" subtitle="Gerar serviço" /> */}
+                            <QuickCard onClick={() => router.push('/funcionarios/comissoes')} icon={<Wallet className="h-5 w-5 text-blue-500" />} title="Comissões" subtitle="Fechamento mensal" />
                             {profile?.roleName?.toLowerCase() !== 'funcionario' && (
-                                <QuickCard onClick={() => router.push('/financeiro')} icon={<DollarSign className="h-5 w-5 text-cyan-600" />} title="Financeiro" subtitle="Controle de gastos" />
+                                <QuickCard onClick={() => router.push('/financeiro')} icon={<DollarSign className="h-5 w-5 text-blue-500" />} title="Financeiro" subtitle="Controle de gastos" />
                             )}
                         </div>
                     </section>

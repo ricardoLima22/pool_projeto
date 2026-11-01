@@ -63,7 +63,7 @@ export default function Produtos() {
                     <button onClick={() => router.push('/home')} className="text-slate-800 transition-colors">
                         <ArrowLeft className="h-5 w-5" />
                     </button>
-                    <h1 className="text-xl font-bold text-slate-800">Meus Produtos</h1>
+                    <h1 className="text-lg sm:text-xl font-bold tracking-tight text-slate-800">Meus Produtos</h1>
                 </div>
                 <div className="flex items-center gap-2">
                     <button
@@ -86,21 +86,21 @@ export default function Produtos() {
             <div className="px-4 py-6 space-y-4">
                 {/* Summary */}
                 <div className="grid grid-cols-3 gap-3">
-                    <div className="bg-white rounded-xl border border-slate-100 shadow-sm p-3 text-center flex flex-col justify-center">
-                        <span className="text-lg font-black text-slate-800">{produtos.length}</span>
-                        <p className="text-[9px] font-bold text-slate-500 uppercase tracking-widest mt-0.5">Produtos</p>
+                    <div className="bg-white rounded-xl border border-slate-100 shadow-sm p-3 sm:p-4 text-center flex flex-col justify-center">
+                        <span className="text-lg sm:text-xl font-bold tracking-tight text-slate-800">{produtos.length}</span>
+                        <p className="text-[11px] font-medium text-slate-500 mt-0.5">Produtos</p>
                     </div>
-                    <div className="bg-white rounded-xl border border-slate-100 shadow-sm p-3 text-center flex flex-col justify-center">
-                        <span className="text-lg font-black text-amber-500">
+                    <div className="bg-white rounded-xl border border-slate-100 shadow-sm p-3 sm:p-4 text-center flex flex-col justify-center">
+                        <span className="text-lg sm:text-xl font-bold tracking-tight text-amber-500">
                             {produtos.filter((p) => p.status === "baixo").length}
                         </span>
-                        <p className="text-[9px] font-bold text-slate-500 uppercase tracking-widest mt-0.5">Baixo</p>
+                        <p className="text-[11px] font-medium text-slate-500 mt-0.5">Baixo</p>
                     </div>
-                    <div className="bg-white rounded-xl border border-slate-100 shadow-sm p-3 text-center flex flex-col justify-center">
-                        <span className="text-lg font-black text-red-500">
+                    <div className="bg-white rounded-xl border border-slate-100 shadow-sm p-3 sm:p-4 text-center flex flex-col justify-center">
+                        <span className="text-lg sm:text-xl font-bold tracking-tight text-red-500">
                             {produtos.filter((p) => p.status === "crítico").length}
                         </span>
-                        <p className="text-[9px] font-bold text-slate-500 uppercase tracking-widest mt-0.5">Crítico</p>
+                        <p className="text-[11px] font-medium text-slate-500 mt-0.5">Crítico</p>
                     </div>
                 </div>
 

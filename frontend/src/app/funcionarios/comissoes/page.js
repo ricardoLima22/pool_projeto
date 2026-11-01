@@ -279,7 +279,7 @@ export default function ComissoesFuncionarios() {
                     >
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
                     </button>
-                    <h1 className="text-xl font-bold text-slate-800">Comissões</h1>
+                    <h1 className="text-lg sm:text-xl font-bold tracking-tight text-slate-800">Comissões</h1>
                 </div>
                 <div className="text-right">
                     <p className="text-[11px] text-slate-500">Total a pagar</p>

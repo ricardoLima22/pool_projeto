@@ -323,7 +323,7 @@ export default function Dashboard() {
 
                     {/* Quick Access */}
                     <section className="mb-8 animate-slide-up" style={{ animationDelay: "0.3s" }}>
-                        <h2 className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-4">Acesso Rápido</h2>
+                        <h2 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-4">Acesso Rápido</h2>
                         <div className="grid grid-cols-2 gap-3">
                             <QuickCard onClick={() => router.push('/clientes')} icon={<Users className="h-5 w-5 text-blue-500" />} title="Meus Clientes" subtitle="Sua carteira" />
                             <QuickCard onClick={() => router.push('/clientes/novo')} icon={<UserPlus className="h-5 w-5 text-blue-500" />} title="Novo Cliente" subtitle="Cadastrar" />
@@ -341,7 +341,7 @@ export default function Dashboard() {
 
                     {/* Upcoming Visits */}
                     <section className="mb-8 animate-slide-up" style={{ animationDelay: "0.4s" }}>
-                        <h2 className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-4">Visitas de Hoje</h2>
+                        <h2 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-4">Visitas de Hoje</h2>
                         <div className="space-y-3">
                             {dataLoading ? (
                                 <div className="bg-white rounded-[20px] p-6 text-center border border-slate-100 shadow-sm animate-pulse">

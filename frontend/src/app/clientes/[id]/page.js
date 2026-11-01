@@ -198,7 +198,7 @@ export default function DetalhesCliente() {
                 <button onClick={() => router.push('/clientes')} className="text-slate-800 transition-colors">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
                 </button>
-                <h1 className="text-lg font-bold text-slate-800">
+                <h1 className="text-lg sm:text-xl font-bold tracking-tight text-slate-800">
                     {editando ? "Editar Cliente" : "Detalhes do Cliente"}
                 </h1>
             </div>

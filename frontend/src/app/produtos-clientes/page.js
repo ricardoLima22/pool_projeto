@@ -260,7 +260,7 @@ export default function ProdutosNosClientesPage() {
                         <ArrowLeft className="h-5 w-5" />
                     </button>
                     <div>
-                        <h1 className="text-xl font-bold text-slate-800 leading-tight">
+                        <h1 className="text-lg sm:text-xl font-bold tracking-tight text-slate-800 leading-tight">
                             Produtos nos Clientes
                         </h1>
                         <p className="text-xs text-slate-500">
@@ -286,39 +286,39 @@ export default function ProdutosNosClientesPage() {
             <div className="max-w-4xl mx-auto px-4 py-6 space-y-4">
                 {/* Indicadores */}
                 <div className="grid grid-cols-3 gap-3">
-                    <div className="bg-white rounded-xl border border-slate-100 shadow-sm p-3 text-center flex flex-col justify-center">
+                    <div className="bg-white rounded-xl border border-slate-100 shadow-sm p-3 sm:p-4 text-center flex flex-col justify-center">
                         <div className="flex justify-center text-blue-500 mb-1">
-                            <Users className="w-4 h-4" />
+                            <Users className="w-5 h-5" />
                         </div>
-                        <span className="text-lg font-black text-slate-800">
+                        <span className="text-lg sm:text-xl font-bold tracking-tight text-slate-800">
                             {indicadores.totalClientes}
                         </span>
-                        <p className="text-[9px] font-bold text-slate-500 uppercase tracking-widest mt-0.5">
-                            Total Clientes
+                        <p className="text-[11px] font-medium text-slate-500 mt-0.5 truncate">
+                            Total clientes
                         </p>
                     </div>
 
-                    <div className="bg-white rounded-xl border border-slate-100 shadow-sm p-3 text-center flex flex-col justify-center">
+                    <div className="bg-white rounded-xl border border-slate-100 shadow-sm p-3 sm:p-4 text-center flex flex-col justify-center">
                         <div className="flex justify-center text-emerald-500 mb-1">
-                            <Package className="w-4 h-4" />
+                            <Package className="w-5 h-5" />
                         </div>
-                        <span className="text-lg font-black text-emerald-600">
+                        <span className="text-lg sm:text-xl font-bold tracking-tight text-emerald-600">
                             {indicadores.clientesComProdutos}
                         </span>
-                        <p className="text-[9px] font-bold text-slate-500 uppercase tracking-widest mt-0.5">
-                            Com Produtos
+                        <p className="text-[11px] font-medium text-slate-500 mt-0.5 truncate">
+                            Com produtos
                         </p>
                     </div>
 
-                    <div className="bg-white rounded-xl border border-slate-100 shadow-sm p-3 text-center flex flex-col justify-center">
+                    <div className="bg-white rounded-xl border border-slate-100 shadow-sm p-3 sm:p-4 text-center flex flex-col justify-center">
                         <div className="flex justify-center text-[#008080] mb-1">
-                            <CheckSquare className="w-4 h-4" />
+                            <CheckSquare className="w-5 h-5" />
                         </div>
-                        <span className="text-lg font-black text-[#008080]">
+                        <span className="text-lg sm:text-xl font-bold tracking-tight text-[#008080]">
                             {indicadores.totalProdutosMarcados}
                         </span>
-                        <p className="text-[9px] font-bold text-slate-500 uppercase tracking-widest mt-0.5">
-                            Produtos Marcados
+                        <p className="text-[11px] font-medium text-slate-500 mt-0.5 truncate">
+                            Produtos marcados
                         </p>
                     </div>
                 </div>

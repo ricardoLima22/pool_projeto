@@ -444,7 +444,7 @@ function NovaVisita() {
                     <button onClick={() => router.back()} className="text-slate-800 transition-colors">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
                     </button>
-                    <h1 className="text-lg font-bold text-slate-800 tracking-tight">Nova Visita</h1>
+                    <h1 className="text-lg sm:text-xl font-bold tracking-tight text-slate-800">Nova Visita</h1>
                 </header>
 
                 <div className="px-4 py-6 space-y-4">
@@ -508,7 +508,7 @@ function NovaVisita() {
                     <ArrowLeft className="h-5 w-5" />
                 </button>
                 <div className="text-slate-800 overflow-hidden">
-                    <h1 className="font-bold text-lg leading-tight truncate">{cliente?.name}</h1>
+                    <h1 className="text-lg sm:text-xl font-bold tracking-tight text-slate-800 leading-tight truncate">{cliente?.name}</h1>
                     <p className="text-sm text-slate-500 truncate">{cliente?.pool_volume_m3 || 0}m³ • {cliente?.address || 'Sem endereço'}</p>
                 </div>
             </div>

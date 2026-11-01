@@ -284,7 +284,7 @@ export default function EmployeeDashboard() {
                 {/* Visitas de Hoje Section */}
                 <section className="animate-slide-up" style={{ animationDelay: "0.2s" }}>
                     <div className="flex items-center justify-between mb-4">
-                        <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Visitas de Hoje</h2>
+                        <h2 className="text-xs font-bold text-slate-500 uppercase tracking-wider">Visitas de Hoje</h2>
                     </div>
                     <div className="space-y-3">
                         {dataLoading ? (
@@ -320,7 +320,7 @@ export default function EmployeeDashboard() {
                 {/* Clientes Section */}
                 <section className="mt-8 mb-8 animate-slide-up" style={{ animationDelay: "0.3s" }}>
                     <div className="flex items-center justify-between mb-4">
-                        <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Meus Clientes</h2>
+                        <h2 className="text-xs font-bold text-slate-500 uppercase tracking-wider">Meus Clientes</h2>
                         <span onClick={() => router.push('/clientes')} className="text-xs text-primary font-medium cursor-pointer hover:underline">Ver todos</span>
                     </div>
                     <div className="space-y-3">

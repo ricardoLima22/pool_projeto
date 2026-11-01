@@ -466,7 +466,7 @@ export default function FinanceiroPage() {
           >
             <ArrowLeft className="h-5 w-5" />
           </button>
-          <h1 className="text-xl font-bold text-slate-800">Financeiro</h1>
+          <h1 className="text-lg sm:text-xl font-bold tracking-tight text-slate-800">Financeiro</h1>
         </div>
 
         {/* Direita: botão Categorias */}
